@@ -39,7 +39,6 @@ WORKDIR /app
 
 # Variables d'environnement pour Railway
 ENV NODE_ENV=production
-ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Installation des dépendances runtime uniquement
@@ -63,21 +62,21 @@ RUN addgroup --system --gid 1001 phoenixcare
 RUN adduser --system --uid 1001 phoenixcare
 USER phoenixcare
 
-# Exposition du port Railway
-EXPOSE 3000
+# Railway utilise un port dynamique - pas d'EXPOSE nécessaire
 
-# Script de démarrage unifié
+# Script de démarrage unifié pour Railway
 COPY --chown=phoenixcare:phoenixcare <<EOF /app/start.sh
 #!/bin/sh
-echo "🚀 Démarrage PhoenixCare - Assistance numérique pour familles"
+echo "🚀 Démarrage PhoenixCare - Port dynamique Railway"
 echo "💝 Mission: Construire les outils que l'État ne fournit pas"
+echo "🔌 Port Railway: \$PORT"
 
 # Démarrage du backend en arrière-plan
-cd /app/backend && node dist/index.js &
+cd /app/backend && PORT=\$PORT node dist/index.js &
 BACKEND_PID=$!
 
 # Démarrage du frontend
-cd /app/frontend && npm start &
+cd /app/frontend && PORT=\$PORT npm start &
 FRONTEND_PID=$!
 
 # Gestion propre des signaux

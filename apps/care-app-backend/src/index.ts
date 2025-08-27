@@ -23,8 +23,21 @@ app.use(authMiddleware);
 app.use('/api/aides', aideRouter);
 
 app.get('/', (_req, res) => {
-  res.send({ message: 'PhoenixCare API 🕊️ OK' });
+  res.send({
+    message: 'PhoenixCare API 🕊️ OK',
+    port: PORT,
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Exporte l'application pour Vercel
+// Démarrage du serveur pour Railway (port dynamique)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 PhoenixCare Backend démarré sur le port ${PORT}`);
+    console.log(`📍 API accessible sur http://localhost:${PORT}`);
+    console.log(`💝 Mission: Construire les outils que l'État ne fournit pas`);
+  });
+}
+
+// Exporte l'application pour les tests et autres usages
 export default app;
