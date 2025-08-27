@@ -111,10 +111,7 @@ const nextHandle = nextApp.getRequestHandler();
             methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
             allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
         }));
-        // Middleware de base
-        server.use(express.json({ limit: '10mb' })); // Limite la taille du body
-        server.use(authMiddleware);
-        // 🏥 Health Checks (liveness & readiness)
+        // 🏥 Health Checks (PUBLIQUES - AVANT l'authentification !)
         server.get('/healthz', (_req, res) => {
             res.status(200).json({
                 status: 'OK',
@@ -142,6 +139,9 @@ const nextHandle = nextApp.getRequestHandler();
                 }
             });
         });
+        // Middleware de base
+        server.use(express.json({ limit: '10mb' })); // Limite la taille du body
+        server.use(authMiddleware);
         // 🔥 Gestion d'erreur CORS améliorée
         server.use((err, req, res, next) => {
             if (err.message && err.message.includes('CORS')) {
