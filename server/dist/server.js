@@ -157,9 +157,17 @@ const nextHandle = nextApp.getRequestHandler();
         });
         // 🔒 API Routes SÉCURISÉES (avec authentification)
         // ⚠️ Authentification appliquée UNIQUEMENT sur les routes API
-        server.use('/api', authMiddleware);
-        // 🔗 Routes API spécifiques (protégées par authMiddleware)
+        // 🔗 Route RECHERCHE PUBLIQUE (pas d'auth - accessible aux utilisateurs)
         server.use('/api/aides', aideRouter);
+        // 🔒 Routes API ADMINISTRATEUR (protégées par authMiddleware)
+        server.use('/api', (req, res, next) => {
+            // Ne pas appliquer l'auth sur /api/aides (déjà défini plus haut)
+            if (req.path.startsWith('/api/aides')) {
+                return next();
+            }
+            // Appliquer l'auth sur toutes les autres routes /api/*
+            return authMiddleware(req, res, next);
+        });
         // 📊 API Info (protégée par authMiddleware)
         server.get('/api', (_req, res) => {
             res.json({
