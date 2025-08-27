@@ -18,7 +18,6 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
-import { json } from 'body-parser';
 
 // Import des routes et middlewares
 import { aideRouter } from './routes/aides.js';
@@ -125,7 +124,7 @@ const nextHandle = nextApp.getRequestHandler();
     }));
 
     // Middleware de base
-    server.use(json({ limit: '10mb' })); // Limite la taille du body
+    server.use(express.json({ limit: '10mb' })); // Limite la taille du body
     server.use(authMiddleware);
 
     // 🏥 Health Checks (liveness & readiness)
