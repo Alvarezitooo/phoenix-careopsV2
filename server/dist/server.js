@@ -40,6 +40,9 @@ const nextHandle = nextApp.getRequestHandler();
         console.log('✅ Next.js prêt');
         // Création du serveur Express
         const server = express();
+        // 🔥 TRUST PROXY - Essentiel pour Railway (proxy devant Express)
+        // Permet à Express de lire correctement l'IP client via X-Forwarded-For
+        server.set('trust proxy', 1);
         // =============================================================================
         // 🛡️ SÉCURITÉ EXPRESS - Configuration renforcée
         // =============================================================================
