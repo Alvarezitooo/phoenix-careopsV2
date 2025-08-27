@@ -52,13 +52,10 @@ COPY --from=builder /app/server/dist ./server/dist
 COPY --from=builder /app/client/.next ./client/.next
 COPY --from=builder /app/client/public ./client/public
 
-# Copie du script de démarrage
-COPY start.sh ./start.sh
-RUN chmod +x ./start.sh
-
 # Copie des fichiers de config nécessaires
 COPY server/tsconfig.json ./server/
 COPY client/next.config.mjs ./client/
 
 EXPOSE 8080
-CMD ["./start.sh"]
+ENV PORT=8080 NODE_ENV=production
+CMD ["node", "server/dist/server.js"]
