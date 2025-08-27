@@ -142,9 +142,8 @@ const nextHandle = nextApp.getRequestHandler();
                 }
             });
         });
-        // Middleware de base
+        // Middleware de base (pour toutes les routes)
         server.use(express.json({ limit: '10mb' })); // Limite la taille du body
-        server.use(authMiddleware);
         // 🔥 Gestion d'erreur CORS améliorée
         server.use((err, req, res, next) => {
             if (err.message && err.message.includes('CORS')) {
@@ -156,9 +155,12 @@ const nextHandle = nextApp.getRequestHandler();
             }
             next(err);
         });
-        // 🔗 API Routes Express
+        // 🔒 API Routes SÉCURISÉES (avec authentification)
+        // ⚠️ Authentification appliquée UNIQUEMENT sur les routes API
+        server.use('/api', authMiddleware);
+        // 🔗 Routes API spécifiques (protégées par authMiddleware)
         server.use('/api/aides', aideRouter);
-        // 📊 API Info
+        // 📊 API Info (protégée par authMiddleware)
         server.get('/api', (_req, res) => {
             res.json({
                 message: 'PhoenixCare API 🕊️ OK',
