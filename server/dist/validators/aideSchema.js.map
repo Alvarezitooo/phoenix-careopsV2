@@ -1,0 +1,1 @@
+{"version":3,"file":"aideSchema.js","sourceRoot":"","sources":["../../src/validators/aideSchema.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,CAAC,EAAE,MAAM,KAAK,CAAC;AAExB,MAAM,CAAC,MAAM,eAAe,GAAG,CAAC,CAAC,MAAM,CAAC;IACtC,UAAU,EAAE,CAAC,CAAC,MAAM,EAAE,CAAC,MAAM,CAAC,CAAC,CAAC;IAChC,YAAY,EAAE,CAAC,CAAC,MAAM,EAAE,CAAC,GAAG,CAAC,CAAC,CAAC;CAChC,CAAC,CAAC"}

@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.aideQuerySchema = void 0;
-const zod_1 = require("zod");
-exports.aideQuerySchema = zod_1.z.object({
-    codePostal: zod_1.z.string().length(5),
-    typeHandicap: zod_1.z.string().min(2),
+import { z } from 'zod';
+export const aideQuerySchema = z.object({
+    codePostal: z.string().length(5),
+    typeHandicap: z.string().min(2),
 });
+//# sourceMappingURL=aideSchema.js.map
