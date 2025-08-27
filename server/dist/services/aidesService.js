@@ -1,5 +1,5 @@
-import { supabase } from '../config/supabase';
-import { anonymiserAide } from '../utils/privacy';
+import { supabase } from '../config/supabase.js';
+import { anonymiserAide } from '../utils/privacy.js';
 export const getAides = async (query) => {
     const { data, error } = await supabase
         .from('aides')

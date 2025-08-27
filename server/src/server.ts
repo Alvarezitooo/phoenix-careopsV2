@@ -21,8 +21,8 @@ import dotenv from 'dotenv';
 import { json } from 'body-parser';
 
 // Import des routes et middlewares
-import { aideRouter } from './routes/aides';
-import { authMiddleware } from './middlewares/auth';
+import { aideRouter } from './routes/aides.js';
+import { authMiddleware } from './middlewares/auth.js';
 
 // Configuration
 dotenv.config();

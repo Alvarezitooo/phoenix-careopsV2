@@ -1,6 +1,6 @@
 import express from 'express';
-import { aideQuerySchema } from '../validators/aideSchema';
-import { getAides } from '../services/aidesService';
+import { aideQuerySchema } from '../validators/aideSchema.js';
+import { getAides } from '../services/aidesService.js';
 export const aideRouter = express.Router();
 aideRouter.get('/', async (req, res) => {
     const parsed = aideQuerySchema.safeParse(req.query);
