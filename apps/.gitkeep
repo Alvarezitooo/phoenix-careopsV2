@@ -1,0 +1,23 @@
+# PhoenixCare - Extensions et Applications Supplémentaires
+# Ce dossier est destiné aux futures extensions de PhoenixCare
+
+## Applications Possibles :
+# - phoenix-care-admin/ : Panel d'administration
+# - phoenix-care-api/ : API supplémentaire spécialisée
+# - phoenix-care-mobile/ : Version mobile/PWA
+# - phoenix-care-docs/ : Documentation utilisateur
+
+## Structure recommandée pour chaque app :
+# ├── src/ (code source)
+# ├── Dockerfile (si déploiement séparé)
+# ├── package.json
+# ├── README.md
+# └── .env.example
+
+## 🚀 Déploiement Multi-Apps sur Railway :
+# 1. Chaque app peut avoir son propre service Railway
+# 2. Partager une base de données commune (Supabase)
+# 3. Utiliser des variables d'environnement partagées
+# 4. Domaines séparés ou sous-domaines
+
+# Plus d'infos : https://docs.railway.app

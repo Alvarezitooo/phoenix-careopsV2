@@ -1,0 +1,69 @@
+# 🕊️ PhoenixCare - Variables d'Environnement
+# 🔥 COPIEZ CE FICHIER VERS .env POUR VOTRE DÉVELOPPEMENT LOCAL
+# ❌ NE COMMITTEZ JAMAIS DE VRAIES VALEURS !
+
+# =============================================================================
+# 🚨 SÉCURITÉ CRITIQUE - Variables Requises
+# =============================================================================
+
+# 🔥 CLÉ JWT - GÉNÉREZ UNE NOUVELLE POUR LA PRODUCTION !
+# Commande pour générer: openssl rand -base64 32
+# Railway: Définissez cette variable dans l'interface web
+JWT_SECRET=your-super-secret-jwt-key-change-me-in-production
+
+# =============================================================================
+# 🗄️ SUPABASE - Base de Données
+# =============================================================================
+
+# URL de votre projet Supabase (publique)
+SUPABASE_URL=https://your-project-id.supabase.co
+
+# 🔥 ANON KEY (PUBLIQUE) - Utilisée côté client
+# Cette clé est PUBLIQUE et peut être exposée dans le frontend
+# Elle permet uniquement les opérations non-authentifiées
+SUPABASE_KEY=your-supabase-anon-key
+
+# ⚠️  SERVICE ROLE KEY (SECRÈTE) - UNIQUEMENT côté serveur !
+# Cette clé est ULTRA SECRÈTE et ne doit JAMAIS être exposée
+# Elle permet TOUTES les opérations sur votre base de données
+# Définissez-la UNIQUEMENT dans les variables d'environnement Railway
+# SUPABASE_SERVICE_ROLE_KEY=your-service-role-key  # (optionnel, si besoin)
+
+# =============================================================================
+# 🌐 CONFIGURATION SERVEUR
+# =============================================================================
+
+# Port (Railway le définit automatiquement en production)
+PORT=8080
+
+# Environnement
+NODE_ENV=development
+
+# Origines autorisées pour CORS (séparées par des virgules)
+ALLOWED_ORIGINS=http://localhost:3000,https://yourdomain.com
+
+# Niveau de logs (debug, info, warn, error)
+LOG_LEVEL=info
+
+# =============================================================================
+# 🚨 RAPPEL SÉCURITÉ
+# =============================================================================
+#
+# ✅ À FAIRE :
+#   - Générer des clés uniques pour chaque environnement
+#   - Utiliser des mots de passe forts (32+ caractères)
+#   - Rotater les clés régulièrement
+#   - Ne jamais committer de vraies valeurs
+#   - Utiliser des variables d'environnement Railway pour la production
+#
+# ❌ À ÉVITER :
+#   - Hardcoder des clés dans le code
+#   - Partager des clés entre environnements
+#   - Utiliser des valeurs par défaut en production
+#   - Exposer des clés secrètes côté client
+#
+# 🔐 SUPABASE SECURITY REMINDER:
+#   - ANON KEY: Publique, côté client uniquement
+#   - SERVICE ROLE KEY: Secrète, côté serveur uniquement, accès complet
+#
+# =============================================================================

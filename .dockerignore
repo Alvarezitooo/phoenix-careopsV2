@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+
+# Node modules
+node_modules
+*/node_modules
+
+# Build outputs
+.next
+dist
+build
+coverage
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+*.log
+
+# Documentation
+README.md
+ARCHITECTURE.md
+*.txt
+
+# Docker files
+Dockerfile
+docker-compose.yml
+
+# Temporary files
+*.tmp
+*.swp
+*~
