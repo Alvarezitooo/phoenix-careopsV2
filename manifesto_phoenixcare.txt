@@ -1,0 +1,64 @@
+# 🕊️ Manifeste du Projet PhoenixCare
+
+## ✨ Pourquoi PhoenixCare existe
+
+Parce que chaque jour, des milliers de parents en France vivent un combat invisible.
+Parce qu’accompagner un enfant en situation de handicap, c’est gérer une vie pleine d’amour, mais aussi de démarches, de fatigue, d’angoisse, et souvent… de solitude.
+
+Parce que l’État ne fait pas assez.
+Parce que le système est trop complexe, trop lent, trop froid.
+
+**PhoenixCare naît d’un cri de vérité : "Personne ne devrait être seul pour affronter ça."**
+
+---
+
+## 🎯 Notre mission
+
+Créer un **écosystème numérique humain et sécurisé**, accessible à tous les parents d’enfants en situation de handicap, pour :
+
+- 📚 **Comprendre leurs droits** sans jargon
+- 📝 **Accomplir leurs démarches** sans stress
+- 🛠️ **Générer les bons documents** sans erreur
+- 🤖 **Être assistés par une IA** qui respecte leur dignité
+- ❤️ **Retrouver un peu de souffle** dans un quotidien chargé
+
+---
+
+## 🛡️ Nos engagements fondamentaux
+
+### 1. **Dignité avant tout**
+Chaque ligne de code, chaque interface, chaque prompt est pensée pour **soutenir, pas exploiter**. Aucune donnée ne sera collectée sans but, rien n’est monétisé au détriment des familles.
+
+### 2. **Accessibilité radicale**
+L’outil est fait pour **tous les parents**, même ceux qui n’ont jamais rempli un formulaire en ligne. Mobile, simple, lisible, émotionnellement respectueux.
+
+### 3. **Sécurité par design**
+RGPD, encryption, anonymisation : la **vie privée des familles est sacrée**. Tout est construit pour la protéger, pas pour y puiser.
+
+### 4. **Code pour le bien commun**
+PhoenixCare est **un acte citoyen**. Le code source est ouvert, documenté, partageable. Le projet est transparent. Il **n’appartient à personne, il sert tout le monde**.
+
+### 5. **Pas d’IA opaque**
+Notre intelligence artificielle est là pour **assister, jamais remplacer**. Elle explique ce qu’elle fait. Elle peut être interrogée. Elle est là pour **soulager, pas diriger**.
+
+---
+
+## 🧱 Notre vision long terme
+
+D’ici 3 ans, PhoenixCare sera :
+- Un réflexe pour tous les parents qui débutent un parcours MDPH
+- Une référence utilisée par les assistantes sociales et les centres médico-sociaux
+- Une vitrine de ce que peut devenir une **technologie éthique, centrée sur les humains**
+
+Et surtout :
+> Un souffle de clarté dans le brouillard administratif.
+> Une main tendue à ceux qui n’en peuvent plus.
+> Un outil de justice émotionnelle, pour équilibrer un système inégal.
+
+---
+
+## 🔥 Le mot du fondateur
+
+"Je l’ai créé parce que j’en avais besoin. Je le construis pour que plus personne ne se sente aussi seul que je l’ai été."
+
+— Matthieu Rubia, Fondateur PhoenixCare
