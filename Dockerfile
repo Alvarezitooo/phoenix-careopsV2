@@ -24,7 +24,7 @@ COPY package.json package-lock.json ./
 COPY server/package.json ./server/
 COPY client/package.json ./client/
 
-# Installation de TOUTES les dépendances avec workspaces (résout le problème de sync)
+# Installation de TOUTES les dépendances avec workspaces (inclut les devDeps pour le build)
 RUN npm ci --workspaces && npm cache clean --force
 
 # Copie du code source complet APRÈS l'installation (optimise le cache Docker)
