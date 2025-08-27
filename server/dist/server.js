@@ -16,6 +16,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import path from 'node:path';
 // Import des routes et middlewares
 import { aideRouter } from './routes/aides.js';
 import { authMiddleware } from './middlewares/auth.js';
@@ -24,9 +25,11 @@ dotenv.config();
 const dev = process.env.NODE_ENV !== 'production';
 const port = Number(process.env.PORT) || 8080;
 // 🔥 Initialisation Next.js avec répertoire client
+// ✅ Utilise path.resolve pour pointer vers /app/client depuis /app
+const clientDir = path.resolve('client');
 const nextApp = next({
     dev,
-    dir: '../client' // Répertoire du frontend Next.js
+    dir: clientDir // Répertoire du frontend Next.js
 });
 const nextHandle = nextApp.getRequestHandler();
 // 🚀 Démarrage asynchrone (pattern recommandé pour Next.js)
