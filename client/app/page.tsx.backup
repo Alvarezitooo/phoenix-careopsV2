@@ -1,0 +1,255 @@
+import Link from 'next/link';
+import {
+  Heart,
+  FileText,
+  ShieldCheck,
+  ArrowRight,
+  Star,
+  ChevronDown
+} from 'lucide-react';
+import { uiCopy } from '@/lib/uiCopy';
+
+export default function LandingPage() {
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-2">
+              <Heart className="h-8 w-8 text-rose-500" />
+              <span className="text-xl font-semibold text-slate-900">PhoenixCare</span>
+            </div>
+            <Link
+              href="/login"
+              className="bg-rose-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-rose-600 transition-colors focus:ring-2 focus:ring-rose-300 focus:outline-none"
+            >
+              {uiCopy.nav.login}
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section
+        className="bg-gradient-to-br from-slate-50 to-white py-20"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1
+            className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-slate-900 tracking-tight mb-6"
+
+          >
+            {uiCopy.landing.hero.title}
+          </h1>
+          <p
+            className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto"
+
+          >
+            {uiCopy.landing.hero.subtitle}
+          </p>
+          <div
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+
+          >
+            <Link
+              href="/login"
+              className="bg-rose-500 text-white px-8 py-4 rounded-xl font-medium hover:bg-rose-600 transition-all duration-200 focus:ring-2 focus:ring-rose-300 focus:outline-none flex items-center justify-center"
+            >
+              {uiCopy.landing.hero.cta_primary}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+            <button className="border border-slate-300 text-slate-700 px-8 py-4 rounded-xl font-medium hover:bg-slate-50 transition-all duration-200 focus:ring-2 focus:ring-slate-300 focus:outline-none">
+              {uiCopy.landing.hero.cta_secondary}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Values Section */}
+      <section
+        className="py-20 bg-white"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-semibold text-slate-900 tracking-tight mb-4">
+              {uiCopy.landing.values.title}
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Trois piliers pour simplifier votre quotidien de parent
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {uiCopy.landing.values.items.map((value, index) => (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center mb-4">
+                  {value.icon === 'FileText' && <FileText className="h-6 w-6 text-rose-600" />}
+                  {value.icon === 'Heart' && <Heart className="h-6 w-6 text-rose-600" />}
+                  {value.icon === 'ShieldCheck' && <ShieldCheck className="h-6 w-6 text-rose-600" />}
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">{value.title}</h3>
+                <p className="text-slate-600">{value.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section
+        className="py-20 bg-slate-50"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-semibold text-slate-900 tracking-tight mb-4">
+              {uiCopy.landing.howItWorks.title}
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Commencez en 4 étapes simples
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {uiCopy.landing.howItWorks.steps.map((step, index) => (
+              <div
+                key={index}
+                className="text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <div className="w-16 h-16 bg-rose-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 text-xl font-semibold">
+                  {index + 1}
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">{step.title}</h3>
+                <p className="text-slate-600">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section
+        className="py-20 bg-white"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-semibold text-slate-900 tracking-tight mb-4">
+              {uiCopy.landing.testimonials.title}
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Découvrez ce que disent les familles qui nous font confiance
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {uiCopy.landing.testimonials.items.map((testimonial, index) => (
+              <div
+                key={index}
+                className="bg-slate-50 p-6 rounded-2xl"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <div className="flex items-center mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-5 w-5 text-amber-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-slate-700 mb-4 italic">"{testimonial.quote}"</p>
+                <p className="text-slate-600 font-medium">- {testimonial.author}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section
+        className="py-20 bg-slate-50"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-semibold text-slate-900 tracking-tight mb-4">
+              {uiCopy.landing.faq.title}
+            </h2>
+            <p className="text-lg text-slate-600">
+              Toutes les réponses à vos questions
+            </p>
+          </div>
+          <div className="space-y-4">
+            {uiCopy.landing.faq.items.map((faq, index) => (
+              <details
+                key={index}
+                className="bg-white p-6 rounded-2xl shadow-sm"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <summary className="cursor-pointer flex justify-between items-center font-medium text-slate-900">
+                  {faq.question}
+                  <ChevronDown className="h-5 w-5 text-slate-500" />
+                </summary>
+                <p className="mt-4 text-slate-600">{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section
+        className="py-20 bg-rose-500"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-semibold text-white tracking-tight mb-4">
+            {uiCopy.landing.footer.cta}
+          </h2>
+          <p className="text-xl text-rose-100 mb-8">
+            Rejoignez des centaines de familles qui nous font confiance
+          </p>
+          <Link
+            href="/login"
+            className="bg-white text-rose-600 px-8 py-4 rounded-xl font-medium hover:bg-rose-50 transition-all duration-200 focus:ring-2 focus:ring-white focus:outline-none inline-flex items-center"
+          >
+            {uiCopy.landing.footer.cta_button}
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Link>
+      </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center space-x-2 mb-4 md:mb-0">
+              <Heart className="h-8 w-8 text-rose-500" />
+              <span className="text-xl font-semibold">PhoenixCare</span>
+            </div>
+            <p className="text-slate-400">{uiCopy.landing.footer.copyright}</p>
+          </div>
+        </div>
+      </footer>
+      </div>
+  );
+}

@@ -1,93 +1,101 @@
-'use client';
+import Link from 'next/link';
+import {
+  Heart,
+  FileText,
+  ShieldCheck,
+  ArrowRight,
+  Star,
+  ChevronDown
+} from 'lucide-react';
+import { uiCopy } from '@/lib/uiCopy';
 
-import { useState } from 'react';
-import { Aide } from '@/types';
-import { fetchAides } from '@/lib/api';
-import { AideCard } from '@/components/AideCard';
-
-export default function HomePage() {
-  const [codePostal, setCodePostal] = useState('');
-  const [typeHandicap, setTypeHandicap] = useState('');
-  const [aides, setAides] = useState<Aide[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [searched, setSearched] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-    setSearched(true);
-
-    try {
-      const result = await fetchAides(codePostal, typeHandicap);
-      setAides(result);
-    } catch (err) {
-      setError('Impossible de récupérer les aides. Veuillez vérifier que le backend est bien démarré et accessible.');
-      setAides([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+export default function LandingPage() {
   return (
-    <main className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto bg-gray-50 min-h-screen">
-      <header className="text-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-blue-900">PhoenixCare 🕊️</h1>
-        <p className="text-gray-600 mt-2">Votre assistant pour trouver les aides adaptées à votre situation.</p>
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-2">
+              <Heart className="h-8 w-8 text-rose-500" />
+              <span className="text-xl font-semibold text-slate-900">PhoenixCare</span>
+            </div>
+            <Link
+              href="/login"
+              className="bg-rose-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-rose-600 transition-colors focus:ring-2 focus:ring-rose-300 focus:outline-none"
+            >
+              {uiCopy.nav.login}
+            </Link>
+          </div>
+        </div>
       </header>
 
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <form onSubmit={handleSubmit}>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <input
-              type="text"
-              value={codePostal}
-              onChange={(e) => setCodePostal(e.target.value)}
-              placeholder="Votre code postal (ex: 75001)"
-              className="p-3 border rounded-md focus:ring-2 focus:ring-blue-500 transition"
-              required
-            />
-            <input
-              type="text"
-              value={typeHandicap}
-              onChange={(e) => setTypeHandicap(e.target.value)}
-              placeholder="Type de handicap (ex: autisme)"
-              className="p-3 border rounded-md focus:ring-2 focus:ring-blue-500 transition"
-              required
-            />
+      {/* Hero Section */}
+      <section className="bg-gradient-to-br from-slate-50 to-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-slate-900 tracking-tight mb-6">
+            {uiCopy.landing.hero.title}
+          </h1>
+          <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto">
+            {uiCopy.landing.hero.subtitle}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/login"
+              className="bg-rose-500 text-white px-8 py-4 rounded-xl font-medium hover:bg-rose-600 transition-all duration-200 focus:ring-2 focus:ring-rose-300 focus:outline-none flex items-center justify-center"
+            >
+              {uiCopy.landing.hero.cta_primary}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+            <button className="border border-slate-300 text-slate-700 px-8 py-4 rounded-xl font-medium hover:bg-slate-50 transition-all duration-200 focus:ring-2 focus:ring-slate-300 focus:outline-none">
+              {uiCopy.landing.hero.cta_secondary}
+            </button>
           </div>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="mt-4 w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 disabled:bg-gray-400 transition-all duration-200 flex items-center justify-center"
-          >
-            {isLoading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Recherche en cours...
-              </>
-            ) : (
-              'Trouver les aides'
-            )}
-          </button>
-        </form>
-      </div>
+        </div>
+      </section>
 
-      {error && <p className="text-red-500 text-center font-semibold">{error}</p>}
+      {/* Values Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-semibold text-slate-900 tracking-tight mb-4">
+              {uiCopy.landing.values.title}
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Trois piliers pour simplifier votre quotidien de parent
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {uiCopy.landing.values.items.map((value, index) => (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow"
+              >
+                <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center mb-4">
+                  {value.icon === 'FileText' && <FileText className="h-6 w-6 text-rose-600" />}
+                  {value.icon === 'Heart' && <Heart className="h-6 w-6 text-rose-600" />}
+                  {value.icon === 'ShieldCheck' && <ShieldCheck className="h-6 w-6 text-rose-600" />}
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">{value.title}</h3>
+                <p className="text-slate-600">{value.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {searched && !isLoading && !error && aides.length === 0 && (
-        <p className="text-center text-gray-700">Aucune aide trouvée pour ces critères.</p>
-      )}
-
-      <div className="grid gap-4">
-        {aides.map((aide) => (
-          <AideCard key={aide.id} aide={aide} />
-        ))}
-      </div>
-    </main>
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center space-x-2 mb-4 md:mb-0">
+              <Heart className="h-8 w-8 text-rose-500" />
+              <span className="text-xl font-semibold">PhoenixCare</span>
+            </div>
+            <p className="text-slate-400">{uiCopy.landing.footer.copyright}</p>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
