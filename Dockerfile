@@ -12,23 +12,24 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copie des fichiers de configuration
-COPY package*.json ./
+# Copie des fichiers de configuration et installation des dépendances
 COPY apps/care-app-backend/package*.json ./apps/care-app-backend/
-COPY apps/care-app-frontend/package*.json ./apps/care-app-frontend/
+RUN cd apps/care-app-backend && npm ci --only=production && npm cache clean --force
 
-# Installation des dépendances
-RUN npm ci --only=production && npm cache clean --force
+COPY apps/care-app-frontend/package*.json ./apps/care-app-frontend/
+RUN cd apps/care-app-frontend && npm ci --only=production && npm cache clean --force
 
 # Build du frontend Next.js
 FROM base AS frontend-builder
 WORKDIR /app
+COPY --from=base /app/apps/care-app-frontend/node_modules ./apps/care-app-frontend/node_modules
 COPY apps/care-app-frontend ./apps/care-app-frontend
 RUN cd apps/care-app-frontend && npm run build
 
 # Build du backend TypeScript
 FROM base AS backend-builder
 WORKDIR /app
+COPY --from=base /app/apps/care-app-backend/node_modules ./apps/care-app-backend/node_modules
 COPY apps/care-app-backend ./apps/care-app-backend
 RUN cd apps/care-app-backend && npm run build
 
@@ -44,6 +45,10 @@ ENV HOSTNAME="0.0.0.0"
 # Installation des dépendances runtime uniquement
 RUN apk add --no-cache libc6-compat
 
+# Copie des node_modules de production depuis l'étape base
+COPY --from=base /app/apps/care-app-frontend/node_modules ./frontend/node_modules
+COPY --from=base /app/apps/care-app-backend/node_modules ./backend/node_modules
+
 # Copie des builds optimisés
 COPY --from=frontend-builder /app/apps/care-app-frontend/.next ./frontend/.next
 COPY --from=frontend-builder /app/apps/care-app-frontend/public ./frontend/public
@@ -52,10 +57,6 @@ COPY --from=frontend-builder /app/apps/care-app-frontend/next.config.mjs ./front
 
 COPY --from=backend-builder /app/apps/care-app-backend/dist ./backend/dist
 COPY --from=backend-builder /app/apps/care-app-backend/package.json ./backend/
-
-# Installation des dépendances de production
-RUN cd frontend && npm ci --only=production --omit=dev
-RUN cd backend && npm ci --only=production --omit=dev
 
 # Création d'un utilisateur non-root pour la sécurité
 RUN addgroup --system --gid 1001 phoenixcare
