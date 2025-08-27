@@ -2,6 +2,11 @@
   "name": "phoenix-care",
   "version": "1.0.0",
   "description": "Plateforme d'assistance numérique pour parents d'enfants en situation de handicap",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
   "main": "server/dist/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",

@@ -19,24 +19,19 @@ RUN apk add --no-cache libc6-compat git
 WORKDIR /app
 
 # Copie des fichiers package.json pour optimiser le cache Docker
-COPY server/package*.json ./server/
-COPY client/package*.json ./client/
+# Utilise les workspaces pour une gestion centralisée des dépendances
+COPY package.json package-lock.json ./
+COPY server/package.json ./server/
+COPY client/package.json ./client/
 
-# Installation des dépendances serveur (backend) - toutes pour le build
-RUN cd server && npm ci && npm cache clean --force
+# Installation de TOUTES les dépendances avec workspaces (résout le problème de sync)
+RUN npm ci --workspaces && npm cache clean --force
 
-# Installation des dépendances client (frontend) - toutes pour le build
-RUN cd client && npm ci && npm cache clean --force
+# Copie du code source complet APRÈS l'installation (optimise le cache Docker)
+COPY . .
 
-# Copie du code source complet
-COPY server/ ./server/
-COPY client/ ./client/
-
-# Build du backend TypeScript
-RUN cd server && npm run build
-
-# Build du frontend Next.js (production)
-RUN cd client && npm run build
+# Build du backend TypeScript et frontend Next.js
+RUN npm run build:server && npm run build:client
 
 # =============================================================================
 # ---- STAGE 2 : RUNNER (Image de production ultra-légère)
@@ -63,12 +58,12 @@ RUN addgroup --system --gid 1001 phoenixcare && \
 WORKDIR /app
 
 # Copie des fichiers package.json (pour référence uniquement)
-COPY --from=builder --chown=phoenixcare:phoenixcare /app/server/package*.json ./server/
-COPY --from=builder --chown=phoenixcare:phoenixcare /app/client/package*.json ./client/
+COPY --from=builder --chown=phoenixcare:phoenixcare /app/package*.json ./
+COPY --from=builder --chown=phoenixcare:phoenixcare /app/server/package.json ./server/
+COPY --from=builder --chown=phoenixcare:phoenixcare /app/client/package.json ./client/
 
-# Installation UNIQUEMENT des dépendances de production
-RUN cd server && npm ci --only=production && npm cache clean --force && \
-    cd ../client && npm ci --only=production && npm cache clean --force
+# Installation UNIQUEMENT des dépendances de production avec workspaces
+RUN npm ci --workspaces --omit=dev && npm cache clean --force
 
 # Copie des builds optimisés uniquement
 COPY --from=builder --chown=phoenixcare:phoenixcare /app/server/dist ./server/dist
