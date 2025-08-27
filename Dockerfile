@@ -1,98 +1,152 @@
-# Dockerfile monolithique PhoenixCare pour Railway
+# PhoenixCare - Architecture Monolitique Optimisée
 # Mission: Construire les outils numériques que l'État ne fournit pas
 # Philosophie: "Ce n'est pas du code, c'est de la compassion compilée"
 
 FROM node:18-alpine AS base
 
+# Labels pour identifier l'application
+LABEL org.opencontainers.image.title="PhoenixCare"
+LABEL org.opencontainers.image.description="Plateforme d'assistance numérique pour parents d'enfants en situation de handicap"
+LABEL org.opencontainers.image.authors="PhoenixCare Team"
+LABEL org.opencontainers.image.version="1.0.0"
+
 # Installation des dépendances système
 RUN apk add --no-cache libc6-compat
-WORKDIR /app
 
-# Configuration des variables d'environnement
+# Variables d'environnement
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copie des fichiers de configuration et installation des dépendances
-COPY apps/care-app-backend/package*.json ./apps/care-app-backend/
-RUN cd apps/care-app-backend && npm ci --only=production && npm cache clean --force
-
-COPY apps/care-app-frontend/package*.json ./apps/care-app-frontend/
-RUN cd apps/care-app-frontend && npm ci --only=production && npm cache clean --force
-
-# Build du frontend Next.js
-FROM base AS frontend-builder
 WORKDIR /app
-COPY --from=base /app/apps/care-app-frontend/node_modules ./apps/care-app-frontend/node_modules
-COPY apps/care-app-frontend ./apps/care-app-frontend
-RUN cd apps/care-app-frontend && npm run build
+
+# =============================================================================
+# ETAPE 1: Préparation des dépendances
+# =============================================================================
+
+# Copie des fichiers package.json pour optimiser le cache Docker
+COPY server/package*.json ./server/
+COPY client/package*.json ./client/
+
+# Installation des dépendances serveur (backend)
+RUN cd server && npm ci --only=production && npm cache clean --force
+
+# Installation des dépendances client (frontend) - avec dev dependencies pour le build
+RUN cd client && npm ci && npm cache clean --force
+
+# =============================================================================
+# ETAPE 2: Construction des applications
+# =============================================================================
+
+# Copie du code source et construction
+COPY server/ ./server/
+COPY client/ ./client/
 
 # Build du backend TypeScript
-FROM base AS backend-builder
-WORKDIR /app
-COPY --from=base /app/apps/care-app-backend/node_modules ./apps/care-app-backend/node_modules
-COPY apps/care-app-backend ./apps/care-app-backend
-RUN cd apps/care-app-backend && npm run build
+RUN cd server && npm run build
 
-# Image finale de production
+# Build du frontend Next.js
+RUN cd client && npm run build
+
+# =============================================================================
+# ETAPE 3: Image finale de production
+# =============================================================================
+
 FROM node:18-alpine AS production
-WORKDIR /app
+
+# Labels de production
+LABEL org.opencontainers.image.title="PhoenixCare Production"
+LABEL org.opencontainers.image.description="Production image for PhoenixCare platform"
 
 # Variables d'environnement pour Railway
 ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Installation des dépendances runtime uniquement
+# Installation des dépendances système minimales
 RUN apk add --no-cache libc6-compat
-
-# Copie des node_modules de production depuis l'étape base
-COPY --from=base /app/apps/care-app-frontend/node_modules ./frontend/node_modules
-COPY --from=base /app/apps/care-app-backend/node_modules ./backend/node_modules
-
-# Copie des builds optimisés
-COPY --from=frontend-builder /app/apps/care-app-frontend/.next ./frontend/.next
-COPY --from=frontend-builder /app/apps/care-app-frontend/public ./frontend/public
-COPY --from=frontend-builder /app/apps/care-app-frontend/package.json ./frontend/
-COPY --from=frontend-builder /app/apps/care-app-frontend/next.config.mjs ./frontend/
-
-COPY --from=backend-builder /app/apps/care-app-backend/dist ./backend/dist
-COPY --from=backend-builder /app/apps/care-app-backend/package.json ./backend/
 
 # Création d'un utilisateur non-root pour la sécurité
 RUN addgroup --system --gid 1001 phoenixcare
 RUN adduser --system --uid 1001 phoenixcare
+
+WORKDIR /app
+
+# =============================================================================
+# Copie des builds optimisés depuis l'étape de construction
+# =============================================================================
+
+# Copie du backend compilé
+COPY --from=base --chown=phoenixcare:phoenixcare /app/server/dist ./server/dist
+COPY --from=base --chown=phoenixcare:phoenixcare /app/server/package.json ./server/
+COPY --from=base --chown=phoenixcare:phoenixcare /app/server/node_modules ./server/node_modules
+
+# Copie du frontend build
+COPY --from=base --chown=phoenixcare:phoenixcare /app/client/.next ./client/.next
+COPY --from=base --chown=phoenixcare:phoenixcare /app/client/public ./client/public
+COPY --from=base --chown=phoenixcare:phoenixcare /app/client/package.json ./client/
+COPY --from=base --chown=phoenixcare:phoenixcare /app/client/next.config.mjs ./client/
+COPY --from=base --chown=phoenixcare:phoenixcare /app/client/node_modules ./client/node_modules
+
+# =============================================================================
+# Configuration de l'utilisateur non-root
+# =============================================================================
 USER phoenixcare
 
-# Railway utilise un port dynamique - pas d'EXPOSE nécessaire
+# Exposition du port (Railway utilisera son propre port dynamique)
+EXPOSE 3000
 
-# Script de démarrage unifié pour Railway
+# =============================================================================
+# Script de démarrage unifié
+# =============================================================================
 COPY --chown=phoenixcare:phoenixcare <<EOF /app/start.sh
 #!/bin/sh
-echo "🚀 Démarrage PhoenixCare - Port dynamique Railway"
+echo "🚀 Démarrage PhoenixCare - Architecture Monolitique"
 echo "💝 Mission: Construire les outils que l'État ne fournit pas"
-echo "🔌 Port Railway: \$PORT"
+echo "🔌 Port dynamique Railway: \$PORT"
+
+# Fonction de nettoyage
+cleanup() {
+    echo "🧹 Nettoyage des processus..."
+    kill \$BACKEND_PID 2>/dev/null || true
+    kill \$FRONTEND_PID 2>/dev/null || true
+    wait
+    exit 0
+}
+
+# Gestion des signaux d'arrêt
+trap cleanup TERM INT
 
 # Démarrage du backend en arrière-plan
-cd /app/backend && PORT=\$PORT node dist/index.js &
-BACKEND_PID=$!
+echo "🏥 Démarrage du serveur backend..."
+cd /app/server && PORT=\$PORT node dist/index.js &
+BACKEND_PID=\$!
 
-# Démarrage du frontend
-cd /app/frontend && PORT=\$PORT npm start &
-FRONTEND_PID=$!
+# Attente que le backend soit prêt
+sleep 5
 
-# Gestion propre des signaux
-trap 'kill $BACKEND_PID $FRONTEND_PID; wait' TERM INT
+# Démarrage du frontend en arrière-plan
+echo "⚛️ Démarrage du client frontend..."
+cd /app/client && PORT=\$PORT npm start &
+FRONTEND_PID=\$!
+
+echo "✅ PhoenixCare opérationnel sur le port \$PORT"
+echo "🌐 Frontend: http://localhost:\$PORT"
+echo "🔧 Backend API: http://localhost:\$PORT/api"
 
 # Attente des processus
-wait $BACKEND_PID $FRONTEND_PID
+wait \$BACKEND_PID \$FRONTEND_PID
 EOF
 
+# Rendre le script exécutable
 RUN chmod +x /app/start.sh
 
-# Commande de démarrage
+# =============================================================================
+# Point d'entrée optimisé
+# =============================================================================
 CMD ["/app/start.sh"]
 
-# Labels pour Railway
-LABEL org.opencontainers.image.title="PhoenixCare"
-LABEL org.opencontainers.image.description="Plateforme d'assistance numérique pour parents d'enfants en situation de handicap"
-LABEL org.opencontainers.image.vendor="PhoenixCare"
-LABEL org.opencontainers.image.licenses="MIT"
+# =============================================================================
+# Health Check pour Railway
+# =============================================================================
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:' + process.env.PORT + '/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"

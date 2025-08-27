@@ -1,0 +1,51 @@
+{
+  "name": "phoenix-care",
+  "version": "1.0.0",
+  "description": "Plateforme d'assistance numérique pour parents d'enfants en situation de handicap",
+  "main": "server/dist/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build",
+    "start": "npm run start:server & npm run start:client",
+    "start:server": "cd server && npm start",
+    "start:client": "cd client && npm start",
+    "docker:build": "docker build -t phoenix-care .",
+    "docker:run": "docker run -p 3000:3000 phoenix-care",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "clean": "rm -rf server/node_modules client/node_modules server/dist client/.next",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "lint": "cd server && npm run lint && cd ../client && npm run lint",
+    "test": "cd server && npm test && cd ../client && npm test"
+  },
+  "keywords": [
+    "phoenix-care",
+    "handicap",
+    "assistance",
+    "parents",
+    "social",
+    "solidarity"
+  ],
+  "author": "PhoenixCare Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alvarezitooo/phoenix-careopsV2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Alvarezitooo/phoenix-careopsV2/issues"
+  },
+  "homepage": "https://github.com/Alvarezitooo/phoenix-careopsV2#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
