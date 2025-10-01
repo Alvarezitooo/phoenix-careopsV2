@@ -191,12 +191,18 @@ export const uiCopy = {
 
   // Messages d'erreur
   errors: {
+    // Erreurs génériques pour le chat
+    UNKNOWN_ERROR: "Une erreur inattendue est survenue. L'équipe technique a été prévenue.",
+    DB_FETCH_FAILED: "Je n'arrive pas à accéder aux informations pour le moment. Veuillez réessayer dans quelques instants.",
+    AI_SERVICE_ERROR: "Mon service d'intelligence artificielle rencontre des difficultés. Veuillez patienter un peu avant de réessayer.",
+
+    // Erreurs existantes
     network: 'Erreur de connexion. Veuillez vérifier votre connexion internet.',
     server: 'Erreur serveur. Nos équipes ont été notifiées.',
     validation: 'Veuillez corriger les erreurs dans le formulaire.',
     unauthorized: 'Vous n\'êtes pas autorisé à accéder à cette ressource.',
     not_found: 'La page demandée n\'existe pas.',
-    forbidden: 'Accès interdit à cette ressource.',
+    forbidden: 'Accès interdit à cette resource.',
   },
 
   // Messages de succès

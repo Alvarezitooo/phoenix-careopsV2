@@ -1,0 +1,362 @@
+{
+  "aeeh": {
+    "title": "Allocation d'Éducation de l'Enfant Handicapé (AEEH)",
+    "content": "\nL'AEEH est une allocation destinée à compenser les frais d'éducation et de soins d'un enfant handicapé.\n\nCONDITIONS:\n- Enfant de moins de 20 ans\n- Taux d'incapacité d'au moins 80% OU entre 50% et 80% avec fréquentation établissement spécialisé\n\nMONTANT 2024:\n- Base: 149,26 € par mois\n- Compléments possibles de 107,36 € à 1 239,27 €\n\nDÉMARCHES:\n1. Dossier MDPH avec formulaire Cerfa 15692\n2. Certificat médical récent\n3. Pièces justificatives\n\nCUMUL: Possible avec allocations familiales, pas avec PCH adulte\n        ",
+    "keywords": [
+      "aeeh",
+      "allocation",
+      "éducation",
+      "enfant",
+      "handicapé",
+      "mdph"
+    ]
+  },
+  "pch": {
+    "title": "Prestation de Compensation du Handicap (PCH)",
+    "content": "\nLa PCH finance les aides humaines, techniques, d'aménagement du logement et du véhicule.\n\nCONDITIONS:\n- Limitation absolue ou grave d'au moins une fonction\n- Âge entre 20 et 60 ans (extensions possibles jusqu'à 75 ans)\n- Résidence stable en France\n\nÉLÉMENTS 2024:\n1. Aide humaine: 17,70 €/heure en emploi direct, 23,50 € en service\n2. Aides techniques: plafond 13 200 € sur 10 ans\n3. Aménagement logement: plafond 10 000 € sur 10 ans\n4. Transport: plafond 5 000 € sur 5 ans\n5. Charges spécifiques: plafond 1 800 € sur 10 ans\n\nDÉMARCHE: Dossier MDPH obligatoire, évaluation équipe pluridisciplinaire\n        ",
+    "keywords": [
+      "pch",
+      "prestation",
+      "compensation",
+      "handicap",
+      "aide",
+      "humaine",
+      "technique"
+    ]
+  },
+  "aah": {
+    "title": "Allocation Adulte Handicapé (AAH)",
+    "content": "\nL'AAH garantit un revenu minimum aux personnes handicapées.\n\nCONDITIONS:\n- Âge minimum 20 ans (16 ans si plus à charge des parents)\n- Taux d'incapacité ≥ 80% OU 50-79% avec restriction substantielle d'accès à l'emploi\n- Ressources inférieures au plafond\n\nMONTANT 2024:\n- Maximum: 971,37 € par mois\n- Calcul selon ressources du foyer\n\nDURÉE:\n- Incapacité ≥ 80%: 1 à 10 ans selon évolution prévisible\n- Incapacité 50-79%: 1 à 2 ans maximum\n\nCUMUL: Possible avec prime d'activité, complément de ressources supprimé depuis 2019\n        ",
+    "keywords": [
+      "aah",
+      "allocation",
+      "adulte",
+      "handicapé",
+      "revenu",
+      "minimum"
+    ]
+  },
+  "aesh": {
+    "title": "Accompagnant d'Élèves en Situation de Handicap (AESH)",
+    "content": "\nL'AESH favorise l'autonomie de l'élève handicapé à l'école.\n\nTYPES:\n- AESH individuel (AESH-i): accompagnement d'un seul élève\n- AESH mutualisé (AESH-m): plusieurs élèves selon emploi du temps\n- AESH collectif: dispositifs ULIS, SEGPA\n\nMISSIONS:\n1. Accompagnement pédagogique: aide aux apprentissages\n2. Accompagnement éducatif: autonomie, socialisation\n3. Accompagnement aux actes de la vie quotidienne: repas, hygiène, déplacements\n\nQUOTITÉ: De 1h à 24h par semaine selon besoins\nDURÉE: Notification de 1 à 3 ans, renouvelable\n\nDÉMARCHE:\n1. Demande MDPH avec GEVA-Sco\n2. Évaluation équipe éducative + ESS\n3. Décision CDAPH\n        ",
+    "keywords": [
+      "aesh",
+      "accompagnant",
+      "école",
+      "scolarisation",
+      "élève",
+      "inclusion"
+    ]
+  },
+  "pps": {
+    "title": "Projet Personnalisé de Scolarisation (PPS)",
+    "content": "\nLe PPS organise la scolarité de l'élève handicapé de la maternelle au lycée.\n\nCONTENU:\n- Modalités de déroulement de la scolarité\n- Actions pédagogiques, psychologiques, éducatives, sociales, médicales\n- Aménagements nécessaires (AESH, matériel adapté, transport)\n\nÉLABORATION:\n1. Équipe éducative identifie les besoins\n2. MDPH évalue la situation\n3. Équipe pluridisciplinaire propose le PPS\n4. CDAPH décide des orientations\n\nSUIVI:\n- Équipe de Suivi de Scolarisation (ESS) annuelle\n- Révision possible à tout moment sur demande\n- Enseignant référent coordonne le parcours\n\nORIENTATIONS POSSIBLES:\n- Classe ordinaire avec ou sans accompagnement\n- ULIS (Unité Localisée d'Inclusion Scolaire)\n- Établissement médico-social\n- Enseignement à distance\n        ",
+    "keywords": [
+      "pps",
+      "projet",
+      "scolarisation",
+      "personnalisé",
+      "école",
+      "parcours"
+    ]
+  },
+  "allocations_familiales": {
+    "title": "Allocations Familiales",
+    "content": "\nLes allocations familiales sont versées aux familles ayant au moins 2 enfants à charge.\n\nMONTANT 2024:\n- 2 enfants: 141,99 € par mois\n- 3 enfants: 323,92 € par mois\n- Par enfant supplémentaire: +181,93 €\n\nMAJORATION ÂGE:\n- 14-15 ans: +71 € par enfant\n- 16 ans et plus: +142 € par enfant\n\nCONDITIONS:\n- Enfants de moins de 20 ans\n- Résidence en France\n- Plafonds de ressources selon revenus (dégressivité)\n\nENFANT HANDICAPÉ:\n- Versement jusqu'à 20 ans sans condition\n- Cumul possible avec AEEH\n- Majoration spéciale si l'enfant ne peut exercer d'activité professionnelle\n        ",
+    "keywords": [
+      "allocations",
+      "familiales",
+      "caf",
+      "enfants",
+      "famille"
+    ]
+  },
+  "complement_familial": {
+    "title": "Complément Familial",
+    "content": "\nLe complément familial aide les familles nombreuses aux revenus modestes.\n\nCONDITIONS:\n- Au moins 3 enfants de 3 à 21 ans à charge\n- Ressources inférieures au plafond\n\nMONTANT 2024:\n- Taux de base: 281,61 € par mois\n- Montant majoré: 422,43 € (familles très modestes)\n\nENFANT HANDICAPÉ:\n- Compte comme enfant à charge jusqu'à 20 ans\n- Pas de condition d'âge minimum si perceoit AEEH\n- Cumul possible avec AEEH et allocations familiales\n        ",
+    "keywords": [
+      "complément",
+      "familial",
+      "famille",
+      "nombreuse",
+      "revenus",
+      "modestes"
+    ]
+  },
+  "ars": {
+    "title": "Allocation de Rentrée Scolaire (ARS)",
+    "content": "\nL'ARS aide les familles à financer la rentrée scolaire de leurs enfants.\n\nMONTANT 2024:\n- 6-10 ans: 416,40 €\n- 11-14 ans: 439,48 €\n- 15-18 ans: 454,60 €\n\nCONDITIONS:\n- Enfants de 6 à 18 ans scolarisés\n- Ressources inférieures au plafond\n- Versement automatique en août\n\nENFANT HANDICAPÉ:\n- Maintien jusqu'à 20 ans si scolarisé\n- Pas de condition si en établissement spécialisé\n- Compatible avec AEEH et aides MDPH\n        ",
+    "keywords": [
+      "ars",
+      "allocation",
+      "rentrée",
+      "scolaire",
+      "école",
+      "fournitures"
+    ]
+  },
+  "conge_proche_aidant": {
+    "title": "Congé de Proche Aidant",
+    "content": "\nLe congé de proche aidant permet d'accompagner un proche en situation de handicap.\n\nCONDITIONS:\n- Lien familial ou de proximité avec la personne aidée\n- Personne aidée: handicap ≥ 80% ou dépendance lourde\n- Ancienneté minimum 1 an dans l'entreprise\n\nDURÉE:\n- Maximum 3 mois renouvelables dans la limite de 1 an sur la carrière\n- Possible à temps partiel (50% minimum)\n\nINDEMNISATION 2024:\n- Allocation journalière: 62,44 € par jour (temps plein)\n- 31,22 € par jour (temps partiel)\n- Versée par la CAF maximum 66 jours\n\nDÉMARCHES:\n- Demande à l'employeur 1 mois avant (15 jours si urgence)\n- Justificatifs médicaux de la personne aidée\n- Demande d'allocation auprès de la CAF\n        ",
+    "keywords": [
+      "congé",
+      "proche",
+      "aidant",
+      "famille",
+      "accompagnement",
+      "handicap"
+    ]
+  },
+  "aepa": {
+    "title": "Allocation d'Éducation de l'Enfant Handicapé - Parent Isolé",
+    "content": "\nMajoration pour parent isolé élevant seul un enfant handicapé.\n\nCONDITIONS:\n- Percevoir l'AEEH\n- Élever seul l'enfant (célibataire, divorcé, séparé, veuf)\n- Enfant à charge exclusive ou principale\n\nMONTANT 2024:\n- Complément AEEH majoré de 50%\n- Exemples:\n  * Complément 1ère catégorie: 107,36 € → 161,04 €\n  * Complément 6ème catégorie: 1 239,27 € → 1 858,91 €\n\nDURÉE:\n- Tant que conditions remplies\n- Révision si situation familiale change\n\nCUMUL:\n- Avec allocations familiales\n- Avec autres prestations CAF si conditions remplies\n        ",
+    "keywords": [
+      "parent",
+      "isolé",
+      "aeeh",
+      "majoration",
+      "enfant",
+      "handicapé",
+      "seul"
+    ]
+  },
+  "ajpp": {
+    "title": "Allocation Journalière de Présence Parentale (AJPP)",
+    "content": "\nL'AJPP compense la perte de revenus des parents qui s'occupent d'un enfant gravement malade.\n\nCONDITIONS:\n- Enfant de moins de 20 ans\n- Maladie, accident ou handicap d'une particulière gravité\n- Nécessité de présence soutenue et soins contraignants\n- Avis médical du médecin qui suit l'enfant\n\nMONTANT 2024:\n- Couple: 47,23 € par jour\n- Parent isolé: 56,17 € par jour\n- Maximum 22 jours par mois\n\nDURÉE:\n- Période initiale: 310 jours sur 3 ans\n- Renouvellement possible si état de l'enfant le justifie\n\nCOMPLEMENT:\n- Complément pour frais: 115,30 € par mois si frais ≥ 115,30 €\n- Frais de transport, hébergement, repas\n\nDÉMARCHES:\n- Certificat médical détaillé\n- Demande auprès de la CAF\n- Possibilité de prise rétroactive\n        ",
+    "keywords": [
+      "ajpp",
+      "présence",
+      "parentale",
+      "maladie",
+      "grave",
+      "enfant",
+      "soins"
+    ]
+  },
+  "transport_scolaire": {
+    "title": "Transport Scolaire Adapté",
+    "content": "\nPrise en charge du transport des élèves handicapés vers leur établissement scolaire.\n\nCONDITIONS:\n- Élève en situation de handicap\n- Incapacité d'utiliser les transports en commun\n- Distance domicile-école justifiant un transport\n- Décision CDAPH\n\nTYPES DE TRANSPORT:\n- Transport collectif adapté (petit bus, taxi collectif)\n- Transport individuel (taxi, véhicule personnel)\n- Accompagnement dans transport en commun\n\nPRISE EN CHARGE:\n- Gratuit pour les familles\n- Financé par département ou région\n- Indemnisation possible si utilisation véhicule personnel (0,50 €/km en 2024)\n\nDÉMARCHES:\n- Demande dans dossier MDPH\n- Évaluation des besoins par équipe pluridisciplinaire\n- Organisation par services départementaux\n        ",
+    "keywords": [
+      "transport",
+      "scolaire",
+      "adapté",
+      "école",
+      "handicap",
+      "gratuit"
+    ]
+  },
+  "carte_mobilite": {
+    "title": "Carte Mobilité Inclusion (CMI)",
+    "content": "\nLa CMI remplace les anciennes cartes d'invalidité, priorité et stationnement.\n\nTYPES:\n1. CMI Invalidité: taux d'incapacité ≥ 80%\n2. CMI Priorité: station debout pénible\n3. CMI Stationnement: réduction autonomie pied\n\nAVANTAGES CMI INVALIDITÉ:\n- Réductions SNCF: 50% accompagnateur, 75% si revenus modestes\n- Réductions transports publics locaux\n- Priorité dans files d'attente\n- Exonération redevance audiovisuelle si revenus modestes\n\nAVANTAGES CMI STATIONNEMENT:\n- Stationnement gratuit sur places payantes (durée limitée)\n- Accès places handicapées\n- Stationnement résidentiel gratuit dans certaines villes\n\nDURÉE:\n- 1 à 10 ans selon handicap\n- À vie si handicap irréversible\n- Mention \"besoin d'accompagnement\" possible\n\nDÉMARCHES:\n- Demande via dossier MDPH\n- Photo d'identité récente\n- Délai moyen 4 mois\n        ",
+    "keywords": [
+      "cmi",
+      "carte",
+      "mobilité",
+      "inclusion",
+      "transport",
+      "stationnement",
+      "priorité"
+    ]
+  },
+  "dossier_mdph": {
+    "title": "Constitution Dossier MDPH",
+    "content": "\nGuide complet pour constituer un dossier MDPH solide et efficace.\n\nDOCUMENTS OBLIGATOIRES:\n1. Formulaire Cerfa 15692 (demande adulte) ou 15695 (demande enfant)\n2. Certificat médical Cerfa 15695 (moins de 6 mois)\n3. Photocopie pièce d'identité\n4. Justificatif de domicile récent\n\nDOCUMENTS RECOMMANDÉS:\n- Comptes rendus médicaux spécialisés\n- Bilans psychologiques, ergothérapie, orthophonie\n- Bulletins scolaires et observations enseignants\n- Photos/vidéos illustrant difficultés quotidiennes\n- Témoignages famille, aidants, professionnels\n\nCONSEILS RÉDACTION:\n- Décrire impact du handicap sur vie quotidienne\n- Utiliser termes médicaux précis\n- Quantifier difficultés (temps, fréquence, intensité)\n- Joindre maximum de preuves objectives\n\nDÉLAIS:\n- Accusé réception sous 15 jours\n- Décision sous 4 mois (6 mois si expertise)\n- Silence = rejet, possibilité de recours\n\nSUIVI:\n- Possible de compléter dossier en cours d'instruction\n- Rencontre équipe pluridisciplinaire sur demande\n        ",
+    "keywords": [
+      "mdph",
+      "dossier",
+      "constitution",
+      "documents",
+      "démarches",
+      "formulaire"
+    ]
+  },
+  "cdaph": {
+    "title": "Commission des Droits et de l'Autonomie des Personnes Handicapées (CDAPH)",
+    "content": "\nLa CDAPH prend toutes les décisions concernant les aides et prestations handicap.\n\nCOMPOSITION:\n- Représentants département, services État, organismes protection sociale\n- Représentants associations personnes handicapées\n- Représentants syndicats, associations familiales\n- Membres qualifiés (médecins, travailleurs sociaux)\n\nDÉCISIONS PRISES:\n- Taux d'incapacité\n- Attribution AEEH, AAH, PCH, cartes\n- Orientation scolaire (AESH, ULIS, IME)\n- Orientation professionnelle (ESAT, entreprise adaptée)\n- Orientation médico-sociale\n\nPROCÉDURE:\n1. Instruction dossier par équipe pluridisciplinaire\n2. Évaluation besoins selon GEVA\n3. Propositions d'aide et accompagnement\n4. Décision CDAPH\n5. Notification décision avec délais recours\n\nRECOURS:\n- Recours gracieux auprès MDPH dans 2 mois\n- Recours contentieux tribunal administratif dans 2 mois\n- Médiation possible avant contentieux\n        ",
+    "keywords": [
+      "cdaph",
+      "commission",
+      "décision",
+      "droits",
+      "autonomie",
+      "recours"
+    ]
+  },
+  "baremes_aeeh_2024": {
+    "title": "Barèmes AEEH 2024 - Montants détaillés",
+    "content": "\nBarèmes officiels AEEH pour l'année 2024 avec tous les compléments.\n\nAEEH DE BASE: 149,26 € par mois\n\nCOMPLÉMENTS AEEH 2024:\n- Complément 1ère catégorie: 107,36 €/mois\n- Complément 2ème catégorie: 290,89 €/mois\n- Complément 3ème catégorie: 413,23 €/mois\n- Complément 4ème catégorie: 641,77 €/mois\n- Complément 5ème catégorie: 818,12 €/mois\n- Complément 6ème catégorie: 1 239,27 €/mois\n\nMAJORATION PARENT ISOLÉ (50% du complément):\n- Complément 1 + majoration: 107,36 + 53,68 = 161,04 €\n- Complément 2 + majoration: 290,89 + 145,45 = 436,34 €\n- Complément 3 + majoration: 413,23 + 206,62 = 619,85 €\n- Complément 4 + majoration: 641,77 + 320,89 = 962,66 €\n- Complément 5 + majoration: 818,12 + 409,06 = 1 227,18 €\n- Complément 6 + majoration: 1 239,27 + 619,64 = 1 858,91 €\n\nCRITÈRES D'ATTRIBUTION PAR CATÉGORIE:\n1ère catégorie: Enfant nécessitant le recours à une tierce personne pour l'aide à la toilette et l'habillage ou dont l'état exige des dépenses particulières\n2ème catégorie: Enfant nécessitant le recours à une tierce personne pour l'aide à la toilette, l'habillage et l'alimentation, ou qui a besoin d'une surveillance constante\n        ",
+    "keywords": [
+      "barème",
+      "aeeh",
+      "montant",
+      "complément",
+      "catégorie",
+      "2024",
+      "majoration"
+    ]
+  },
+  "situations_handicap": {
+    "title": "Situations de handicap et taux d'incapacité",
+    "content": "\nGuide des principales situations de handicap et taux d'incapacité généralement attribués.\n\nHANDICAPS MENTAUX ET COGNITIFS:\n- Autisme sévère avec troubles associés: 80% et plus\n- Autisme sans déficience intellectuelle (Asperger): 50-80%\n- Trisomie 21: 80% généralement\n- Déficience intellectuelle légère: 50-65%\n- Déficience intellectuelle moyenne: 65-80%\n- Déficience intellectuelle sévère: 80% et plus\n\nHANDICAPS SENSORIELS:\n- Cécité totale: 85%\n- Déficience visuelle grave: 65-80%\n- Surdité profonde: 80%\n- Surdité sévère: 60-75%\n- Surdi-cécité: 95%\n\nHANDICAPS MOTEURS:\n- Tétraplégic complète: 95%\n- Paraplégic complète: 80-90%\n- Hémiplégie: 60-80%\n- Infirmité motrice cérébrale sévère: 80% et plus\n- Spina bifida avec troubles: 70-90%\n\nMALADIES CHRONIQUES:\n- Épilepsie sévère non contrôlée: 50-80%\n- Diabète type 1 avec complications: 40-60%\n- Insuffisance rénale chronique: 60-80%\n- Mucoviscidose: 70-90%\n- Maladie de Crohn sévère: 50-70%\n\nTROUBLES DU COMPORTEMENT:\n- TDAH sévère avec troubles associés: 50-65%\n- Troubles oppositionnels sévères: 30-50%\n- Troubles du spectre autistique avec troubles du comportement: 65-80%\n\nATTENTION: Ces taux sont indicatifs. Chaque situation est évaluée individuellement par la CDAPH selon le guide-barème officiel et l'impact sur la vie quotidienne.\n        ",
+    "keywords": [
+      "taux",
+      "incapacité",
+      "handicap",
+      "autisme",
+      "déficience",
+      "maladie",
+      "évaluation"
+    ]
+  },
+  "formulaires_mdph": {
+    "title": "Formulaires MDPH - Guide complet 2024",
+    "content": "\nListe complète des formulaires MDPH avec conseils de rédaction.\n\nFORMULAIRES PRINCIPAUX:\n1. Cerfa 15692*01 - Demande(s) de prestations liées au handicap\n2. Cerfa 15695*01 - Certificat médical MDPH (validité 6 mois)\n3. Cerfa 15692*01 - Demande adulte handicapé\n4. GEVA-Sco - Guide d'évaluation des besoins de compensation en matière de scolarisation\n\nPIÈCES OBLIGATOIRES:\n- Photocopie pièce d'identité (recto-verso)\n- Justificatif de domicile récent (moins 3 mois)\n- Photocopie livret de famille (si enfant)\n- Justificatif de situation CAF ou MSA\n\nDOCUMENTS FORTEMENT RECOMMANDÉS:\n- Comptes-rendus médicaux récents (moins 1 an)\n- Bilans paramédicaux (orthophonie, psychomotricité, ergothérapie)\n- Bulletins scolaires et observations enseignants\n- Projet personnalisé de scolarisation existant\n- Photos/vidéos illustrant les difficultés quotidiennes\n- Témoignages des aidants (famille, professionnels)\n- Devis d'aménagements ou d'aides techniques\n\nCONSEILS RÉDACTION PARTIE 4 (VIE QUOTIDIENNE):\n- Décrire une journée type détaillée\n- Quantifier les difficultés (temps, fréquence, aide nécessaire)\n- Utiliser un vocabulaire médical précis\n- Éviter la minimisation ou dramatisation\n- Expliquer l'évolution prévisible du handicap\n- Mentionner les répercussions sur la famille\n\nDÉLAIS À RESPECTER:\n- Dépôt: accusé réception sous 15 jours\n- Instruction: 4 mois (6 mois si expertise complémentaire)\n- Silence valant rejet au bout de 4 mois\n- Recours gracieux: 2 mois après notification\n- Recours contentieux: 2 mois après notification\n        ",
+    "keywords": [
+      "formulaire",
+      "cerfa",
+      "15692",
+      "15695",
+      "geva-sco",
+      "dossier",
+      "pièces",
+      "délais"
+    ]
+  },
+  "ecole_inclusive": {
+    "title": "École inclusive et aménagements scolaires",
+    "content": "\nGuide complet de la scolarisation des enfants handicapés en milieu ordinaire.\n\nPRINCIPES DE L'ÉCOLE INCLUSIVE:\n- Droit à la scolarisation pour tous les enfants\n- Scolarisation en milieu ordinaire privilégiée\n- Parcours personnalisé selon les besoins\n- Accompagnement adapté si nécessaire\n\nAMÉNAGEMENTS POSSIBLES:\n1. AMÉNAGEMENTS PÉDAGOGIQUES:\n   - Tiers temps aux examens\n   - Adaptation des supports (agrandissement, police, couleurs)\n   - Outils numériques spécialisés\n   - Évaluation adaptée\n   - Pause supplémentaire\n\n2. AMÉNAGEMENTS MATÉRIELS:\n   - Ordinateur portable avec logiciels spécialisés\n   - Enregistreur numérique\n   - Supports visuels (Time Timer, planning)\n   - Mobilier adapté\n   - Éclairage spécifique\n\n3. AMÉNAGEMENTS HUMAINS:\n   - AESH individuel ou mutualisé\n   - Intervention de professionnels extérieurs\n   - Formation des enseignants\n   - Sensibilisation des élèves\n\nDISPOSITIFS SPÉCIALISÉS:\n- ULIS École (Unité Localisée d'Inclusion Scolaire)\n- ULIS Collège et Lycée\n- SEGPA (Section d'Enseignement Général et Professionnel Adapté)\n- EREA (Établissement Régional d'Enseignement Adapté)\n\nORIENTATION SPÉCIALISÉE:\n- IME (Institut Médico-Éducatif)\n- ITEP (Institut Thérapeutique Éducatif et Pédagogique)\n- IEM (Institut d'Éducation Motrice)\n- Institut pour déficients sensoriels\n- Hôpital de jour avec scolarité\n\nINTERLOCUTEURS CLÉS:\n- Enseignant référent de secteur\n- Directeur d'école ou chef d'établissement\n- Médecin scolaire\n- Psychologue scolaire\n- Équipe éducative et ESS (Équipe de Suivi de Scolarisation)\n        ",
+    "keywords": [
+      "école",
+      "inclusive",
+      "scolarisation",
+      "aménagement",
+      "ulis",
+      "ime",
+      "aesh",
+      "pps"
+    ]
+  },
+  "recours_contestation": {
+    "title": "Recours et contestations MDPH - Procédures détaillées",
+    "content": "\nGuide complet des recours en cas de décision MDPH défavorable.\n\nTYPES DE RECOURS:\n\n1. RECOURS GRACIEUX (à privilégier):\n   - Délai: 2 mois après notification\n   - Gratuit et sans avocat\n   - Adressé au Directeur de la MDPH\n   - Permet de compléter le dossier\n   - Suspend les délais du recours contentieux\n\n2. RECOURS CONTENTIEUX:\n   - Délai: 2 mois après notification (ou après réponse au recours gracieux)\n   - Devant le Tribunal Administratif\n   - Peut nécessiter un avocat\n   - Procédure plus longue (12-24 mois)\n\nMOTIFS DE RECOURS FRÉQUENTS:\n- Taux d'incapacité insuffisant\n- Refus d'AEEH ou complément trop faible\n- Refus d'AESH ou quotité insuffisante\n- Orientation non souhaitée\n- Refus de carte mobilité inclusion\n- Refus de transport scolaire adapté\n\nCOMMENT RÉDIGER UN RECOURS GRACIEUX:\n1. En-tête: vos coordonnées complètes\n2. Destinataire: Monsieur le Directeur de la MDPH\n3. Objet: Recours gracieux contre décision du [date]\n4. Références: numéro de dossier MDPH\n5. Exposé des faits et de la décision contestée\n6. Arguments juridiques et médicaux\n7. Demande précise de révision\n8. Signature et date\n\nPIÈCES À JOINDRE AU RECOURS:\n- Copie de la décision contestée\n- Nouveaux éléments médicaux\n- Témoignages de professionnels\n- Jurisprudence similaire si disponible\n- Éléments prouvant l'évolution de la situation\n\nMÉDIATION PRÉALABLE:\n- Gratuite et confidentielle\n- Peut éviter le contentieux\n- Disponible dans certains départements\n- Durée: 2-3 mois généralement\n\nCONSEIL: Constituer un dossier de recours solide avec l'aide d'associations spécialisées ou d'un avocat en droit du handicap.\n        ",
+    "keywords": [
+      "recours",
+      "contestation",
+      "gracieux",
+      "contentieux",
+      "tribunal",
+      "médiation",
+      "avocat"
+    ]
+  },
+  "organismes_aide": {
+    "title": "Organismes d'aide et accompagnement",
+    "content": "\nRépertoire des organismes pouvant accompagner les familles.\n\nSERVICES PUBLICS:\n- MDPH: Maison Départementale des Personnes Handicapées\n- CAF: Caisse d'Allocations Familiales\n- CPAM: Caisse Primaire d'Assurance Maladie\n- Service social du Conseil Départemental\n- Centre Communal d'Action Sociale (CCAS)\n\nASSOCIATIONS NATIONALES:\n- UNAPEI: Union nationale des associations de parents de personnes handicapées intellectuelles\n- APF France handicap: Association des Paralysés de France\n- FNASEPH: Fédération Nationale des Associations au Service des Élèves Présentant une Situation de Handicap\n- Autisme France: Association pour la défense des droits des personnes autistes\n- ANPEA: Association Nationale de Parents d'Enfants Aveugles\n\nSERVICES SPÉCIALISÉS:\n- CAMSP: Centre d'Action Médico-Sociale Précoce (0-6 ans)\n- CMPP: Centre Médico-Psycho-Pédagogique\n- CMP: Centre Médico-Psychologique\n- SESSAD: Service d'Éducation Spéciale et de Soins à Domicile\n- PCPE: Pôle de Compétences et de Prestations Externalisées\n\nAIDE JURIDIQUE:\n- Maison de la Justice et du Droit\n- Ordre des Avocats (consultation gratuite)\n- Défenseur des droits\n- CDAD: Conseil Départemental de l'Accès au Droit\n\nNUMÉROS UTILES:\n- Écoute Info Handicap: 0800 360 360 (gratuit)\n- Allô Service Public: 3939\n- Handicap Info Service: 0800 39 39 88\n- SOS Autisme: 0820 03 40 90\n\nAIDE FINANCIÈRE D'URGENCE:\n- Fonds de solidarité pour le logement (FSL)\n- Secours Catholique, Secours Populaire\n- Fondations privées (Fondation de France, etc.)\n- Collectivités locales (aides exceptionnelles)\n        ",
+    "keywords": [
+      "organismes",
+      "aide",
+      "association",
+      "contact",
+      "urgence",
+      "accompagnement",
+      "numéro"
+    ]
+  },
+  "famille_nombreuse": {
+    "title": "Handicap et famille nombreuse - Cumuls d'aides",
+    "content": "\nLes familles nombreuses avec enfant handicapé bénéficient de cumuls d'aides spécifiques.\n\nALLOCATIONS FAMILIALES MAJORÉES:\n- Enfant de 11 ans: +42,49 € par mois\n- Enfant de 16 ans: +75,62 € par mois\n- Majoration famille nombreuse (3+ enfants): +21,25 € dès le 3ème enfant\n\nAEEH ET ALLOCATIONS FAMILIALES:\n- Cumul intégral possible\n- L'AEEH ne réduit pas les allocations familiales\n- Majorations d'âge applicables même sur enfant handicapé\n\nCARTE FAMILLE NOMBREUSE:\n- Réductions SNCF pour accompagnateur\n- Tarifs préférentiels avec enfant handicapé\n- Conditions allégées si justificatif MDPH\n\nAUTRES AVANTAGES:\n- Quotient familial majoré (impôts)\n- Réductions d'activités périscolaires\n- Tarifs préférentiels transport en commun\n        ",
+    "keywords": [
+      "famille",
+      "nombreuse",
+      "cumul",
+      "allocations",
+      "majorations",
+      "réductions"
+    ]
+  },
+  "droits_grands_parents": {
+    "title": "Droits des grands-parents d'enfant handicapé",
+    "content": "\nLes grands-parents d'enfants handicapés disposent de droits spécifiques souvent méconnus.\n\nDROIT DE VISITE ET D'HÉBERGEMENT:\n- Maintenu même en cas de conflit familial\n- Renforcé si l'enfant a un handicap (intérêt supérieur)\n- Possibilité de médiation familiale gratuite\n\nSOUTIEN FINANCIER:\n- Pension alimentaire possible si parents en difficulté\n- Déduction fiscale des sommes versées\n- Aide au logement si hébergement régulier\n\nREPRÉSENTATION LÉGALE:\n- Possibilité de délégation d'autorité parentale\n- Tutelle ou curatelle si nécessaire\n- Désignation comme personne de confiance\n\nCONGÉS ET DROITS SOCIAUX:\n- Congé de solidarité familiale possible\n- Congé de soutien familial (non rémunéré)\n- Aménagement temps de travail\n\nSUCCESSION ET PATRIMOINE:\n- Donation-partage avec saut de génération\n- Assurance-vie dédiée à l'enfant handicapé\n- Testament avec legs spécifique\n        ",
+    "keywords": [
+      "grands-parents",
+      "droits",
+      "visite",
+      "succession",
+      "soutien",
+      "famille"
+    ]
+  },
+  "logement_adapte": {
+    "title": "Logement adapté et aménagements",
+    "content": "\nGuide complet pour adapter le logement aux besoins d'un enfant handicapé.\n\nFINANCEMENTS POSSIBLES:\n- PCH aide technique (jusqu'à 3 960 €/an)\n- ANAH subventions (jusqu'à 20 000 €)\n- Crédit d'impôt 25% des travaux\n- Prêt CAF amélioration habitat\n- 1% logement (employeurs +20 salariés)\n\nAMÉNAGEMENTS FRÉQUENTS:\n- Rampe d'accès et élargissement portes\n- Salle de bain adaptée (douche plain-pied)\n- Monte-escalier ou ascenseur\n- Domotique et commandes adaptées\n- Revêtements antidérapants\n\nLOGEMENT SOCIAL:\n- Priorité famille avec enfant handicapé\n- Attribution d'urgence possible\n- Logements pré-adaptés disponibles\n- Mutation prioritaire si inadéquation\n\nDÉMARCHES:\n1. Évaluation ergothérapeute\n2. Devis travaux certifiés\n3. Dossier PCH auprès MDPH\n4. Demandes subventions complémentaires\n5. Déclaration fiscale adaptée\n\nORGANISMES RESSOURCES:\n- PACT (amélioration habitat)\n- SOLIHA (accompagnement travaux)\n- ADIL (conseil juridique gratuit)\n        ",
+    "keywords": [
+      "logement",
+      "adapté",
+      "aménagement",
+      "travaux",
+      "financement",
+      "accessibilité"
+    ]
+  },
+  "transport_handicap": {
+    "title": "Transport et déplacements - Droits et aides",
+    "content": "\nDroits et aides pour les déplacements des enfants handicapés et leurs familles.\n\nTRANSPORT SCOLAIRE:\n- Gratuit pour enfant reconnu handicapé\n- Accompagnateur si nécessaire (AESH)\n- Transport adapté (taxi, VSL)\n- Frais de carburant remboursés si transport familial\n\nCARTE MOBILITÉ INCLUSION (CMI):\n- CMI Invalidité (ex-carte d'invalidité)\n- CMI Priorité (ex-carte de priorité)\n- CMI Stationnement (places handicapés)\n- Gratuite et valable 10 ans\n\nRÉDUCTIONS TRANSPORT:\n- SNCF: gratuite accompagnateur + 50% enfant\n- Transport urbain: gratuit dans 80% des villes\n- Avion: assistance gratuite + bagages médicaux\n- Ferry: cabine adaptée + véhicule gratuit\n\nAIDE AUX TRAJETS MÉDICAUX:\n- Prise en charge 100% si ALD\n- Transport assis professionnalisé\n- Véhicule sanitaire léger (VSL)\n- Remboursement frais kilométriques\n\nPERMIS DE CONDUIRE ADAPTÉ:\n- Aide financière jusqu'à 1 000 €\n- Auto-école spécialisée\n- Véhicule à double commande\n- Évaluation médicale spécialisée\n        ",
+    "keywords": [
+      "transport",
+      "déplacement",
+      "scolaire",
+      "carte",
+      "réduction",
+      "permis"
+    ]
+  },
+  "vacances_handicap": {
+    "title": "Vacances et loisirs adaptés",
+    "content": "\nOrganiser des vacances et loisirs pour un enfant handicapé : aides et structures.\n\nAIDES FINANCIÈRES:\n- Bons CAF vacances familles\n- ANCV chèques vacances majorés\n- Secours populaire / Croix-Rouge\n- Associations caritatives locales\n- CE d'entreprise (majoration handicap)\n\nSTRUCTURES SPÉCIALISÉES:\n- Villages vacances adaptés\n- Campings labellisés \"Tourisme & Handicap\"\n- Centres de vacances spécialisés\n- Familles d'accueil agréées\n- Séjours répit pour parents\n\nACTIVITÉS ADAPTÉES:\n- Centres de loisirs inclusifs\n- Clubs sportifs handisport\n- Ateliers artistiques adaptés\n- Thérapies par l'animal\n- Activités sensorielles spécialisées\n\nMATÉRIEL ET ÉQUIPEMENTS:\n- Location matériel médical sur lieu de séjour\n- Transport équipements lourds\n- Pharmacie de voyage adaptée\n- Assurance voyage spécifique\n\nORGANISMES SPÉCIALISÉS:\n- APF France Handicap\n- UNAPEI séjours\n- Évasion Loisirs Culture\n- Tourisme & Handicap\n- Handilol (loisirs adaptés)\n        ",
+    "keywords": [
+      "vacances",
+      "loisirs",
+      "séjours",
+      "adapté",
+      "financement",
+      "activités"
+    ]
+  },
+  "fratrie_handicap": {
+    "title": "Accompagnement de la fratrie",
+    "content": "\nSoutenir les frères et sœurs d'un enfant handicapé.\n\nIMPACT SUR LA FRATRIE:\n- Sentiment de responsabilité précoce\n- Besoin d'attention spécifique\n- Risque d'isolement social\n- Questionnements sur l'avenir\n- Fierté et maturité développées\n\nSOUTIEN PSYCHOLOGIQUE:\n- Consultations psychologue remboursées\n- Groupes de parole fratries\n- Thérapie familiale systémique\n- Médiation fratrie-parents\n\nAIDES PRATIQUES:\n- Garde d'enfants renforcée (CESU)\n- Activités spécifiques fratrie\n- Séjours répit sans handicap\n- Transport scolaire prioritaire\n\nAMÉNAGEMENTS SCOLAIRES:\n- Information équipe éducative\n- Soutien psychologique scolaire\n- Absence justifiée (rdv médicaux)\n- Projet d'accueil individualisé si besoin\n\nASSOCIATIONS SPÉCIALISÉES:\n- Fondation OCH (Œuvre des Pupilles)\n- Association Grandir Ensemble\n- Reseau Lucioles (polyhandicap)\n- Groupes fratries locaux\n- Forums d'échange en ligne\n\nPRÉPARATION À L'ÂGE ADULTE:\n- Information tutelle/curatelle\n- Rôle dans projet de vie\n- Soutien juridique et financier\n- Relais avec services spécialisés\n        ",
+    "keywords": [
+      "fratrie",
+      "frères",
+      "sœurs",
+      "soutien",
+      "accompagnement",
+      "psychologique"
+    ]
+  },
+  "situations_urgence": {
+    "title": "Situations d'urgence et crises",
+    "content": "\nGestion des situations d'urgence impliquant un enfant handicapé.\n\nURGENCES MÉDICALES:\n- Protocole d'urgence à l'école (PAI renforcé)\n- Fiche médicale d'urgence détaillée\n- Contacts médicaux prioritaires\n- Médicaments d'urgence et posologie\n- Hospitalisations : droits des parents\n\nCRISES COMPORTEMENTALES:\n- Techniques de désamorçage\n- Contacts professionnels spécialisés\n- Numéros d'urgence 24h/24\n- Protocoles apaisement personnalisés\n- Soutien aux équipes éducatives\n\nURGENCES SOCIALES:\n- Aide d'urgence CAF (délai 48h)\n- Fonds de solidarité départemental\n- Hébergement d'urgence adapté\n- Garde d'enfant d'urgence\n- Aide alimentaire spécialisée\n\nHOSPITALISATION:\n- Droit d'accompagnement parental\n- Aménagement chambre si besoin\n- Continuité soins habituels\n- Maintien aides à domicile\n- Prise en charge transport famille\n\nCELLULE DE CRISE:\n- Numéro vert handicap rare: 0800 40 12 60\n- SOS Autisme: 0820 03 40 90\n- Croix-Rouge écoute: 0800 858 858\n- SOS Amitié: 09 72 39 40 50\n- 3114 (numéro national prévention suicide)\n        ",
+    "keywords": [
+      "urgence",
+      "crise",
+      "médical",
+      "social",
+      "hospitalisation",
+      "comportemental"
+    ]
+  },
+  "transition_adulte": {
+    "title": "Transition vers l'âge adulte",
+    "content": "\nPréparer le passage aux dispositifs adultes (16-20 ans).\n\nCHANGEMENTS ADMINISTRATIFS:\n- Passage MDPH enfant → MDPH adulte\n- AEEH → AAH (à partir de 20 ans)\n- Réorientation vers structures adultes\n- Nouveaux interlocuteurs référents\n\nORIENTATION POST-SCOLAIRE:\n- ESAT (Établissement et Service d'Aide par le Travail)\n- Entreprise adaptée\n- Formation professionnelle spécialisée\n- Foyer d'hébergement\n- Service d'accompagnement à domicile\n\nPROTECTION JURIDIQUE:\n- Évaluation capacité juridique\n- Mise sous tutelle ou curatelle si nécessaire\n- Désignation tuteur familial ou professionnel\n- Mandat de protection future\n- Habilitation familiale\n\nLOGEMENT AUTONOME:\n- Foyer d'hébergement spécialisé\n- Logement autonome avec SAMSAH\n- Colocation accompagnée\n- Accueil familial social adulte\n- Aide au logement majorée\n\nDÉMARCHES ANTICIPÉES (dès 16 ans):\n1. Bilan d'orientation MDPH\n2. Visite structures d'accueil\n3. Constitution dossier AAH\n4. Évaluation protection juridique\n5. Recherche logement adapté\n\nACCOMPAGNEMENT SPÉCIALISÉ:\n- Service de transition 16-25 ans\n- Référent parcours MDPH\n- Éducateur spécialisé transition\n- Psychologue du développement\n        ",
+    "keywords": [
+      "transition",
+      "adulte",
+      "orientation",
+      "aah",
+      "esat",
+      "tutelle",
+      "autonomie"
+    ]
+  }
+}

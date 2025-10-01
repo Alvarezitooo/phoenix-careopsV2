@@ -1,61 +1,47 @@
-# 🕊️ PhoenixCare - Dockerfile Multi-Stage Optimisé
-# 🔥 PRODUCTION READY : 1 Process, 1 Port, 0 Zombie, 0 Proxy
-# 🏗️  ARCHITECTURE : Custom Next Server + Express (mono-process)
-
-# =========================
-# deps: installe TOUTES les deps (incl. dev) pour builder
-# =========================
+# ---------- deps ----------
 FROM node:20-alpine AS deps
 WORKDIR /app
 
-# Copie les manifests d'abord pour profiter du cache
+# 1) Manifests pour cache
 COPY package.json package-lock.json ./
 COPY server/package.json server/
 COPY client/package.json client/
 
-# Installe via workspaces (inclut devDeps, nécessaire pour tsc/next build)
+# 2) Installe toutes deps (incl. dev) pour builder Next/tsc
 RUN npm ci --workspaces
 
-# =========================
-# builder: copie le code et build
-# =========================
+# ---------- builder ----------
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Récupère node_modules (toutes deps) depuis l'étape deps
+# 1) Récupère node_modules du stage deps
 COPY --from=deps /app /app
 
-# Copie le reste du code source
+# 2) Copie le code source
 COPY . .
 
-# Build backend + frontend
+# 3) Build backend + frontend
 RUN npm run build:server && npm run build:client
 
-# =========================
-# runner: image prod minimale (sans devDeps)
-# =========================
+# ---------- runner ----------
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production \
     PORT=8080
 
-# Copie uniquement manifests
+# 1) Manifests pour install prod
 COPY package.json package-lock.json ./
 COPY server/package.json server/
 COPY client/package.json client/
 
-# Installe uniquement les prod deps
+# 2) Installe uniquement les deps runtime (Next doit être en dependencies dans client/)
 RUN npm ci --workspaces --omit=dev
 
-# Copie les artefacts de build
+# 3) Copie artefacts buildés aux bons endroits
 COPY --from=builder /app/server/dist ./server/dist
 COPY --from=builder /app/client/.next ./client/.next
+# Si tu as un dossier public/ :
 COPY --from=builder /app/client/public ./client/public
 
-# Copie des fichiers de config nécessaires
-COPY server/tsconfig.json ./server/
-COPY client/next.config.mjs ./client/
-
 EXPOSE 8080
-ENV PORT=8080 NODE_ENV=production
-CMD ["node", "server/dist/server.js"]
+CMD ["node","server/dist/server.js"]

@@ -1,110 +1,160 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Heart, ArrowLeft, Loader2 } from 'lucide-react';
-import { uiCopy } from '@/lib/uiCopy';
+import { Heart, LogIn, Mail, Lock, Loader2 } from 'lucide-react';
+import { useSupabaseAuth } from '@/context/SupabaseAuthContext';
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  const auth = useSupabaseAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div>Loading...</div>;
+  }
+
+  const { signIn } = auth;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setError('');
+    setLoading(true);
 
-    // Simulation d'une connexion
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('🔐 Tentative de connexion avec:', email);
 
-    // Définir le cookie de session
-    document.cookie = 'session=ok; Path=/; SameSite=Lax; Max-Age=86400';
+    try {
+      const { data, error } = await signIn(email, password);
 
-    // Rediriger vers le dashboard
-    router.push('/app');
+      console.log('📊 Réponse Supabase:', { data, error });
+
+      if (error) {
+        console.error('❌ Erreur Supabase:', error);
+        throw error;
+      }
+
+      if (data.user) {
+        console.log('✅ Utilisateur connecté:', data.user.id);
+        console.log('🔄 Redirection vers /dashboard...');
+
+        // Attendre que les cookies soient mis à jour avant de rediriger
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Forcer un hard reload pour que le middleware détecte la session
+        window.location.href = '/dashboard';
+      } else {
+        console.warn('⚠️ Pas d\'utilisateur dans la réponse');
+        setError('Connexion réussie mais pas d\'utilisateur retourné');
+      }
+    } catch (err: any) {
+      console.error('💥 Erreur catch:', err);
+      setError(err.message || 'Erreur de connexion');
+    } finally {
+      setLoading(false);
+      console.log('🏁 Fin du processus de connexion');
+    }
   };
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-md"
-      >
-        {/* Header avec logo */}
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center text-slate-600 hover:text-slate-800 mb-6">
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Retour à l'accueil
-          </Link>
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Heart className="h-12 w-12 text-rose-500" />
-            <span className="text-3xl font-semibold text-slate-900">PhoenixCare</span>
+          <div className="mx-auto w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mb-4">
+            <Heart className="h-8 w-8 text-rose-500" />
           </div>
-          <p className="text-slate-600">Connectez-vous à votre espace</p>
+          <h1 className="text-2xl font-bold text-slate-900">Connexion à Phoenix</h1>
+          <p className="text-slate-600 mt-2">Votre assistant social personnalisé</p>
         </div>
 
-        {/* Formulaire de connexion */}
-        <motion.form
-          onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          <div className="space-y-6">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                {uiCopy.auth.login.email}
+                Email
               </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 focus:outline-none transition-colors"
-                placeholder="votre.email@example.com"
-                required
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  placeholder="votre@email.com"
+                  required
+                />
+              </div>
             </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700 text-sm">{error}</p>
+              </div>
+            )}
 
             <button
               type="submit"
-              disabled={isLoading || !email}
-              className="w-full bg-rose-500 text-white py-3 px-4 rounded-xl font-medium hover:bg-rose-600 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors focus:ring-2 focus:ring-rose-300 focus:outline-none flex items-center justify-center min-h-[48px]"
+              disabled={loading}
+              className="w-full bg-rose-500 text-white py-3 rounded-xl font-medium hover:bg-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {isLoading ? (
+              {loading ? (
                 <>
-                  <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5" />
-                  Connexion en cours...
+                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  Connexion...
                 </>
               ) : (
-                uiCopy.auth.login.submit
+                <>
+                  <LogIn className="h-5 w-5 mr-2" />
+                  Se connecter
+                </>
               )}
             </button>
-          </div>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-slate-600">
-              Connexion simulée - Aucun mot de passe requis
-            </p>
-          </div>
-        </motion.form>
-
-        {/* Footer */}
+          </form>
+        </div>
         <div className="mt-8 text-center">
-          <p className="text-sm text-slate-600">
-            Nouveau sur PhoenixCare ?{' '}
-            <Link href="/" className="text-rose-600 hover:text-rose-700 font-medium">
+          <p className="text-slate-600">
+            Pas encore de compte ?{' '}
+            <Link href="/signup" className="text-rose-600 hover:text-rose-700 font-medium">
               Créer un compte
             </Link>
           </p>
         </div>
-      </motion.div>
+
+        <div className="mt-8 text-center">
+          <Link href="/" className="text-slate-600 hover:text-slate-700 text-sm">
+            ← Retour à l'accueil
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

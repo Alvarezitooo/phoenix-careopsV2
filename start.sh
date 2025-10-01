@@ -144,5 +144,5 @@ if [[ "${1:-}" == "--dev" ]]; then
   exec npm run dev
 else
   log "INFO" "🏭 Mode production activé"
-  exec node dist/index.js
+  exec node dist/server.js
 fi

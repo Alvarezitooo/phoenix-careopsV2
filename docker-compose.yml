@@ -1,8 +1,6 @@
 # PhoenixCare - Développement Local
 # Architecture Monolitique Optimisée
 
-version: '3.8'
-
 services:
   phoenixcare:
     build:

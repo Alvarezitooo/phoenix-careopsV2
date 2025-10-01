@@ -20,12 +20,20 @@ export default function LandingPage() {
               <Heart className="h-8 w-8 text-rose-500" />
               <span className="text-xl font-semibold text-slate-900">PhoenixCare</span>
             </div>
-            <Link
-              href="/login"
-              className="bg-rose-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-rose-600 transition-colors focus:ring-2 focus:ring-rose-300 focus:outline-none"
-            >
-              {uiCopy.nav.login}
-            </Link>
+            <div className="space-x-3">
+              <Link
+                href="/login"
+                className="text-slate-600 hover:text-slate-900 font-medium"
+              >
+                Connexion
+              </Link>
+              <Link
+                href="/signup"
+                className="bg-rose-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-rose-600 transition-colors focus:ring-2 focus:ring-rose-300 focus:outline-none"
+              >
+                Créer un compte
+              </Link>
+            </div>
           </div>
         </div>
       </header>
@@ -41,10 +49,10 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/login"
+              href="/signup"
               className="bg-rose-500 text-white px-8 py-4 rounded-xl font-medium hover:bg-rose-600 transition-all duration-200 focus:ring-2 focus:ring-rose-300 focus:outline-none flex items-center justify-center"
             >
-              {uiCopy.landing.hero.cta_primary}
+              Commencer maintenant
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
             <button className="border border-slate-300 text-slate-700 px-8 py-4 rounded-xl font-medium hover:bg-slate-50 transition-all duration-200 focus:ring-2 focus:ring-slate-300 focus:outline-none">
