@@ -25,6 +25,7 @@ sys.path.append(str(Path(__file__).parent / 'src'))
 import google.generativeai as genai
 from dotenv import load_dotenv
 import requests
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 # Chargement variables d'environnement
 load_dotenv()
@@ -377,36 +378,28 @@ generation_config = {
 }
 
 # ===== 🔄 GÉNÉRATION GEMINI AVEC RETRY =====
+def generate_with_gemini_internal(prompt: str) -> str:
+    """Appel Gemini brut (utilisé par le wrapper avec retry)"""
+    response = model.generate_content(prompt, request_options={'timeout': 30})
+
+    if response.text:
+        return response.text
+    else:
+        raise ValueError("Réponse vide de Gemini")
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=1, max=10),
+    retry=retry_if_exception_type((Exception,)),
+    reraise=True
+)
 def generate_with_gemini(prompt: str, max_retries: int = 3) -> str:
-    """Génère une réponse avec Gemini avec retry automatique"""
-    last_error = None
-
-    for attempt in range(max_retries):
-        try:
-            # Timeout de 30 secondes
-            response = model.generate_content(prompt, request_options={'timeout': 30})
-
-            if response.text:
-                return response.text
-            else:
-                raise ValueError("Réponse vide de Gemini")
-
-        except Exception as e:
-            last_error = e
-            print(f"⚠️ Gemini attempt {attempt + 1}/{max_retries} failed: {e}")
-
-            if attempt < max_retries - 1:
-                # Attendre avant retry (backoff exponentiel)
-                wait_time = 2 ** attempt
-                print(f"⏳ Retry dans {wait_time}s...")
-                time.sleep(wait_time)
-            else:
-                print(f"❌ Échec final après {max_retries} tentatives")
-
-    # Si tous les retries échouent
-    error_msg = f"Erreur Gemini: {str(last_error)}"
-    print(error_msg)
-    return "Je rencontre des difficultés techniques pour répondre. Veuillez réessayer dans quelques instants."
+    """Génère une réponse avec Gemini avec retry automatique (tenacity)"""
+    try:
+        return generate_with_gemini_internal(prompt)
+    except Exception as e:
+        print(f"⚠️ Erreur Gemini: {e}")
+        raise  # Tenacity va retry avec backoff exponentiel (1s → 2s → 4s)
 
 model = genai.GenerativeModel(
     model_name="models/gemini-2.5-flash",
@@ -686,8 +679,25 @@ SUGGESTIONS:
 
 RÉPONDS:"""
 
-        # 🔐 Génération avec Gemini (avec retry et timeout)
-        full_response = generate_with_gemini(prompt, max_retries=3)
+        # 🔐 Génération avec Gemini (avec retry et timeout + fallback gracieux)
+        try:
+            full_response = generate_with_gemini(prompt, max_retries=3)
+        except Exception as e:
+            print(f"❌ Échec Gemini après tous les retries: {e}")
+            # Fallback gracieux
+            full_response = """Je rencontre actuellement des difficultés techniques pour accéder à ma base de connaissances.
+
+Voici ce que je vous recommande :
+1. **Réessayez dans quelques instants** - il peut s'agir d'un problème temporaire
+2. **Contactez votre MDPH** au 0 800 360 360 pour une aide immédiate
+3. **Visitez service-public.fr** pour consulter les informations officielles
+
+ℹ️ *Service temporairement indisponible. Nous nous excusons pour la gêne occasionnée.*
+
+SUGGESTIONS:
+- Quelles sont les coordonnées de ma MDPH ?
+- Comment faire une réclamation en cas de délai ?
+- Où trouver de l'aide pour remplir mon dossier ?"""
 
         # 💡 Extraire suggestions de la réponse
         answer, suggestions = extract_suggestions(full_response)
@@ -823,8 +833,21 @@ Sois CONCIS, PRÉCIS et ACTIONNABLE. Utilise des émojis et du markdown pour la 
 Termine par: "ℹ️ *Résumé généré automatiquement. Pour plus de détails, discutez avec Phoenix.*"
 """
 
-        # 🔐 Génération avec Gemini (avec retry et timeout)
-        summary = generate_with_gemini(prompt, max_retries=3)
+        # 🔐 Génération avec Gemini (avec retry et timeout + fallback)
+        try:
+            summary = generate_with_gemini(prompt, max_retries=3)
+        except Exception as e:
+            print(f"❌ Échec Gemini après tous les retries (résumé): {e}")
+            summary = """## ⚠️ Résumé temporairement indisponible
+
+Le service de génération automatique de résumé rencontre actuellement des difficultés.
+
+**🎯 Prochaines actions recommandées :**
+1. Vérifiez vos documents et procédures dans les sections dédiées
+2. Consultez votre messagerie Phoenix pour des recommandations personnalisées
+3. Contactez votre MDPH pour un accompagnement
+
+ℹ️ *Service temporairement indisponible. Réessayez dans quelques instants.*"""
 
         return jsonify({
             'summary': summary,
@@ -1032,8 +1055,21 @@ RÉPONDS MAINTENANT:"""
                     "error": f"Erreur analyse image: {str(e)}"
                 }), 500
         else:
-            # 📝 Utiliser Gemini texte standard avec retry
-            analysis = generate_with_gemini(prompt, max_retries=3)
+            # 📝 Utiliser Gemini texte standard avec retry + fallback
+            try:
+                analysis = generate_with_gemini(prompt, max_retries=3)
+            except Exception as e:
+                print(f"❌ Échec Gemini après tous les retries (analyse doc): {e}")
+                analysis = """## ⚠️ Analyse temporairement indisponible
+
+Le service d'analyse automatique des documents rencontre actuellement des difficultés techniques.
+
+**🎯 Actions recommandées :**
+1. Conservez votre document en sécurité
+2. Réessayez l'analyse dans quelques instants
+3. Contactez votre MDPH pour une analyse manuelle
+
+ℹ️ *Service temporairement indisponible. Nous nous excusons pour la gêne occasionnée.*"""
 
         # Extraction de suggestions d'actions pour UI
         suggestions = []
@@ -1182,6 +1218,128 @@ def delete_user_memory(memory_id: str):
         print(f"❌ Erreur delete_user_memory: {e}")
         return jsonify({"error": str(e)}), 500
 
+
+# ===== 📊 ROUTES MÉTIER (DASHBOARD) =====
+
+@app.route('/api/documents', methods=['GET'])
+@require_auth
+def get_documents():
+    """📄 Récupérer les documents d'un utilisateur"""
+    try:
+        user_id = request.user_data.get('id')
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+
+        if not SUPABASE_URL or not SUPABASE_ANON_KEY:
+            return jsonify({"error": "Supabase non configuré"}), 500
+
+        # Appel Supabase avec RLS (Row Level Security)
+        headers = {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.get(
+            f"{SUPABASE_URL}/rest/v1/user_documents?user_id=eq.{user_id}&order=created_at.desc",
+            headers=headers,
+            timeout=5
+        )
+
+        if response.status_code == 200:
+            documents = response.json()
+            return jsonify({"documents": documents}), 200
+        else:
+            print(f"❌ Erreur Supabase documents: {response.status_code}")
+            return jsonify({"documents": []}), 200
+
+    except Exception as e:
+        print(f"❌ Erreur get_documents: {e}")
+        return jsonify({"documents": []}), 200
+
+
+@app.route('/api/procedures', methods=['GET'])
+@require_auth
+def get_procedures():
+    """📋 Récupérer les démarches (deadlines) d'un utilisateur"""
+    try:
+        user_id = request.user_data.get('id')
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+
+        if not SUPABASE_URL or not SUPABASE_ANON_KEY:
+            return jsonify({"error": "Supabase non configuré"}), 500
+
+        headers = {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.get(
+            f"{SUPABASE_URL}/rest/v1/user_deadlines?user_id=eq.{user_id}&order=date.asc",
+            headers=headers,
+            timeout=5
+        )
+
+        if response.status_code == 200:
+            deadlines = response.json()
+
+            # Format pour compatibilité frontend (procedures = deadlines)
+            procedures = []
+            for deadline in deadlines:
+                procedures.append({
+                    'id': deadline.get('id'),
+                    'name': deadline.get('titre'),
+                    'status': 'completed' if deadline.get('completed') else 'pending',
+                    'details': deadline.get('description', ''),
+                    'dueDate': deadline.get('date'),
+                    'priority': deadline.get('priorite', 'moyenne')
+                })
+
+            return jsonify({"procedures": procedures}), 200
+        else:
+            print(f"❌ Erreur Supabase procedures: {response.status_code}")
+            return jsonify({"procedures": []}), 200
+
+    except Exception as e:
+        print(f"❌ Erreur get_procedures: {e}")
+        return jsonify({"procedures": []}), 200
+
+
+@app.route('/api/aides', methods=['GET'])
+@require_auth
+def get_aides():
+    """💰 Récupérer les aides d'un utilisateur"""
+    try:
+        user_id = request.user_data.get('id')
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+
+        if not SUPABASE_URL or not SUPABASE_ANON_KEY:
+            return jsonify({"error": "Supabase non configuré"}), 500
+
+        headers = {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.get(
+            f"{SUPABASE_URL}/rest/v1/user_aides?user_id=eq.{user_id}&order=created_at.desc",
+            headers=headers,
+            timeout=5
+        )
+
+        if response.status_code == 200:
+            aides = response.json()
+            return jsonify({"aides": aides}), 200
+        else:
+            print(f"❌ Erreur Supabase aides: {response.status_code}")
+            return jsonify({"aides": []}), 200
+
+    except Exception as e:
+        print(f"❌ Erreur get_aides: {e}")
+        return jsonify({"aides": []}), 200
+
+
 if __name__ == '__main__':
     print("=" * 60)
     print("🚀 SERVEUR RAG PHOENIX - VERSION OPTIMISÉE V2")
@@ -1197,6 +1355,9 @@ if __name__ == '__main__':
     print("=" * 60)
     print("📍 Endpoints disponibles:")
     print("  POST /api/chat/send - Chat principal")
+    print("  GET  /api/documents - Documents utilisateur")
+    print("  GET  /api/procedures - Démarches utilisateur")
+    print("  GET  /api/aides - Aides utilisateur")
     print("  GET  /api/cache/stats - Stats cache")
     print("  GET  /api/memory/stats - Stats mémoire")
     print("  DELETE /api/memory/clear/<user_id> - Effacer mémoire")

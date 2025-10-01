@@ -29,6 +29,7 @@ aiohttp==3.9.0
 # Database et cache
 redis==5.0.1
 psycopg2-binary==2.9.7
+supabase>=2.0.0
 
 # Background tasks
 celery==5.3.4
