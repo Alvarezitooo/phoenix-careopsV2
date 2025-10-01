@@ -1,97 +1,130 @@
 import { env } from '../../config/env.js';
+import { CircuitBreakerFactory } from '../../utils/circuitBreaker.js';
+import { retryWithBackoff, RetryPredicates } from '../../utils/retry.js';
 // Configuration pour Python AI Service
 const FASTAPI_BASE_URL = env.PYTHON_API_URL;
+// Circuit breaker pour AI Service (protection contre défaillances)
+const aiCircuit = CircuitBreakerFactory.get('ai-service', {
+    failureThreshold: 5, // Ouvrir après 5 échecs
+    successThreshold: 2, // Fermer après 2 succès
+    timeout: 60000, // 60s avant retry
+    name: 'ai-service'
+});
 export const chatService = {
     // 🤖 Génération de réponse IA empathique avec RAG
     async generateResponse(request) {
         const { message, userId, conversationHistory, userContext } = request;
-        try {
-            // Préparation du contexte pour le système RAG
-            const ragRequest = {
-                message: message,
-                user_id: userId,
-                conversation_history: conversationHistory,
-                user_context: userContext || {}
-            };
-            console.log(`🤖 Envoi requête RAG vers ${FASTAPI_BASE_URL}/api/chat/send`);
-            // Appel au système RAG FastAPI
-            const response = await fetch(`${FASTAPI_BASE_URL}/api/chat/send`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(ragRequest),
-                signal: AbortSignal.timeout(30000), // 30 secondes
+        // Préparation du contexte pour le système RAG
+        const ragRequest = {
+            message: message,
+            user_id: userId,
+            conversation_history: conversationHistory,
+            user_context: userContext || {}
+        };
+        console.log(`🤖 Envoi requête RAG vers ${FASTAPI_BASE_URL}/api/chat/send`);
+        // Circuit breaker + retry avec backoff exponentiel
+        return aiCircuit.execute(async () => {
+            // Retry avec backoff sur erreurs réseau/serveur
+            return retryWithBackoff(async () => {
+                const response = await fetch(`${FASTAPI_BASE_URL}/api/chat/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(ragRequest),
+                    signal: AbortSignal.timeout(30000), // 30 secondes
+                });
+                if (!response.ok) {
+                    throw new Error(`RAG API Error: ${response.status} ${response.statusText}`);
+                }
+                const ragResponse = await response.json();
+                return {
+                    content: ragResponse.answer || ragResponse.response,
+                    conversationId: ragResponse.conversation_id || `conv_${userId}_${Date.now()}`,
+                    tokens: ragResponse.processing_time || 0,
+                    model: "gemini-2.5-flash-rag",
+                    sources: ragResponse.sources || [],
+                    processing_time: ragResponse.processing_time
+                };
+            }, {
+                maxAttempts: 3,
+                initialDelay: 1000, // 1s
+                maxDelay: 10000, // 10s max
+                backoffFactor: 2, // 1s → 2s → 4s
+                shouldRetry: RetryPredicates.standard // Network + server errors
             });
-            if (!response.ok) {
-                throw new Error(`RAG API Error: ${response.status} ${response.statusText}`);
-            }
-            const ragResponse = await response.json();
+        }, 
+        // Fallback gracieux si circuit OPEN ou échec définitif
+        async () => {
+            console.warn('⚠️ Fallback activé - AI Service indisponible');
             return {
-                content: ragResponse.answer || ragResponse.response,
-                conversationId: ragResponse.conversation_id || `conv_${userId}_${Date.now()}`,
-                tokens: ragResponse.processing_time || 0,
-                model: "gemini-2.5-flash-rag",
-                sources: ragResponse.sources || [],
-                processing_time: ragResponse.processing_time
-            };
-        }
-        catch (error) {
-            console.error('Erreur RAG:', error);
-            // Fallback empathique en cas d'erreur
-            return {
-                content: `Je rencontre une difficulté technique en ce moment (${error instanceof Error ? error.message : 'erreur inconnue'}). Je suis là pour vous aider - pouvez-vous reformuler votre question ? En attendant, n'hésitez pas à consulter nos ressources d'aide d'urgence.`,
-                conversationId: `conv_${userId}_${Date.now()}`,
+                content: `Je rencontre une difficulté technique en ce moment. Mon système d'intelligence artificielle est temporairement indisponible. Je suis là pour vous aider - pouvez-vous reformuler votre question ? En attendant, n'hésitez pas à consulter nos ressources d'aide d'urgence.`,
+                conversationId: `conv_fallback_${userId}_${Date.now()}`,
                 tokens: 0,
                 model: "fallback",
-                sources: []
+                sources: [],
+                processing_time: undefined
             };
-        }
+        });
     },
     // 📄 Analyse de documents via RAG
     async analyzeDocument(request) {
         const { document, userId, documentType } = request;
-        try {
-            console.log(`📄 Analyse document via RAG: type=${documentType}`);
-            // Appel au système RAG pour l'analyse de documents
-            const analysisRequest = {
-                message: `Analyse ce document de type ${documentType} et extrait les informations importantes:\n\n${document}`,
-                user_id: userId,
-                conversation_history: [],
-                user_context: { document_type: documentType }
-            };
-            const response = await fetch(`${FASTAPI_BASE_URL}/api/chat/send`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(analysisRequest),
-                signal: AbortSignal.timeout(30000),
+        console.log(`📄 Analyse document via RAG: type=${documentType}`);
+        // Appel au système RAG pour l'analyse de documents
+        const analysisRequest = {
+            message: `Analyse ce document de type ${documentType} et extrait les informations importantes:\n\n${document}`,
+            user_id: userId,
+            conversation_history: [],
+            user_context: { document_type: documentType }
+        };
+        // Circuit breaker + retry pour analyse documents
+        return aiCircuit.execute(async () => {
+            return retryWithBackoff(async () => {
+                const response = await fetch(`${FASTAPI_BASE_URL}/api/chat/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(analysisRequest),
+                    signal: AbortSignal.timeout(30000),
+                });
+                if (!response.ok) {
+                    throw new Error(`RAG Analysis Error: ${response.status}`);
+                }
+                const ragResponse = await response.json();
+                const analysis = ragResponse.answer || ragResponse.response;
+                // Parse la réponse pour structurer les données
+                return {
+                    summary: this.extractSummary(analysis),
+                    data: this.extractStructuredData(analysis),
+                    suggestions: this.extractSuggestions(analysis),
+                    fullAnalysis: analysis,
+                    sources: ragResponse.sources || []
+                };
+            }, {
+                maxAttempts: 3,
+                initialDelay: 1000,
+                maxDelay: 10000,
+                backoffFactor: 2,
+                shouldRetry: RetryPredicates.standard
             });
-            if (!response.ok) {
-                throw new Error(`RAG Analysis Error: ${response.status}`);
-            }
-            const ragResponse = await response.json();
-            const analysis = ragResponse.answer || ragResponse.response;
-            // Parse la réponse pour structurer les données
+        }, 
+        // Fallback pour analyse de documents
+        async () => {
+            console.warn('⚠️ Fallback activé pour analyse document');
             return {
-                summary: this.extractSummary(analysis),
-                data: this.extractStructuredData(analysis),
-                suggestions: this.extractSuggestions(analysis),
-                fullAnalysis: analysis,
-                sources: ragResponse.sources || []
-            };
-        }
-        catch (error) {
-            console.error('Erreur analyse document RAG:', error);
-            return {
-                summary: "Erreur lors de l'analyse du document",
+                summary: "Service d'analyse temporairement indisponible",
                 data: {},
-                suggestions: ["Vérifiez le format du document et réessayez"],
-                fullAnalysis: "Analyse indisponible via RAG",
+                suggestions: [
+                    "Vérifiez le format du document",
+                    "Réessayez dans quelques instants",
+                    "Contactez le support si le problème persiste"
+                ],
+                fullAnalysis: "L'analyse IA est temporairement indisponible. Veuillez réessayer ultérieurement.",
                 sources: []
             };
-        }
+        });
     },
     // 📝 Extraction du résumé
     extractSummary(analysis) {

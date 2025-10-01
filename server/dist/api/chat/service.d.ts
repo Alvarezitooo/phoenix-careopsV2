@@ -17,13 +17,6 @@ export declare const chatService: {
         model: string;
         sources: any;
         processing_time: any;
-    } | {
-        content: string;
-        conversationId: string;
-        tokens: number;
-        model: string;
-        sources: never[];
-        processing_time?: undefined;
     }>;
     analyzeDocument(request: DocumentAnalysisRequest): Promise<{
         summary: string;

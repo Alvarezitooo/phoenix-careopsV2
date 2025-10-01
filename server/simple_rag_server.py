@@ -539,7 +539,7 @@ def health_check():
     })
 
 @app.route('/api/chat/send', methods=['POST'])
-@rate_limit(max_requests=10, window_minutes=1)
+@rate_limit(max_requests=100, window_minutes=1)
 @require_auth
 def chat_send():
     """🚀 Endpoint principal pour le chat RAG (avec cache + fuzzy search + contexte)"""
