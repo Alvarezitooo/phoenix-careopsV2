@@ -30,6 +30,7 @@ export interface PaginationMeta {
 // Types pour l'authentification
 export interface User {
   id: string;
+  userId: string;  // Alias pour compatibilité
   email: string;
   name: string;
   avatar?: string;

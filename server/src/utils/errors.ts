@@ -97,7 +97,7 @@ export const errorHandler = (
     requestId: req.requestId,
     method: req.method,
     url: req.originalUrl,
-    userId: req.user?.id,
+    userId: req.user?.userId,
     userAgent: req.get('User-Agent'),
     ip: req.ip,
   });

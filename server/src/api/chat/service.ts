@@ -1,5 +1,7 @@
-// Configuration pour FastAPI RAG Backend
-const FASTAPI_BASE_URL = process.env.PYTHON_API_URL || 'http://localhost:8000';
+import { env } from '../../config/env.js';
+
+// Configuration pour Python AI Service
+const FASTAPI_BASE_URL = env.PYTHON_API_URL;
 
 // Types pour le service
 interface ChatRequest {
@@ -38,14 +40,14 @@ export const chatService = {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(ragRequest),
-        timeout: 30000, // 30 secondes
+        signal: AbortSignal.timeout(30000), // 30 secondes
       });
 
       if (!response.ok) {
         throw new Error(`RAG API Error: ${response.status} ${response.statusText}`);
       }
 
-      const ragResponse = await response.json();
+      const ragResponse: any = await response.json();
 
       return {
         content: ragResponse.answer || ragResponse.response,
@@ -91,14 +93,14 @@ export const chatService = {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(analysisRequest),
-        timeout: 30000,
+        signal: AbortSignal.timeout(30000),
       });
 
       if (!response.ok) {
         throw new Error(`RAG Analysis Error: ${response.status}`);
       }
 
-      const ragResponse = await response.json();
+      const ragResponse: any = await response.json();
       const analysis = ragResponse.answer || ragResponse.response;
 
       // Parse la réponse pour structurer les données

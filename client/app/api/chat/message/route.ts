@@ -1,7 +1,8 @@
 // 🚀 API Route Next.js pour Phoenix RAG
 import { NextRequest, NextResponse } from 'next/server';
 
-const RAG_SERVER_URL = 'http://localhost:8000';
+// Env var validée (via BFF, pas direct)
+const RAG_SERVER_URL = process.env.PYTHON_API_URL || 'http://localhost:8000';
 
 export async function POST(request: NextRequest) {
   try {

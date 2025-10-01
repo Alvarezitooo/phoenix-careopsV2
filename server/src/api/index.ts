@@ -21,8 +21,8 @@ apiRouter.use('/chat', chatRouter);
 // Routes pour les documents
 apiRouter.get('/documents',
   validateQuery(schemas.documents.search),
-  asyncHandler(async (req, res) => {
-    const userId = req.user!.id;
+  asyncHandler(async (req: express.Request, res: express.Response) => {
+    const userId = req.user!.userId;
     const documents = await DocumentsService.getUserDocuments(userId);
 
     // Format pour compatibilité avec le frontend existant
@@ -42,8 +42,8 @@ apiRouter.get('/documents',
 // Routes pour les procédures
 apiRouter.get('/procedures',
   validateQuery(schemas.procedures.search),
-  asyncHandler(async (req, res) => {
-    const userId = req.user!.id;
+  asyncHandler(async (req: express.Request, res: express.Response) => {
+    const userId = req.user!.userId;
     const procedures = await ProceduresService.getUserProcedures(userId);
 
     // Format pour compatibilité avec le frontend existant
@@ -62,8 +62,8 @@ apiRouter.get('/procedures',
 
 // Route pour les statistiques du dashboard
 apiRouter.get('/dashboard/stats',
-  asyncHandler(async (req, res) => {
-    const userId = req.user!.id;
+  asyncHandler(async (req: express.Request, res: express.Response) => {
+    const userId = req.user!.userId;
 
     const [documents, procedureStats] = await Promise.all([
       DocumentsService.getUserDocuments(userId),

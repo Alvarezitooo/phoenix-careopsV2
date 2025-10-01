@@ -10,6 +10,8 @@ const envSchema = z.object({
   ALLOWED_ORIGINS: z.string().optional(),
   LOG_LEVEL: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
+  // 🐍 Python AI Service
+  PYTHON_API_URL: z.string().url('PYTHON_API_URL doit être une URL valide').default('http://localhost:8000'),
 });
 
 const parsed = envSchema.safeParse(process.env);

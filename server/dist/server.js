@@ -1,73 +1,98 @@
-/**
- * 🕊️ PhoenixCare - Architecture Monolitique Optimisée
- *
- * 🔥 SOLUTION RECOMMANDÉE : Custom Next Server + Express
- * ✅ 1 seul processus Node.js
- * ✅ 1 seul port Railway
- * ✅ 0 conflit, 0 proxy, 0 zombie process
- *
- * Architecture : Express gère les API, Next.js gère les pages/assets
- * Tout dans un seul container Docker avec PID 1 propre
- */
 import express from 'express';
 import next from 'next';
-import dotenv from 'dotenv';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 // Import des routes et middlewares
+import { authRouter } from './api/auth/index.js';
 import apiRouter from './api/index.js';
+import { authMiddleware } from './middlewares/auth.js';
+import { env } from './config/env.js';
+import { API_ERRORS } from './utils/errors.js';
+import { loggers, requestLogger } from './utils/logger.js';
+import { errorHandler } from './utils/errors.js';
 // Configuration
-dotenv.config();
-const dev = process.env.NODE_ENV !== 'production';
-const port = Number(process.env.PORT) || 8080;
+const dev = env.NODE_ENV !== 'production';
+const port = env.PORT;
+const allowAllOrigins = env.allowedOrigins.includes('*');
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowAllOrigins || !origin || env.allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        console.warn(`❌ Requête refusée par CORS depuis l'origine: ${origin}`);
+        return callback(new Error('Origin not allowed by CORS'));
+    },
+    credentials: true,
+};
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    handler: (_req, res) => {
+        res.status(429).json({
+            error: {
+                code: API_ERRORS.RATE_LIMITED,
+                message: 'Trop de requêtes, merci de réessayer dans quelques instants.',
+            },
+        });
+    },
+});
 // 🔥 Initialisation Next.js avec répertoire client
-// ✅ résout en /app/client à l'exécution
-const clientDir = path.resolve('client');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientDir = path.resolve(__dirname, '../../client');
 const nextApp = next({
     dev,
-    dir: clientDir // Répertoire du frontend Next.js
+    dir: clientDir
 });
 const nextHandle = nextApp.getRequestHandler();
-// 🚀 Démarrage asynchrone (pattern recommandé pour Next.js)
+// 🚀 Démarrage asynchrone
 (async () => {
     try {
-        // Préparation de Next.js
         await nextApp.prepare();
-        console.log('✅ Next.js prêt');
-        // Création du serveur Express
+        loggers.system('Next.js initialized successfully');
         const server = express();
-        // 1) Base
+        // 1) Middlewares de base et de sécurité
         server.set("trust proxy", 1);
+        // Logger des requêtes (doit être en premier)
+        server.use(requestLogger);
+        // Durcissement HTTP de base
+        server.use(helmet({
+            contentSecurityPolicy: false,
+            crossOriginEmbedderPolicy: false,
+        }));
+        server.use(limiter);
+        // Configuration CORS pour autoriser le frontend
+        server.use(cors(corsOptions));
         server.use(express.json());
         server.use(express.urlencoded({ extended: true }));
-        // 2) Health publics
+        server.use(cookieParser());
+        // 2) Routes publiques (health checks, authentification)
         server.get("/healthz", (_req, res) => res.status(200).json({ status: "ok" }));
         server.get("/readyz", (_req, res) => res.status(200).json({ status: "ready" }));
-        // 3) 🧪 Routes diagnostiques (temporaire)
-        server.get("/api/ping", (_req, res) => res.json({ pong: true, t: Date.now() }));
-        server.get("/api/debug", (req, res) => res.json({
-            method: req.method,
-            path: req.path,
-            ip: req.ip,
-            cookies: req.headers.cookie || null,
-            ua: req.headers['user-agent'],
-            host: req.headers.host,
-        }));
-        // 4) ⬅️ API avant Next (IMPORTANT)
-        //    ⚠️ TEMP : aucune auth ici pour isoler le problème
-        server.use("/api", apiRouter);
-        // 5) Next pour tout le reste
+        server.use("/api/auth", authRouter);
+        // 3) Routes API protégées
+        server.use("/api", authMiddleware, apiRouter);
+        // 4) Gestionnaire Next.js pour toutes les autres requêtes (pages frontend)
         server.all("*", (req, res) => nextHandle(req, res));
+        // 5) Gestion d'erreurs centralisée (doit être en dernier)
+        server.use(errorHandler);
         // 🎉 Démarrage du serveur unifié
         server.listen(port, () => {
-            console.log(`🚀 PhoenixCare démarré sur le port ${port}`);
-            console.log(`📍 URL: http://localhost:${port}`);
-            console.log(`🔥 Architecture: Custom Next Server + Express`);
-            console.log(`💝 Mission: Construire les outils que l'État ne fournit pas`);
-            console.log(`🏥 Health checks: /healthz, /readyz`);
+            loggers.system('PhoenixCare server started successfully', {
+                port,
+                environment: env.NODE_ENV,
+                allowedOrigins: allowAllOrigins ? ['*'] : env.allowedOrigins,
+            });
         });
     }
     catch (error) {
-        console.error('❌ Erreur lors du démarrage:', error);
+        loggers.error('Failed to start server', error);
         process.exit(1);
     }
 })();
