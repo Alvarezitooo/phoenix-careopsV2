@@ -165,7 +165,14 @@ export default function SignupPage() {
 
           <div className="mt-6 text-center">
             <p className="text-xs text-slate-500">
-              En créant un compte, vous acceptez nos conditions d'utilisation et notre politique de confidentialité.
+              En créant un compte, vous acceptez nos{' '}
+              <Link href="/cgu" className="text-rose-600 hover:text-rose-700 underline">
+                conditions d'utilisation
+              </Link>{' '}
+              et notre{' '}
+              <Link href="/politique-confidentialite" className="text-rose-600 hover:text-rose-700 underline">
+                politique de confidentialité
+              </Link>.
             </p>
           </div>
         </div>
