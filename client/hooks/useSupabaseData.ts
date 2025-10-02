@@ -2,11 +2,22 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useSupabaseAuth } from '@/context/SupabaseAuthContext';
+import type {
+  UserAide,
+  UserDocument,
+  UserDeadline,
+  FamilyProfile,
+  Child,
+  UserAideInsert,
+  UserDocumentInsert,
+  UserDeadlineInsert,
+  FamilyProfileUpdate
+} from '@/types/supabase';
 
 // Hook pour les aides de l'utilisateur
 export function useUserAides() {
   const { user } = useSupabaseAuth();
-  const [aides, setAides] = useState<any[]>([]);
+  const [aides, setAides] = useState<UserAide[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,7 +53,7 @@ export function useUserAides() {
 // Hook pour les documents de l'utilisateur
 export function useUserDocuments() {
   const { user } = useSupabaseAuth();
-  const [documents, setDocuments] = useState<any[]>([]);
+  const [documents, setDocuments] = useState<UserDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,7 +89,7 @@ export function useUserDocuments() {
 // Hook pour les échéances de l'utilisateur
 export function useUserDeadlines() {
   const { user } = useSupabaseAuth();
-  const [deadlines, setDeadlines] = useState<any[]>([]);
+  const [deadlines, setDeadlines] = useState<UserDeadline[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -114,8 +125,8 @@ export function useUserDeadlines() {
 // Hook pour le profil famille
 export function useFamilyProfile() {
   const { user } = useSupabaseAuth();
-  const [profile, setProfile] = useState<any>(null);
-  const [children, setChildren] = useState<any[]>([]);
+  const [profile, setProfile] = useState<FamilyProfile | null>(null);
+  const [children, setChildren] = useState<Child[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -165,7 +176,7 @@ export function useFamilyProfile() {
 export function useSupabaseActions() {
   const { user } = useSupabaseAuth();
 
-  const addAide = async (aide: any) => {
+  const addAide = async (aide: Omit<UserAideInsert, 'user_id'>) => {
     if (!user) throw new Error('Non connecté');
 
     const { data, error } = await supabase
@@ -178,7 +189,7 @@ export function useSupabaseActions() {
     return data;
   };
 
-  const addDocument = async (document: any) => {
+  const addDocument = async (document: Omit<UserDocumentInsert, 'user_id'>) => {
     if (!user) throw new Error('Non connecté');
 
     const { data, error } = await supabase
@@ -191,7 +202,7 @@ export function useSupabaseActions() {
     return data;
   };
 
-  const addDeadline = async (deadline: any) => {
+  const addDeadline = async (deadline: Omit<UserDeadlineInsert, 'user_id'>) => {
     if (!user) throw new Error('Non connecté');
 
     const { data, error } = await supabase
@@ -204,7 +215,7 @@ export function useSupabaseActions() {
     return data;
   };
 
-  const updateProfile = async (profileData: any) => {
+  const updateProfile = async (profileData: FamilyProfileUpdate) => {
     if (!user) throw new Error('Non connecté');
 
     const { data, error } = await supabase

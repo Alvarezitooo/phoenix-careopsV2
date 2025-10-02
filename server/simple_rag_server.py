@@ -265,6 +265,35 @@ def get_conversation_history(user_id: str) -> list:
     """Récupère l'historique de conversation (derniers 10 messages)"""
     return conversation_memory.get(user_id, [])[-MAX_MEMORY_MESSAGES:]
 
+def fetch_user_memories(user_id: str, limit: int = 5) -> list:
+    """🧠 Récupère les mémoires à long terme de l'utilisateur depuis Supabase"""
+    try:
+        if not SUPABASE_URL or not SUPABASE_ANON_KEY:
+            return []
+
+        headers = {
+            'apikey': SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json'
+        }
+
+        # Récupérer les top N mémoires (triées par importance)
+        response = requests.get(
+            f"{SUPABASE_URL}/rest/v1/user_memories?user_id=eq.{user_id}&order=importance_score.desc,created_at.desc&limit={limit}",
+            headers=headers,
+            timeout=2
+        )
+
+        if response.status_code == 200:
+            memories = response.json()
+            print(f"🧠 {len(memories)} mémoires récupérées pour {user_id}")
+            return memories
+        else:
+            return []
+
+    except Exception as e:
+        print(f"⚠️ Erreur fetch_user_memories: {e}")
+        return []
+
 def add_to_conversation(user_id: str, message: str, response: str):
     """Ajoute un échange à l'historique avec limite globale"""
     # Cleanup si trop d'utilisateurs en mémoire
@@ -605,6 +634,9 @@ def chat_send():
         conversation_history = get_conversation_history(user_id)
         has_history = len(conversation_history) > 0
 
+        # 🧠 Récupérer les mémoires à long terme de l'utilisateur
+        user_memories = fetch_user_memories(user_id, limit=5)
+
         # Recherche documents pertinents (avec fuzzy matching)
         relevant_docs = find_relevant_documents(message)
 
@@ -629,6 +661,17 @@ def chat_send():
                     history_text += f"{idx}. Utilisateur: {exchange['user']}\n"
                     history_text += f"   Toi: {exchange['assistant'][:100]}...\n\n"
 
+            # 🧠 Mémoires à long terme de l'utilisateur
+            memories_text = ""
+            if user_memories:
+                memories_text = "\n🧠 CE QUE JE SAIS SUR CET UTILISATEUR (mémoires importantes):\n"
+                for idx, memory in enumerate(user_memories, 1):
+                    memory_content = memory.get('memory_content', '')
+                    memory_type = memory.get('memory_type', 'general')
+                    importance = memory.get('importance_score', 5)
+                    memories_text += f"{idx}. [{memory_type}] {memory_content} (importance: {importance}/10)\n"
+                memories_text += "\n⚠️ UTILISE CES MÉMOIRES pour personnaliser tes réponses et créer un lien authentique !\n"
+
             # Contexte utilisateur personnalisé
             context_text = ""
             if user_context:
@@ -648,7 +691,7 @@ def chat_send():
                 context_text += "\n⚠️ Utilise ce contexte pour personnaliser ta réponse !\n"
 
             prompt = f"""Tu es PhoenixIA, conseiller social expert pour les familles d'enfants en situation de handicap.
-{history_text}{context_text}
+{history_text}{memories_text}{context_text}
 📚 SOURCES DISPONIBLES:
 {sources_list}
 
