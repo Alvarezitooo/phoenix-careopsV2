@@ -26,6 +26,7 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import requests
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+import stripe
 
 # Chargement variables d'environnement
 load_dotenv()
@@ -33,6 +34,10 @@ load_dotenv()
 # Variables Supabase
 SUPABASE_URL = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
 SUPABASE_ANON_KEY = os.getenv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
+
+# Configuration Stripe
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
 
 app = Flask(__name__)
 
@@ -1340,6 +1345,72 @@ def get_aides():
         return jsonify({"aides": []}), 200
 
 
+# ===== 💳 STRIPE PAYMENT ROUTES =====
+
+@app.route('/api/stripe/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    """Crée une session Stripe Checkout pour un abonnement"""
+    try:
+        data = request.get_json()
+        price_id = data.get('priceId')
+
+        if not price_id:
+            return jsonify({'error': 'priceId requis'}), 400
+
+        # Récupère l'URL frontend depuis l'environnement
+        frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+
+        # Crée une session Checkout
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price': price_id,
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url=f'{frontend_url}/soutenir/success?session_id={{CHECKOUT_SESSION_ID}}',
+            cancel_url=f'{frontend_url}/soutenir',
+            metadata={
+                'source': 'phoenixcare_donations'
+            }
+        )
+
+        return jsonify({'url': checkout_session.url})
+
+    except Exception as e:
+        print(f"❌ Erreur Stripe checkout: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/stripe/webhook', methods=['POST'])
+def stripe_webhook():
+    """Webhook Stripe pour gérer les événements de paiement"""
+    payload = request.data
+    sig_header = request.headers.get('Stripe-Signature')
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError:
+        return jsonify({'error': 'Invalid payload'}), 400
+    except stripe.error.SignatureVerificationError:
+        return jsonify({'error': 'Invalid signature'}), 400
+
+    # Gestion des événements
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        print(f"✅ Paiement réussi: {session['id']}")
+        # TODO: Mettre à jour Supabase avec le statut donateur
+
+    elif event['type'] == 'customer.subscription.deleted':
+        subscription = event['data']['object']
+        print(f"❌ Abonnement annulé: {subscription['id']}")
+        # TODO: Retirer le statut donateur dans Supabase
+
+    return jsonify({'status': 'success'})
+
+
 if __name__ == '__main__':
     print("=" * 60)
     print("🚀 SERVEUR RAG PHOENIX - VERSION OPTIMISÉE V2")
@@ -1361,6 +1432,8 @@ if __name__ == '__main__':
     print("  GET  /api/cache/stats - Stats cache")
     print("  GET  /api/memory/stats - Stats mémoire")
     print("  DELETE /api/memory/clear/<user_id> - Effacer mémoire")
+    print("  POST /api/stripe/create-checkout-session - Créer session Stripe")
+    print("  POST /api/stripe/webhook - Webhook Stripe")
     print("=" * 60)
 
     # 🔐 SECURITY: debug=True interdit en production (CWE-94)

@@ -2,8 +2,44 @@
 
 import { Heart, Coffee, Users, Star } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
+
+// TODO: Remplacer par tes vrais Price IDs Stripe
+const STRIPE_PRICE_IDS = {
+  essential: 'price_XXXXX', // 5€/mois - À remplacer
+  generous: 'price_XXXXX',  // 10€/mois - À remplacer
+  patron: 'price_XXXXX',    // 20€/mois - À remplacer
+};
 
 export default function SoutenirPage() {
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleSubscribe = async (priceId: string, tier: string) => {
+    setLoading(tier);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+      const response = await fetch(`${API_URL}/api/stripe/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url; // Redirige vers Stripe Checkout
+      } else {
+        alert('Erreur lors de la création de la session de paiement');
+      }
+    } catch (error) {
+      console.error('Erreur Stripe:', error);
+      alert('Une erreur est survenue. Réessayez plus tard.');
+    } finally {
+      setLoading(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header simple */}
@@ -57,13 +93,17 @@ export default function SoutenirPage() {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
             <Coffee className="h-12 w-12 text-amber-500 mb-4" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">Un café</h3>
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">Soutien Essentiel</h3>
             <p className="text-slate-600 mb-4">
-              Offrez un café à l'équipe Phoenix
+              Soutenez PhoenixCare avec un petit geste
             </p>
-            <div className="text-2xl font-bold text-slate-900 mb-4">3€</div>
-            <button className="w-full bg-amber-500 text-white py-3 rounded-xl font-medium hover:bg-amber-600 transition-colors">
-              Offrir un café ☕
+            <div className="text-2xl font-bold text-slate-900 mb-4">5€/mois</div>
+            <button
+              onClick={() => handleSubscribe(STRIPE_PRICE_IDS.essential, 'essential')}
+              disabled={loading !== null}
+              className="w-full bg-amber-500 text-white py-3 rounded-xl font-medium hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading === 'essential' ? 'Chargement...' : 'Choisir ce palier ☕'}
             </button>
           </div>
 
@@ -74,25 +114,33 @@ export default function SoutenirPage() {
               </span>
             </div>
             <Heart className="h-12 w-12 text-rose-500 mb-4" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">Soutien mensuel</h3>
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">Soutien Généreux</h3>
             <p className="text-slate-600 mb-4">
               Aidez Phoenix à grandir et aider plus de familles
             </p>
             <div className="text-2xl font-bold text-slate-900 mb-4">10€/mois</div>
-            <button className="w-full bg-rose-500 text-white py-3 rounded-xl font-medium hover:bg-rose-600 transition-colors">
-              Soutenir Phoenix 💝
+            <button
+              onClick={() => handleSubscribe(STRIPE_PRICE_IDS.generous, 'generous')}
+              disabled={loading !== null}
+              className="w-full bg-rose-500 text-white py-3 rounded-xl font-medium hover:bg-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading === 'generous' ? 'Chargement...' : 'Choisir ce palier 💝'}
             </button>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
             <Star className="h-12 w-12 text-purple-500 mb-4" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">Mécénat</h3>
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">Soutien Héroïque</h3>
             <p className="text-slate-600 mb-4">
               Devenez mécène de Phoenix et de l'inclusion
             </p>
-            <div className="text-2xl font-bold text-slate-900 mb-4">25€/mois</div>
-            <button className="w-full bg-purple-500 text-white py-3 rounded-xl font-medium hover:bg-purple-600 transition-colors">
-              Devenir mécène ⭐
+            <div className="text-2xl font-bold text-slate-900 mb-4">20€/mois</div>
+            <button
+              onClick={() => handleSubscribe(STRIPE_PRICE_IDS.patron, 'patron')}
+              disabled={loading !== null}
+              className="w-full bg-purple-500 text-white py-3 rounded-xl font-medium hover:bg-purple-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading === 'patron' ? 'Chargement...' : 'Choisir ce palier ⭐'}
             </button>
           </div>
         </div>

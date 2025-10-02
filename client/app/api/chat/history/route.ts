@@ -1,6 +1,9 @@
 // 📜 API Route pour l'historique chat
 import { NextRequest, NextResponse } from 'next/server';
 
+// Force dynamic rendering (disable static optimization)
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
