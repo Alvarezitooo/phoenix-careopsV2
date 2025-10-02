@@ -398,6 +398,17 @@ generation_config = {
     "max_output_tokens": 2000,
 }
 
+# 🔒 Configuration Safety pour documents médicaux/administratifs
+# PhoenixCare analyse des documents MDPH/médicaux légitimes
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
+
+safety_settings = {
+    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+}
+
 # ===== 🔄 GÉNÉRATION GEMINI AVEC RETRY =====
 def generate_with_gemini_internal(prompt: str) -> str:
     """Appel Gemini brut (utilisé par le wrapper avec retry)"""
@@ -425,6 +436,7 @@ def generate_with_gemini(prompt: str, max_retries: int = 3) -> str:
 model = genai.GenerativeModel(
     model_name="models/gemini-2.5-flash",
     generation_config=generation_config,
+    safety_settings=safety_settings,  # 🔒 Ajout safety_settings
     system_instruction="""Tu es PhoenixIA, conseiller social expert multi-domaines.
 
 EXPERTISE COMPLÈTE:
@@ -1055,15 +1067,36 @@ RÉPONDS MAINTENANT:"""
                 # Convertir bytes en PIL Image
                 image = PIL.Image.open(io.BytesIO(document_content))
 
-                # Utiliser gemini-2.0-flash-exp pour vision
-                vision_model = genai.GenerativeModel('gemini-2.0-flash-exp')
+                # Utiliser gemini-2.0-flash-exp pour vision avec safety_settings
+                vision_model = genai.GenerativeModel(
+                    'gemini-2.0-flash-exp',
+                    safety_settings=safety_settings  # 🔒 Safety settings pour documents médicaux
+                )
 
                 response = vision_model.generate_content(
                     [prompt, image],
                     request_options={'timeout': 30}
                 )
 
-                analysis = response.text if response.text else "Impossible d'analyser l'image."
+                # Gestion finish_reason SAFETY
+                if not response.text and hasattr(response, 'candidates') and len(response.candidates) > 0:
+                    finish_reason = response.candidates[0].finish_reason
+                    if finish_reason == 2:  # SAFETY
+                        print(f"⚠️ Erreur Gemini: finish_reason=SAFETY (2) - Contenu bloqué par filtre de sécurité")
+                        analysis = """## ⚠️ Document bloqué par le filtre de sécurité
+
+Le filtre de sécurité de l'IA a bloqué l'analyse de ce document. Cela peut arriver avec certains documents médicaux ou administratifs contenant des termes sensibles.
+
+**🎯 Solutions :**
+1. Réessayez avec un autre format (PDF → TXT ou image)
+2. Contactez le support Phoenix pour une analyse manuelle
+3. Vérifiez que le document est lisible et complet
+
+ℹ️ *Vos données restent confidentielles et sécurisées.*"""
+                    else:
+                        analysis = f"Impossible d'analyser l'image (finish_reason: {finish_reason})."
+                else:
+                    analysis = response.text if response.text else "Impossible d'analyser l'image."
 
             except ImportError:
                 return jsonify({
