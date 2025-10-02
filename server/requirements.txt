@@ -46,6 +46,7 @@ loguru==0.7.2
 python-dateutil==2.8.2
 python-multipart==0.0.6
 python-jose[cryptography]==3.3.0
+tenacity==8.2.3
 # Tests
 pytest>=8.0.0
 pytest-asyncio>=0.23.0
