@@ -1,4 +1,5 @@
 // 🤖 API Client pour Phoenix Care Chat
+import { supabase } from './supabase';
 
 export interface ChatMessage {
   id: string;
@@ -31,13 +32,31 @@ export interface UserMemory {
 class ChatApi {
   private baseUrl = '/api/chat';
 
+  // 🔐 Récupérer le token d'authentification
+  private async getAuthToken(): Promise<string> {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      throw new Error('Utilisateur non authentifié. Veuillez vous reconnecter.');
+    }
+
+    return session.access_token;
+  }
+
+  // 🔐 Headers avec authentification
+  private async getAuthHeaders(): Promise<HeadersInit> {
+    const token = await this.getAuthToken();
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+  }
+
   // 💬 Envoyer un message
   async sendMessage(message: string, userId: string): Promise<ChatResponse> {
     const response = await fetch(`${this.baseUrl}/message`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: await this.getAuthHeaders(), // 🔐 Token ajouté
       body: JSON.stringify({ message, userId }),
     });
 
@@ -50,7 +69,9 @@ class ChatApi {
 
   // 📜 Récupérer l'historique
   async getChatHistory(userId: string): Promise<{ messages: ChatMessage[]; context: any }> {
-    const response = await fetch(`${this.baseUrl}/history?userId=${userId}`);
+    const response = await fetch(`${this.baseUrl}/history?userId=${userId}`, {
+      headers: await this.getAuthHeaders(), // 🔐 Token ajouté
+    });
 
     if (!response.ok) {
       throw new Error(`Erreur ${response.status}: ${response.statusText}`);
@@ -63,9 +84,7 @@ class ChatApi {
   async saveMemory(userId: string, memory: string, type: string = 'general'): Promise<{ success: boolean; message: string }> {
     const response = await fetch(`${this.baseUrl}/memory`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: await this.getAuthHeaders(), // 🔐 Token ajouté
       body: JSON.stringify({ userId, memory, type }),
     });
 
@@ -80,9 +99,7 @@ class ChatApi {
   async resetConversation(userId: string): Promise<{ success: boolean; message: string }> {
     const response = await fetch(`${this.baseUrl}/reset`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: await this.getAuthHeaders(), // 🔐 Token ajouté
       body: JSON.stringify({ userId }),
     });
 
@@ -101,9 +118,7 @@ class ChatApi {
   ): Promise<DocumentAnalysis> {
     const response = await fetch(`${this.baseUrl}/analyze-document`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: await this.getAuthHeaders(), // 🔐 Token ajouté
       body: JSON.stringify({ document, userId, documentType }),
     });
 
@@ -116,7 +131,9 @@ class ChatApi {
 
   // 🧠 Récupérer mémoire utilisateur
   async getUserMemory(userId: string): Promise<UserMemory> {
-    const response = await fetch(`${this.baseUrl}/memory/${userId}`);
+    const response = await fetch(`${this.baseUrl}/memory/${userId}`, {
+      headers: await this.getAuthHeaders(), // 🔐 Token ajouté
+    });
 
     if (!response.ok) {
       throw new Error(`Erreur ${response.status}: ${response.statusText}`);
@@ -129,9 +146,7 @@ class ChatApi {
   async updateUserMemory(userId: string, memoryUpdate: any): Promise<{ success: boolean; message: string }> {
     const response = await fetch(`${this.baseUrl}/memory/${userId}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: await this.getAuthHeaders(), // 🔐 Token ajouté
       body: JSON.stringify({ memoryUpdate }),
     });
 
@@ -142,7 +157,7 @@ class ChatApi {
     return response.json();
   }
 
-  // 🏥 Health check
+  // 🏥 Health check (pas besoin d'auth)
   async healthCheck(): Promise<{ status: string; services: Record<string, string> }> {
     const response = await fetch('/api/health');
 

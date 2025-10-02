@@ -3,10 +3,8 @@ const nextConfig = {
   // 🔥 JAMstack sur Railway - Configuration Hybride
   reactStrictMode: true,
 
-  // Désactiver ESLint strict pour le build (erreurs non-bloquantes)
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // ✅ ESLint activé pour garantir qualité code
+  // (corrigé suite audit sécurité)
 
   // Optimisation Railway CDN
   images: {
