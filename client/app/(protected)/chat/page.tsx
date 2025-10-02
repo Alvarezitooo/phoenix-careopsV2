@@ -5,6 +5,9 @@ import { useSupabaseAuth } from '@/context/SupabaseAuthContext';
 import { useSearchParams } from 'next/navigation';
 import { useUserAides, useUserDocuments, useUserDeadlines, useFamilyProfile } from '@/hooks/useSupabaseData';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default function ChatPage() {
   const { user, loading: isLoading } = useSupabaseAuth();
   const searchParams = useSearchParams();
