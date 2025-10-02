@@ -373,7 +373,14 @@ def save_conversation_to_supabase(user_id: str, message: str, response: str, sou
         print(f"⚠️ Erreur sauvegarde Supabase: {e}")
 
 # Configuration Gemini
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    print("❌ ERREUR CRITIQUE: GEMINI_API_KEY manquant!")
+    print("⚠️  Le serveur va démarrer mais les requêtes IA échoueront")
+    # On configure quand même avec une clé vide pour éviter le crash au boot
+    genai.configure(api_key="dummy_key")
+else:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 generation_config = {
     "temperature": 0.7,  # Augmenté pour des réponses plus naturelles
