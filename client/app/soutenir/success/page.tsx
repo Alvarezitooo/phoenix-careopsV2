@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Heart, CheckCircle } from 'lucide-react';
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic';
-
-export default function SuccessPage() {
+// Composant séparé pour le contenu qui utilise useSearchParams
+function SuccessContent() {
   const searchParams = useSearchParams();
   const session_id = searchParams.get('session_id');
 
@@ -60,5 +58,21 @@ export default function SuccessPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+// Page principale avec Suspense boundary
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500 mx-auto mb-4"></div>
+          <p className="text-slate-600">Chargement...</p>
+        </div>
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 }
