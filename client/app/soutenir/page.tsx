@@ -4,11 +4,11 @@ import { Heart, Coffee, Users, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
-// TODO: Remplacer par tes vrais Price IDs Stripe
+// Stripe Price IDs
 const STRIPE_PRICE_IDS = {
-  essential: 'price_XXXXX', // 5€/mois - À remplacer
-  generous: 'price_XXXXX',  // 10€/mois - À remplacer
-  patron: 'price_XXXXX',    // 20€/mois - À remplacer
+  essential: 'price_1SDgQbGqCED3zWAv9CumyPpt', // 5€/mois - Soutien Essentiel
+  generous: 'price_1SDgR8GqCED3zWAvADexF6yv',  // 10€/mois - Soutien Généreux
+  patron: 'price_1SDgRXGqCED3zWAvpfhOnDCf',    // 20€/mois - Soutien Héroïque
 };
 
 export default function SoutenirPage() {
