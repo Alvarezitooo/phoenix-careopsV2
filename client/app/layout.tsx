@@ -2,6 +2,7 @@
 
 import "./globals.css";
 import { Providers } from "@/providers";
+import CookieConsent from "@/components/CookieConsent";
 
 export default function RootLayout({
   children,
@@ -13,6 +14,7 @@ export default function RootLayout({
       <body>
         <Providers>
           {children}
+          <CookieConsent />
         </Providers>
       </body>
     </html>
