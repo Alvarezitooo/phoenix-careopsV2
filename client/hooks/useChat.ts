@@ -41,7 +41,7 @@ async function getApiErrorMessage(error: any): Promise<string> {
       return uiCopy.errors.UNKNOWN_ERROR;
     }
   }
-  if (error.message.includes('Failed to fetch')) {
+  if (error.message && error.message.includes('Failed to fetch')) {
     return uiCopy.errors.network;
   }
   return uiCopy.errors.UNKNOWN_ERROR;
