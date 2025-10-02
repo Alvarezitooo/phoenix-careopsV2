@@ -1352,16 +1352,17 @@ def get_aides():
         return jsonify({"aides": []}), 200
 
 
-# ===== 🏠 HEALTH CHECK =====
+# ===== 🏠 ROOT ENDPOINT =====
 
 @app.route('/', methods=['GET'])
-def health_check():
-    """Health check endpoint pour Railway"""
+def root():
+    """Root endpoint pour Railway (API info)"""
     return jsonify({
         'status': 'ok',
         'service': 'PhoenixCare RAG API',
         'version': '1.0.0',
         'endpoints': {
+            'health': '/health',
             'chat': '/api/chat/send',
             'aides': '/api/aides',
             'stripe': '/api/stripe/create-checkout-session'
