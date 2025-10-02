@@ -1,7 +1,7 @@
 # Core web framework (Flask only, FastAPI not used)
 Flask==3.0.0
-gunicorn==21.2.0
-flask-cors==4.0.0
+gunicorn>=23.0.0  # 🔒 Fix: Request smuggling CVE (was 21.2.0)
+flask-cors>=5.0.0  # 🔒 Fix: Access-Control-Allow-Private-Network (was 4.0.0)
 
 # Gemini AI
 google-generativeai==0.8.3
@@ -15,7 +15,10 @@ python-dotenv==1.0.0
 tenacity==8.2.3
 
 # Document processing
-PyPDF2==3.0.1
+pypdf>=5.1.0  # 🔒 Fix: Infinite loop CVE + PyPDF2 deprecated → pypdf
+
+# Image processing (pour Gemini Vision)
+Pillow>=11.0.0
 
 # Stripe payments
 stripe==7.0.0

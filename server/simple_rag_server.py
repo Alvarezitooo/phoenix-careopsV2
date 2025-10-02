@@ -953,9 +953,9 @@ def analyze_document():
                     tmp_file.write(pdf_bytes)
                     tmp_path = tmp_file.name
 
-                # Extraire le texte avec PyPDF2
+                # Extraire le texte avec pypdf (nouvelle API)
                 try:
-                    from PyPDF2 import PdfReader
+                    from pypdf import PdfReader
                     reader = PdfReader(tmp_path)
                     text_parts = []
                     for page in reader.pages:
@@ -978,8 +978,8 @@ def analyze_document():
 
             except ImportError:
                 return jsonify({
-                    "error": "PyPDF2 non installé",
-                    "message": "Installez PyPDF2 : pip install PyPDF2"
+                    "error": "pypdf non installé",
+                    "message": "Installez pypdf : pip install pypdf"
                 }), 500
             except Exception as e:
                 print(f"⚠️ Erreur extraction PDF: {e}")
