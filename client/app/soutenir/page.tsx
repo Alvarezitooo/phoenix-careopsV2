@@ -68,23 +68,19 @@ export default function SoutenirPage() {
           </p>
         </div>
 
-        {/* Stats impact */}
+        {/* Mission Phoenix */}
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 mb-12">
           <h2 className="text-2xl font-semibold text-slate-900 mb-6 text-center">
-            L'impact de Phoenix
+            🚀 Phoenix - Bêta Test en Cours
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-rose-600 mb-2">1,247</div>
-              <div className="text-slate-600">Familles aidées</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-rose-600 mb-2">8,934</div>
-              <div className="text-slate-600">Questions répondues</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-rose-600 mb-2">100%</div>
-              <div className="text-slate-600">Gratuit toujours</div>
+          <p className="text-lg text-slate-600 text-center max-w-2xl mx-auto">
+            PhoenixCare est en phase de test pour aider les familles d'enfants
+            en situation de handicap à naviguer les démarches administratives.
+          </p>
+          <div className="mt-6 text-center">
+            <div className="inline-flex items-center space-x-2 bg-rose-50 px-4 py-2 rounded-full">
+              <span className="text-3xl font-bold text-rose-600">100%</span>
+              <span className="text-slate-700 font-medium">Gratuit · Toujours</span>
             </div>
           </div>
         </div>
@@ -150,57 +146,51 @@ export default function SoutenirPage() {
           <h2 className="text-2xl font-semibold text-slate-900 mb-6">
             💡 Transparence totale
           </h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-3">
-                Nos coûts mensuels :
-              </h3>
-              <ul className="space-y-2 text-slate-600">
-                <li>• IA (Gemini) : ~150€/mois</li>
-                <li>• Hébergement : ~50€/mois</li>
-                <li>• Développement : Bénévole</li>
-                <li>• <strong>Total : ~200€/mois</strong></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-3">
-                Objectif actuel :
-              </h3>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-slate-600">42 soutiens sur 60</span>
-                  <span className="font-semibold">70%</span>
-                </div>
-                <div className="w-full bg-slate-200 rounded-full h-3">
-                  <div className="bg-rose-500 h-3 rounded-full" style={{width: '70%'}}></div>
-                </div>
-                <p className="text-sm text-slate-500">
-                  Il nous manque 18 soutiens pour couvrir 100% des coûts !
-                </p>
-              </div>
-            </div>
+          <div className="prose prose-slate max-w-none">
+            <p className="text-lg text-slate-700 mb-4">
+              PhoenixCare reste <strong>100% gratuit</strong> pour les familles.
+            </p>
+            <p className="text-slate-600">
+              Les coûts de fonctionnement (IA, hébergement) sont couverts par des
+              contributions volontaires de la communauté.
+            </p>
+            <p className="text-slate-600 mt-4">
+              <strong>Objectif :</strong> Pérenniser le service pour aider un maximum de familles.
+            </p>
           </div>
         </div>
 
-        {/* Témoignages */}
+        {/* Mission personnelle */}
         <div className="mt-12 text-center">
           <h2 className="text-2xl font-semibold text-slate-900 mb-8">
-            Ce que disent les familles
+            💝 Pourquoi Phoenix existe
           </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-              <p className="text-slate-600 italic mb-4">
-                "Phoenix m'a évité des mois de galère administrative.
-                En 5 minutes j'avais toutes les réponses pour l'AEEH de mon fils."
-              </p>
-              <div className="font-semibold text-slate-900">— Marie, maman de Lucas (autisme)</div>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-              <p className="text-slate-600 italic mb-4">
-                "Enfin un outil qui comprend vraiment nos problématiques.
-                Je recommande Phoenix à tous les parents que je croise."
-              </p>
-              <div className="font-semibold text-slate-900">— Thomas, papa d'Emma (trisomie)</div>
+          <div className="max-w-2xl mx-auto bg-white rounded-xl p-8 shadow-sm border border-slate-200">
+            <p className="text-lg text-slate-700 italic mb-4">
+              "En tant que papa d'un enfant en situation de handicap, je connais
+              ce défi administratif. Phoenix est né de ce vécu : simplifier
+              l'accès aux aides pour toutes les familles qui font face au même défi."
+            </p>
+            <div className="font-semibold text-slate-900">— Matthieu, créateur de Phoenix</div>
+          </div>
+
+          {/* Lien gestion abonnement */}
+          <div className="max-w-2xl mx-auto mt-8 bg-slate-50 border border-slate-200 rounded-lg p-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h3 className="font-semibold text-slate-900 mb-1">
+                  Déjà contributeur ?
+                </h3>
+                <p className="text-sm text-slate-600">
+                  Gérez votre abonnement (factures, annulation...)
+                </p>
+              </div>
+              <Link
+                href="/soutenir/gerer"
+                className="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-white transition-colors font-medium whitespace-nowrap"
+              >
+                Gérer mon abonnement
+              </Link>
             </div>
           </div>
         </div>

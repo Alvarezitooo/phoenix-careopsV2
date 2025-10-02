@@ -8,41 +8,40 @@ export default function InterconnectionDemo() {
 
   const flows = [
     {
-      id: 'document-analysis',
-      title: 'Upload → Analyse → Dashboard',
-      description: 'Document analysé automatiquement et ajouté au dossier',
-      steps: [
-        { icon: FileText, text: 'Upload document', color: 'bg-blue-100 text-blue-600' },
-        { icon: Sparkles, text: 'Analyse Phoenix', color: 'bg-purple-100 text-purple-600' },
-        { icon: Calendar, text: 'Échéances détectées', color: 'bg-orange-100 text-orange-600' },
-        { icon: Euro, text: 'Droits identifiés', color: 'bg-green-100 text-green-600' }
-      ]
-    },
-    {
       id: 'contextual-help',
-      title: 'Dashboard → Questions contextuelles',
-      description: 'Chaque élément du dashboard connecté à Phoenix',
+      title: 'Dashboard → Chat contextuel',
+      description: 'Chaque bouton du dashboard lance une question pré-remplie dans le chat',
       steps: [
-        { icon: Euro, text: 'Aide AEEH', color: 'bg-green-100 text-green-600' },
-        { icon: MessageSquare, text: 'Comment renouveler ?', color: 'bg-rose-100 text-rose-600' },
-        { icon: Sparkles, text: 'Réponse personnalisée', color: 'bg-purple-100 text-purple-600' }
+        { icon: Euro, text: 'Clic sur aide AEEH', color: 'bg-green-100 text-green-600' },
+        { icon: MessageSquare, text: 'Ouvre le chat', color: 'bg-rose-100 text-rose-600' },
+        { icon: Sparkles, text: 'Question déjà prête', color: 'bg-purple-100 text-purple-600' }
       ]
     },
     {
-      id: 'proactive-suggestions',
-      title: 'Système proactif intelligent',
-      description: 'Phoenix anticipe vos besoins selon votre profil',
+      id: 'document-upload',
+      title: 'Upload document (expérimental)',
+      description: 'Analysez un document avec Phoenix IA',
       steps: [
-        { icon: Calendar, text: 'Échéance détectée', color: 'bg-orange-100 text-orange-600' },
-        { icon: Sparkles, text: 'Alerte Phoenix', color: 'bg-purple-100 text-purple-600' },
-        { icon: MessageSquare, text: 'Guidance automatique', color: 'bg-rose-100 text-rose-600' }
+        { icon: FileText, text: 'Upload fichier', color: 'bg-blue-100 text-blue-600' },
+        { icon: Sparkles, text: 'Analyse IA', color: 'bg-purple-100 text-purple-600' },
+        { icon: MessageSquare, text: 'Résultat affiché', color: 'bg-rose-100 text-rose-600' }
+      ]
+    },
+    {
+      id: 'real-alerts',
+      title: 'Alertes automatiques',
+      description: 'Affiche les échéances à moins de 7 jours depuis Supabase',
+      steps: [
+        { icon: Calendar, text: 'Deadline Supabase', color: 'bg-orange-100 text-orange-600' },
+        { icon: Sparkles, text: 'Calcul J-7', color: 'bg-purple-100 text-purple-600' },
+        { icon: MessageSquare, text: 'Bouton "Demander aide"', color: 'bg-rose-100 text-rose-600' }
       ]
     }
   ];
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-slate-900 mb-4">🔗 Écosystème Interconnecté</h3>
+      <h3 className="text-lg font-semibold text-slate-900 mb-4">🔗 Fonctionnalités actuelles</h3>
 
       <div className="space-y-4">
         {flows.map((flow) => (
@@ -92,9 +91,9 @@ export default function InterconnectionDemo() {
         <div className="flex items-start space-x-3">
           <Sparkles className="h-5 w-5 text-purple-600 mt-0.5" />
           <div>
-            <h4 className="font-medium text-slate-900">Intelligence contextuelle</h4>
+            <h4 className="font-medium text-slate-900">Chat IA avec contexte</h4>
             <p className="text-sm text-slate-600 mt-1">
-              Phoenix connaît votre famille, vos aides actuelles et vos échéances pour des réponses ultra-personnalisées.
+              Le chat reçoit automatiquement vos données (aides, documents, échéances) pour des réponses personnalisées.
             </p>
           </div>
         </div>

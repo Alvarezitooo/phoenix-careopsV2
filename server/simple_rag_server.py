@@ -1407,6 +1407,33 @@ def create_checkout_session():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/stripe/customer-portal', methods=['POST'])
+@require_auth
+def create_customer_portal():
+    """Crée une session Stripe Customer Portal pour gérer l'abonnement"""
+    try:
+        data = request.get_json()
+        customer_id = data.get('customerId')
+
+        if not customer_id:
+            return jsonify({'error': 'customerId requis'}), 400
+
+        # Récupère l'URL frontend
+        frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+
+        # Crée une session Customer Portal
+        portal_session = stripe.billing_portal.Session.create(
+            customer=customer_id,
+            return_url=f'{frontend_url}/soutenir',
+        )
+
+        return jsonify({'url': portal_session.url})
+
+    except Exception as e:
+        print(f"❌ Erreur Stripe portal: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/stripe/webhook', methods=['POST'])
 def stripe_webhook():
     """Webhook Stripe pour gérer les événements de paiement"""

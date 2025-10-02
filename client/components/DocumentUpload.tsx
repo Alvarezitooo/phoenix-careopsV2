@@ -44,11 +44,17 @@ export default function DocumentUpload({ onDocumentAnalyzed, userId }: DocumentU
         const documentType = file.type.includes('image') ? 'scan' :
                            file.type.includes('pdf') ? 'pdf' : 'text';
 
+        // 🔐 Récupérer le token Supabase
+        const { supabase } = await import('@/lib/supabase');
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+
         // Appel à l'API d'analyse
         const response = await fetch('/api/chat/analyze-document', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : '',
           },
           body: JSON.stringify({
             document: content,

@@ -10,6 +10,7 @@ import { useUserAides, useUserDocuments, useUserDeadlines, useFamilyProfile } fr
 import { useRouter } from 'next/navigation';
 import DocumentUpload from '@/components/DocumentUpload';
 import InterconnectionDemo from '@/components/InterconnectionDemo';
+import OnboardingWizard from '@/components/OnboardingWizard';
 import ReactMarkdown from 'react-markdown';
 
 export default function DashboardPage() {
@@ -19,6 +20,7 @@ export default function DashboardPage() {
   const [selectedTab, setSelectedTab] = useState('resume');
   const [summary, setSummary] = useState<string | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   // Hooks pour récupérer les données
   const { aides, loading: aidesLoading } = useUserAides();
@@ -90,7 +92,8 @@ export default function DashboardPage() {
         throw new Error('Session expirée');
       }
 
-      const response = await fetch('http://localhost:8000/api/summary/generate', {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_URL}/api/summary/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,6 +131,11 @@ export default function DashboardPage() {
     { id: 'planning', label: 'Planning', icon: Calendar }
   ];
 
+  // Afficher wizard si nouveau utilisateur (pas de profil)
+  if (!profileLoading && !profile && !showOnboarding) {
+    setShowOnboarding(true);
+  }
+
   if (profileLoading) {
     return (
       <div className="h-full bg-slate-50 flex items-center justify-center">
@@ -139,15 +147,31 @@ export default function DashboardPage() {
     );
   }
 
+  if (showOnboarding) {
+    return <OnboardingWizard onComplete={() => {
+      setShowOnboarding(false);
+      router.refresh();
+    }} />;
+  }
+
   return (
     <div className="h-full bg-slate-50 overflow-auto">
       <div className="max-w-6xl mx-auto p-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">Mon Dossier Familial</h1>
-          <p className="text-slate-600 mt-2">
-            Bienvenue {user?.email || profile?.name}, voici un aperçu de votre situation
-          </p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Mon Dossier Familial</h1>
+            <p className="text-slate-600 mt-2">
+              Bienvenue {user?.email || profile?.name}, voici un aperçu de votre situation
+            </p>
+          </div>
+          <button
+            onClick={() => router.push('/profil')}
+            className="flex items-center space-x-2 px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+          >
+            <Edit2 className="h-4 w-4 text-slate-600" />
+            <span className="text-slate-700 font-medium">Mon Profil</span>
+          </button>
         </div>
 
         {/* Tabs */}
