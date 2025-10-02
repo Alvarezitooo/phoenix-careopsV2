@@ -648,7 +648,7 @@ export default function DashboardPage() {
 
               try {
                 const { supabase } = await import('@/lib/supabase');
-                const { error } = await supabase.from('aides').insert([{
+                const { error } = await supabase.from('user_aides').insert([{
                   user_id: user?.id,
                   nom,
                   montant,
@@ -702,7 +702,6 @@ export default function DashboardPage() {
                   <option value="actif">✅ Actif</option>
                   <option value="en_attente">⏳ En attente</option>
                   <option value="refuse">❌ Refusé</option>
-                  <option value="expire_bientot">⚠️ Expire bientôt</option>
                 </select>
               </div>
 
@@ -761,7 +760,7 @@ export default function DashboardPage() {
 
               try {
                 const { supabase } = await import('@/lib/supabase');
-                const { error } = await supabase.from('deadlines').insert([{
+                const { error } = await supabase.from('user_deadlines').insert([{
                   user_id: user?.id,
                   titre,
                   date,
