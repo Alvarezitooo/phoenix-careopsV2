@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Env var validée (via BFF, pas direct)
-const RAG_SERVER_URL = process.env.PYTHON_API_URL || 'http://localhost:8000';
+const RAG_SERVER_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export async function POST(request: NextRequest) {
   try {
