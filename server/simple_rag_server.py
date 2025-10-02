@@ -1345,6 +1345,23 @@ def get_aides():
         return jsonify({"aides": []}), 200
 
 
+# ===== 🏠 HEALTH CHECK =====
+
+@app.route('/', methods=['GET'])
+def health_check():
+    """Health check endpoint pour Railway"""
+    return jsonify({
+        'status': 'ok',
+        'service': 'PhoenixCare RAG API',
+        'version': '1.0.0',
+        'endpoints': {
+            'chat': '/api/chat/send',
+            'aides': '/api/aides',
+            'stripe': '/api/stripe/create-checkout-session'
+        }
+    }), 200
+
+
 # ===== 💳 STRIPE PAYMENT ROUTES =====
 
 @app.route('/api/stripe/create-checkout-session', methods=['POST'])
@@ -1443,7 +1460,7 @@ if __name__ == '__main__':
     if NODE_ENV == 'production' and DEBUG_MODE:
         raise RuntimeError("⛔ SECURITÉ: FLASK_DEBUG=True est interdit en production! (risque code execution)")
 
-    PORT = int(os.getenv('RAG_PORT', 8000))
+    PORT = int(os.getenv('PORT', 8000))  # Railway utilise $PORT automatiquement
     HOST = '0.0.0.0' if NODE_ENV == 'production' else '127.0.0.1'
 
     print(f"🔐 Debug mode: {'✅ Activé (dev only)' if DEBUG_MODE else '❌ Désactivé (production safe)'}")
