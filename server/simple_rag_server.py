@@ -44,10 +44,11 @@ app = Flask(__name__)
 # 🔒 CORS sécurisé - Uniquement origines autorisées
 ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:3001').split(',')
 
-# 🌐 Support pour les domaines Vercel preview (*.vercel.app) via regex
-# Flask-CORS accepte les patterns regex avec r"..."
+# 🌐 Support pour les domaines Vercel preview (RESTREINT au projet PhoenixCare)
+# ⚠️ SÉCURITÉ : On accepte uniquement les déploiements de ce projet Vercel
+# Format: phoenix-careops*.vercel.app (production + previews)
 import re
-VERCEL_PATTERN = r"https://.*\.vercel\.app$"
+VERCEL_PATTERN = r"https://phoenix-careops[a-z0-9-]*\.vercel\.app$"
 
 # Combine allowed origins + regex pattern pour Vercel
 CORS(app,
@@ -481,6 +482,33 @@ MISSION: Accompagner les familles comme un conseiller MDPH+CAF unifié.
 STYLE: Empathique, précis, concret. Toujours proposer des actions et étapes pratiques."""
 )
 
+# ===== 📝 CHARGEMENT PROMPTS =====
+def load_prompts() -> dict:
+    """
+    📝 Charge les prompts depuis config/prompts.json
+
+    Returns:
+        dict: Prompts chargés, ou prompts par défaut si erreur
+    """
+    try:
+        config_path = Path(__file__).parent / 'config' / 'prompts.json'
+
+        if not config_path.exists():
+            print(f"⚠️ Fichier prompts.json introuvable, utilisation prompts par défaut")
+            return {}
+
+        with open(config_path, 'r', encoding='utf-8') as f:
+            prompts = json.load(f)
+            print(f"📝 Prompts chargés (version {prompts.get('version', '1.0.0')})")
+            return prompts
+
+    except Exception as e:
+        print(f"❌ Erreur chargement prompts: {e}")
+        return {}
+
+# Charger les prompts au démarrage
+PROMPTS = load_prompts()
+
 # ===== 📚 CHARGEMENT BASE DE CONNAISSANCES =====
 def load_knowledge_base() -> dict:
     """
@@ -690,7 +718,8 @@ def chat_send():
                         context_text += f"👨‍👩‍👧 Famille: {prof['nb_enfants']} enfant(s)\n"
                 context_text += "\n⚠️ Utilise ce contexte pour personnaliser ta réponse !\n"
 
-            prompt = f"""Tu es PhoenixIA, conseiller social expert pour les familles d'enfants en situation de handicap.
+            # Charger prompt depuis JSON ou fallback
+            prompt_template = PROMPTS.get('chat_with_sources', """Tu es PhoenixIA, conseiller social expert pour les familles d'enfants en situation de handicap.
 {history_text}{memories_text}{context_text}
 📚 SOURCES DISPONIBLES:
 {sources_list}
@@ -709,6 +738,7 @@ def chat_send():
 5. Propose des **actions concrètes** à la fin
 6. Si l'information n'est pas dans les documents, **dis-le clairement**
 7. Si c'est une question de suivi, **fais référence à l'historique**
+8. Si tu connais des informations personnelles (mémoires), **utilise-les** pour créer un lien authentique
 
 ⚠️ DISCLAIMER OBLIGATOIRE:
 Termine TOUJOURS par: "ℹ️ *Ces informations sont fournies à titre indicatif. Pour une situation personnelle, contactez votre MDPH ou CAF.*"
@@ -723,7 +753,16 @@ SUGGESTIONS:
 - Quels documents dois-je préparer ?
 - Combien de temps prend le traitement du dossier ?
 
-RÉPONDS MAINTENANT:"""
+RÉPONDS MAINTENANT:""")
+
+            prompt = prompt_template.format(
+                history_text=history_text,
+                memories_text=memories_text,
+                context_text=context_text,
+                sources_list=sources_list,
+                context=context,
+                message=message
+            )
         else:
             history_text = ""
             if has_history:
@@ -732,28 +771,31 @@ RÉPONDS MAINTENANT:"""
                     history_text += f"{idx}. Utilisateur: {exchange['user']}\n"
                     history_text += f"   Toi: {exchange['assistant'][:100]}...\n\n"
 
-            prompt = f"""Tu es PhoenixIA, conseiller social expert en droits du handicap en France.
-{history_text}
+            # 🧠 Mémoires pour cas sans sources aussi
+            memories_text = ""
+            if user_memories:
+                memories_text = "\n🧠 CE QUE JE SAIS SUR CET UTILISATEUR :\n"
+                for idx, memory in enumerate(user_memories, 1):
+                    memory_content = memory.get('memory_content', '')
+                    memories_text += f"{idx}. {memory_content}\n"
+                memories_text += "\n⚠️ UTILISE CES MÉMOIRES pour personnaliser ta réponse !\n"
+
+            # Charger prompt depuis JSON ou fallback
+            prompt_template = PROMPTS.get('chat_without_sources', """Tu es PhoenixIA, conseiller social expert en droits du handicap en France.
+{history_text}{memories_text}
 ❓ QUESTION: "{message}"
 
 Tu n'as pas de documents spécifiques sur ce sujet, mais tu peux:
 1. Donner des **informations générales** basées sur tes connaissances
 2. Orienter vers les **bons organismes** (MDPH, CAF, associations)
 3. Proposer de **reformuler** la question si nécessaire
-4. Si c'est une question de suivi, **fais référence à l'historique**
+4. Si tu connais des informations personnelles (mémoires), **utilise-les** pour personnaliser ta réponse""")
 
-Réponds de manière **empathique** et **constructive** en français.
-
-⚠️ Termine par: "ℹ️ *Ces informations sont générales. Pour votre situation, contactez votre MDPH ou CAF.*"
-
-💡 SUGGESTIONS:
-Après ta réponse, ajoute EXACTEMENT 3 questions de suivi sur une nouvelle ligne avec le format:
-SUGGESTIONS:
-- Question 1
-- Question 2
-- Question 3
-
-RÉPONDS:"""
+            prompt = prompt_template.format(
+                history_text=history_text,
+                memories_text=memories_text,
+                message=message
+            )
 
         # 🔐 Génération avec Gemini (avec retry et timeout + fallback gracieux)
         try:
