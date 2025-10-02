@@ -14,5 +14,8 @@ requests==2.31.0
 python-dotenv==1.0.0
 tenacity==8.2.3
 
+# Document processing
+PyPDF2==3.0.1
+
 # Stripe payments
 stripe==7.0.0
