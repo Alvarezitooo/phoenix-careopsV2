@@ -18,9 +18,12 @@ export default function DashboardPage() {
   const router = useRouter();
   const [showDocumentUpload, setShowDocumentUpload] = useState(false);
   const [selectedTab, setSelectedTab] = useState('resume');
-  const [summary, setSummary] = useState<string | null>(null);
-  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [insights, setInsights] = useState<string | null>(null);
+  const [insightsLoading, setInsightsLoading] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showAddAide, setShowAddAide] = useState(false);
+  const [showAddDeadline, setShowAddDeadline] = useState(false);
+  const [dismissedWelcome, setDismissedWelcome] = useState(false);
 
   // Hooks pour récupérer les données
   const { aides, loading: aidesLoading } = useUserAides();
@@ -80,49 +83,45 @@ export default function DashboardPage() {
     // TODO: Ajouter le document à la base Supabase
   };
 
-  const generateSummary = async () => {
-    setSummaryLoading(true);
+  // 🔄 Générer insights auto au chargement (si données disponibles)
+  const generateInsights = async () => {
+    if (!aides?.length && !deadlines?.length && !documents?.length) return;
+
+    setInsightsLoading(true);
     try {
-      // 🔐 Récupérer le token Supabase
       const { supabase } = await import('@/lib/supabase');
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
-      if (!token) {
-        throw new Error('Session expirée');
-      }
+      if (!token) throw new Error('Session expirée');
 
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
       const response = await fetch(`${API_URL}/api/summary/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // 🔐 Ajouter le token
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           user_id: user?.id,
-          context: {
-            aides,
-            deadlines,
-            documents,
-            profile
-          }
+          context: { aides, deadlines, documents, profile }
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Erreur génération résumé');
-      }
+      if (!response.ok) throw new Error('Erreur génération insights');
 
       const data = await response.json();
-      setSummary(data.summary);
+      setInsights(data.summary);
     } catch (error) {
-      console.error('Erreur:', error);
-      setSummary('❌ Impossible de générer le résumé. Réessayez plus tard.');
+      console.error('Erreur insights:', error);
     } finally {
-      setSummaryLoading(false);
+      setInsightsLoading(false);
     }
   };
+
+  // Détection nouvel utilisateur (compte créé < 24h et aucune donnée)
+  const isNewUser = !aidesLoading && !documentsLoading &&
+    !aides?.length && !documents?.length && !deadlines?.length;
 
   const tabs = [
     { id: 'resume', label: 'Résumé', icon: User },
@@ -174,72 +173,135 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex space-x-1 mb-8 bg-white rounded-xl p-1 shadow-sm">
-          {tabs.map(tab => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedTab(tab.id)}
-                className={`flex items-center space-x-2 px-4 py-3 rounded-lg font-medium transition-colors ${
-                  selectedTab === tab.id
-                    ? 'bg-rose-500 text-white'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                <Icon className="h-5 w-5" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
+        {/* Tabs - Responsive */}
+        <div className="mb-8">
+          {/* Desktop tabs */}
+          <div className="hidden md:flex space-x-1 bg-white rounded-xl p-1 shadow-sm">
+            {tabs.map(tab => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setSelectedTab(tab.id)}
+                  className={`flex items-center space-x-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                    selectedTab === tab.id
+                      ? 'bg-rose-500 text-white shadow-md'
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Mobile dropdown */}
+          <div className="md:hidden bg-white rounded-xl shadow-sm">
+            <select
+              value={selectedTab}
+              onChange={(e) => setSelectedTab(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border-0 font-medium text-slate-900 focus:ring-2 focus:ring-rose-500"
+            >
+              {tabs.map(tab => (
+                <option key={tab.id} value={tab.id}>
+                  {tab.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Contenu Résumé */}
         {selectedTab === 'resume' && (
           <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              {/* Bouton Résumé IA */}
-              <div className="bg-gradient-to-r from-rose-500 to-pink-600 rounded-xl p-6 shadow-lg text-white">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Sparkles className="h-6 w-6" />
-                      <h3 className="text-xl font-bold">Résumé Intelligent Phoenix</h3>
-                    </div>
-                    <p className="text-rose-100 text-sm mb-4">
-                      Générez un résumé personnalisé de votre situation avec des recommandations d'actions.
-                    </p>
+              {/* Banner d'accueil nouveaux utilisateurs */}
+              {isNewUser && !dismissedWelcome && (
+                <div className="bg-gradient-to-br from-purple-500 via-rose-500 to-pink-500 rounded-2xl p-6 md:p-8 text-white shadow-xl animate-fadeIn">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-3">
+                    👋 Bienvenue {profile?.name} !
+                  </h2>
+                  <p className="text-purple-50 mb-6">
+                    Phoenix est prêt à vous aider. Voici comment démarrer :
+                  </p>
+
+                  <div className="grid md:grid-cols-3 gap-3 mb-4">
                     <button
-                      onClick={generateSummary}
-                      disabled={summaryLoading}
-                      className="bg-white text-rose-600 px-6 py-2 rounded-lg font-medium hover:bg-rose-50 transition-colors disabled:opacity-50 flex items-center gap-2"
+                      onClick={() => router.push('/chat?q=Quelles aides puis-je demander pour mon enfant ?')}
+                      className="bg-white/20 hover:bg-white/30 p-4 rounded-xl text-left transition-all duration-200 hover:scale-105 backdrop-blur-sm"
                     >
-                      {summaryLoading ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Génération en cours...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="h-4 w-4" />
-                          Générer mon résumé
-                        </>
-                      )}
+                      <div className="text-2xl mb-2">💰</div>
+                      <div className="font-semibold mb-1">Découvrir mes aides</div>
+                      <div className="text-sm text-purple-100">AEEH, PCH, AJPP...</div>
+                    </button>
+
+                    <button
+                      onClick={() => setShowDocumentUpload(true)}
+                      className="bg-white/20 hover:bg-white/30 p-4 rounded-xl text-left transition-all duration-200 hover:scale-105 backdrop-blur-sm"
+                    >
+                      <div className="text-2xl mb-2">📄</div>
+                      <div className="font-semibold mb-1">Analyser un document</div>
+                      <div className="text-sm text-purple-100">Notification MDPH...</div>
+                    </button>
+
+                    <button
+                      onClick={() => router.push('/chat')}
+                      className="bg-white/20 hover:bg-white/30 p-4 rounded-xl text-left transition-all duration-200 hover:scale-105 backdrop-blur-sm"
+                    >
+                      <div className="text-2xl mb-2">💬</div>
+                      <div className="font-semibold mb-1">Poser une question</div>
+                      <div className="text-sm text-purple-100">Phoenix répond à tout</div>
                     </button>
                   </div>
-                </div>
 
-                {summary && (
-                  <div className="mt-4 pt-4 border-t border-rose-400">
-                    <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-white prose prose-invert prose-sm max-w-none">
-                      <ReactMarkdown>{summary}</ReactMarkdown>
+                  <button
+                    onClick={() => setDismissedWelcome(true)}
+                    className="text-white/80 hover:text-white text-sm underline transition-colors"
+                  >
+                    Masquer ce message
+                  </button>
+                </div>
+              )}
+
+              {/* Insights automatiques (si données disponibles) */}
+              {!isNewUser && (aides?.length > 0 || deadlines?.length > 0) && (
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+                  <div className="flex items-start gap-3 mb-4">
+                    <Sparkles className="h-6 w-6 flex-shrink-0 mt-1" />
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold mb-2">📊 Votre situation en un coup d'œil</h3>
+
+                      {insightsLoading ? (
+                        <div className="space-y-2 animate-pulse">
+                          <div className="h-4 bg-white/20 rounded w-3/4"></div>
+                          <div className="h-4 bg-white/20 rounded w-1/2"></div>
+                        </div>
+                      ) : insights ? (
+                        <div className="bg-white/10 backdrop-blur rounded-lg p-4 text-sm prose prose-invert prose-sm max-w-none">
+                          <ReactMarkdown>{insights}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <div className="space-y-2 text-sm text-blue-50">
+                          <p>✅ Vous avez {aides?.length || 0} aide(s) active(s)</p>
+                          {deadlines?.filter(d => getDaysUntil(d.date) <= 30).length > 0 && (
+                            <p>⚠️ {deadlines.filter(d => getDaysUntil(d.date) <= 30).length} échéance(s) ce mois-ci</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
-                )}
-              </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <button
+                    onClick={() => router.push('/chat?q=Explique-moi ma situation en détail')}
+                    className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105"
+                  >
+                    💬 Discuter avec Phoenix
+                  </button>
+                </div>
+              )}
+
+              <div className="bg-white rounded-xl p-6 shadow-sm transition-all duration-200 hover:shadow-md">
                 <h2 className="text-xl font-semibold text-slate-900 mb-4">👨‍👩‍👧‍👦 Ma Famille</h2>
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
@@ -306,14 +368,22 @@ export default function DashboardPage() {
         {/* Contenu Aides */}
         {selectedTab === 'aides' && (
           <div className="bg-white rounded-xl p-6 shadow-sm">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
               <h2 className="text-xl font-semibold text-slate-900">💰 Mes Aides et Allocations</h2>
-              <button
-                onClick={() => askPhoenix('Quelles autres aides puis-je demander pour ma situation ?')}
-                className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors"
-              >
-                + Découvrir d'autres aides
-              </button>
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={() => askPhoenix('Quelles autres aides puis-je demander pour ma situation ?')}
+                  className="px-4 py-2 border border-rose-500 text-rose-600 rounded-lg hover:bg-rose-50 transition-all duration-200"
+                >
+                  💡 Découvrir
+                </button>
+                <button
+                  onClick={() => setShowAddAide(true)}
+                  className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-all duration-200 hover:scale-105"
+                >
+                  + Ajouter une aide
+                </button>
+              </div>
             </div>
             <div className="grid gap-4">
               {aidesLoading ? (
@@ -474,8 +544,8 @@ export default function DashboardPage() {
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold text-slate-900">📅 Prochaines Échéances</h2>
                 <button
-                  onClick={() => askPhoenix('Quelles sont les prochaines démarches importantes à prévoir ?')}
-                  className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors"
+                  onClick={() => setShowAddDeadline(true)}
+                  className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-all duration-200 hover:scale-105"
                 >
                   + Ajouter échéance
                 </button>
@@ -553,6 +623,235 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Modal Ajouter Aide */}
+      {showAddAide && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-slate-900">💰 Ajouter une aide</h3>
+              <button
+                onClick={() => setShowAddAide(false)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const nom = formData.get('nom') as string;
+              const montant = formData.get('montant') as string;
+              const statut = formData.get('statut') as string;
+              const echeance = formData.get('echeance') as string;
+
+              try {
+                const { supabase } = await import('@/lib/supabase');
+                const { error } = await supabase.from('aides').insert([{
+                  user_id: user?.id,
+                  nom,
+                  montant,
+                  statut,
+                  echeance: echeance || null
+                }]);
+
+                if (error) throw error;
+
+                setShowAddAide(false);
+                router.refresh();
+              } catch (error) {
+                console.error('Erreur ajout aide:', error);
+                alert('Erreur lors de l\'ajout de l\'aide');
+              }
+            }} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Nom de l'aide *
+                </label>
+                <input
+                  type="text"
+                  name="nom"
+                  placeholder="Ex: AEEH Base, PCH, AAH..."
+                  required
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Montant
+                </label>
+                <input
+                  type="text"
+                  name="montant"
+                  placeholder="Ex: 142€/mois, 1200€/an..."
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Statut *
+                </label>
+                <select
+                  name="statut"
+                  required
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                >
+                  <option value="actif">✅ Actif</option>
+                  <option value="en_attente">⏳ En attente</option>
+                  <option value="refuse">❌ Refusé</option>
+                  <option value="expire_bientot">⚠️ Expire bientôt</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Date d'échéance (optionnel)
+                </label>
+                <input
+                  type="date"
+                  name="echeance"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddAide(false)}
+                  className="flex-1 px-4 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-all"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-all font-medium"
+                >
+                  Ajouter l'aide
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Ajouter Échéance */}
+      {showAddDeadline && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-slate-900">📅 Ajouter une échéance</h3>
+              <button
+                onClick={() => setShowAddDeadline(false)}
+                className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const titre = formData.get('titre') as string;
+              const date = formData.get('date') as string;
+              const type = formData.get('type') as string;
+              const priorite = formData.get('priorite') as string;
+
+              try {
+                const { supabase } = await import('@/lib/supabase');
+                const { error } = await supabase.from('deadlines').insert([{
+                  user_id: user?.id,
+                  titre,
+                  date,
+                  type,
+                  priorite
+                }]);
+
+                if (error) throw error;
+
+                setShowAddDeadline(false);
+                router.refresh();
+              } catch (error) {
+                console.error('Erreur ajout échéance:', error);
+                alert('Erreur lors de l\'ajout de l\'échéance');
+              }
+            }} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Titre *
+                </label>
+                <input
+                  type="text"
+                  name="titre"
+                  placeholder="Ex: RDV MDPH, Renouvellement AEEH..."
+                  required
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Date *
+                </label>
+                <input
+                  type="date"
+                  name="date"
+                  required
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Type *
+                </label>
+                <select
+                  name="type"
+                  required
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                >
+                  <option value="rdv">👥 Rendez-vous</option>
+                  <option value="renouvellement">🔄 Renouvellement</option>
+                  <option value="demarche">📋 Démarche administrative</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Priorité *
+                </label>
+                <select
+                  name="priorite"
+                  required
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+                >
+                  <option value="haute">🔴 Haute</option>
+                  <option value="moyenne">🟡 Moyenne</option>
+                  <option value="basse">🔵 Basse</option>
+                </select>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddDeadline(false)}
+                  className="flex-1 px-4 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-all"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-all font-medium"
+                >
+                  Créer l'échéance
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Modal Upload Document */}
       {showDocumentUpload && (
