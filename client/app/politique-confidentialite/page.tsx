@@ -199,7 +199,8 @@ export default function PolitiqueConfidentialitePage() {
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">12. Contact et réclamations</h2>
             <div className="text-slate-700 space-y-2">
               <p><strong>Responsable du traitement :</strong></p>
-              <p>PhoenixCare - [VOTRE NOM/SOCIÉTÉ]</p>
+              <p>PhoenixCare - Phoenix</p>
+              <p>Adresse : Var (83), France</p>
               <p>Email : <a href="mailto:privacy@phoenixcare.fr" className="text-rose-600 hover:text-rose-700 underline">privacy@phoenixcare.fr</a></p>
               <p className="mt-4">
                 <strong>Autorité de contrôle :</strong> Si vous estimez que vos droits ne sont pas respectés,

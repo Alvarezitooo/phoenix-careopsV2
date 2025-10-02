@@ -32,17 +32,16 @@ export default function MentionsLegalesPage() {
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">1. Éditeur du site</h2>
             <div className="text-slate-700 space-y-2">
               <p><strong>Nom du site :</strong> PhoenixCare</p>
-              <p><strong>Propriétaire :</strong> [VOTRE NOM / RAISON SOCIALE]</p>
-              <p><strong>Adresse :</strong> [VOTRE ADRESSE]</p>
+              <p><strong>Propriétaire :</strong> Phoenix</p>
+              <p><strong>Adresse :</strong> Var (83), France</p>
               <p><strong>Email :</strong> contact@phoenixcare.fr</p>
-              <p><strong>SIRET :</strong> [VOTRE NUMÉRO SIRET]</p>
             </div>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">2. Directeur de publication</h2>
             <p className="text-slate-700">
-              <strong>Nom :</strong> [VOTRE NOM]
+              <strong>Nom :</strong> Phoenix
             </p>
           </section>
 

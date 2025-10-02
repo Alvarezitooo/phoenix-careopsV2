@@ -243,7 +243,7 @@ export default function CGUPage() {
                 pour tenter de trouver une solution amiable.
               </p>
               <p>
-                À défaut d'accord, le litige sera soumis aux tribunaux compétents de [VOTRE VILLE].
+                À défaut d'accord, le litige sera soumis aux tribunaux compétents de Toulon.
               </p>
             </div>
           </section>
@@ -259,7 +259,7 @@ export default function CGUPage() {
                 </a>
               </p>
               <p>
-                Adresse : [VOTRE ADRESSE]
+                Adresse : Var (83), France
               </p>
             </div>
           </section>
