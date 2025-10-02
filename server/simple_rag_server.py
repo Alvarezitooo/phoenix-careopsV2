@@ -43,7 +43,18 @@ app = Flask(__name__)
 
 # 🔒 CORS sécurisé - Uniquement origines autorisées
 ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:3001').split(',')
-CORS(app, origins=ALLOWED_ORIGINS, supports_credentials=True)
+
+# 🌐 Support pour les domaines Vercel preview (*.vercel.app)
+def check_origin(origin):
+    """Vérifie si l'origine est autorisée (domaines exacts ou *.vercel.app)"""
+    if origin in ALLOWED_ORIGINS:
+        return True
+    # Autoriser tous les domaines Vercel (production + preview)
+    if origin and origin.endswith('.vercel.app'):
+        return True
+    return False
+
+CORS(app, origins=check_origin, supports_credentials=True)
 
 # ===== 🚀 SYSTÈME DE CACHE IN-MEMORY =====
 class SmartCache:

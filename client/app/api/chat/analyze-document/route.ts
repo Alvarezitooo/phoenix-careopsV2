@@ -13,7 +13,15 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('Authorization') || '';
     const token = authHeader.replace('Bearer ', '').trim();
 
+    console.log('🔐 API Route /analyze-document - Headers:', {
+      hasAuth: !!authHeader,
+      authPrefix: authHeader.substring(0, 20),
+      hasToken: !!token,
+      tokenPrefix: token.substring(0, 20)
+    });
+
     if (!token) {
+      console.error('❌ Token manquant dans la requête');
       return NextResponse.json({
         error: {
           code: 'UNAUTHORIZED',

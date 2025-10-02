@@ -49,12 +49,18 @@ export default function DocumentUpload({ onDocumentAnalyzed, userId }: DocumentU
         const { data: { session } } = await supabase.auth.getSession();
         const token = session?.access_token;
 
+        if (!token) {
+          throw new Error('Vous devez être connecté pour analyser un document');
+        }
+
+        console.log('📤 Upload document avec token:', token.substring(0, 20) + '...');
+
         // Appel à l'API d'analyse
         const response = await fetch('/api/chat/analyze-document', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token}` : '',
+            'Authorization': `Bearer ${token}`,
           },
           body: JSON.stringify({
             document: content,
