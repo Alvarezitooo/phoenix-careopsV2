@@ -30,3 +30,14 @@ node_modules/
 .vscode/
 .idea/
 .aider*
+
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+*.bak
