@@ -1,8 +1,8 @@
 // 📄 API Route Next.js pour l'analyse de documents avec Phoenix IA
 import { NextRequest, NextResponse } from 'next/server';
 
-// Env var validée (via BFF, pas direct)
-const RAG_SERVER_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Env var validée (API Routes = côté serveur, donc pas NEXT_PUBLIC_)
+const RAG_SERVER_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export async function POST(request: NextRequest) {
   try {
