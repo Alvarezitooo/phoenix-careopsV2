@@ -39,6 +39,9 @@ COPY . .
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 
+# Fix permissions Railway : chmod +x sur uvicorn et python
+RUN chmod +x /opt/venv/bin/uvicorn /opt/venv/bin/python
+
 # Port exposé (Railway utilise $PORT dynamique)
 EXPOSE 8080
 
