@@ -39,9 +39,6 @@ COPY . .
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 
-# Fix permissions Railway : chmod +x sur uvicorn et python
-RUN chmod +x /opt/venv/bin/uvicorn /opt/venv/bin/python
-
 # Port exposé (Railway utilise $PORT dynamique)
 EXPOSE 8080
 
@@ -51,4 +48,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 # ===== COMMANDE DE DÉMARRAGE =====
 # Railway va automatiquement injecter $PORT
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "4", "--log-level", "info"]
+# Utilise python -m pour éviter les problèmes de permissions
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "4", "--log-level", "info"]
