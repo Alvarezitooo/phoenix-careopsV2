@@ -51,5 +51,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8080/health', timeout=3)"
 
 # ===== COMMANDE DE DÉMARRAGE =====
-# FORCE bash explicite pour contourner les problèmes de permissions Railway
-ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
+# Railway workaround : utilise sh -c au lieu d'ENTRYPOINT
+CMD ["/bin/sh", "-c", "cd /app && source /opt/venv/bin/activate && exec python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080} --workers 4 --log-level info"]
