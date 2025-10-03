@@ -27,10 +27,10 @@ generation_config = {
 }
 
 safety_settings = {
-    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
 }
 
 model = genai.GenerativeModel(
@@ -200,10 +200,62 @@ def generate_with_gemini(prompt: str, max_retries: int = 3) -> str:
         raise
 
 # ===== SÉCURITÉ =====
+def detect_prompt_injection(text: str) -> tuple[bool, str]:
+    """
+    🔒 Détecte les tentatives de prompt injection
+    Retourne (is_injection, reason)
+    """
+    text_lower = text.lower()
+
+    # Patterns suspects
+    injection_patterns = [
+        # System prompt manipulation
+        ("ignore previous", "Tentative d'ignorer les instructions système"),
+        ("forget everything", "Tentative d'oublier le contexte"),
+        ("system prompt", "Tentative d'accéder au prompt système"),
+        ("you are now", "Tentative de redéfinir le rôle"),
+        ("act as", "Tentative de changer de rôle"),
+        ("pretend to be", "Tentative d'usurpation"),
+        ("disregard all", "Tentative d'ignorer les règles"),
+
+        # Instruction leak attempts
+        ("show your instructions", "Tentative d'extraire les instructions"),
+        ("what are your rules", "Tentative d'extraire les règles"),
+        ("reveal your prompt", "Tentative d'extraire le prompt"),
+        ("output your system message", "Tentative d'extraire le message système"),
+
+        # Code injection attempts
+        ("```python", "Tentative d'injection de code"),
+        ("<script>", "Tentative d'injection XSS"),
+        ("javascript:", "Tentative d'injection JavaScript"),
+        ("eval(", "Tentative d'exécution de code"),
+        ("exec(", "Tentative d'exécution de code"),
+
+        # Jailbreak attempts
+        ("dan mode", "Tentative de jailbreak"),
+        ("developer mode", "Tentative d'accès développeur"),
+        ("sudo mode", "Tentative d'élévation de privilèges"),
+    ]
+
+    for pattern, reason in injection_patterns:
+        if pattern in text_lower:
+            print(f"🚨 PROMPT INJECTION DÉTECTÉ: {reason}")
+            print(f"   Pattern: '{pattern}'")
+            print(f"   Input: {text[:100]}...")
+            return True, reason
+
+    return False, ""
+
+
 def sanitize_input(text: str, max_length: int = 2000) -> str:
     """Nettoie et valide l'input utilisateur"""
     if not text:
         return ""
+
+    # 🔒 DÉTECTION PROMPT INJECTION
+    is_injection, reason = detect_prompt_injection(text)
+    if is_injection:
+        raise ValueError(f"🚨 Requête bloquée: {reason}")
 
     # Limiter longueur
     text = str(text)[:max_length]

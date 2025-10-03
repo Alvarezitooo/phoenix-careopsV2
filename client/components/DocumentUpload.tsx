@@ -169,7 +169,7 @@ export default function DocumentUpload({ onDocumentAnalyzed, userId }: DocumentU
           <li>• Notifications et décisions MDPH</li>
           <li>• Certificats médicaux et bilans</li>
           <li>• Courriers CAF et organismes</li>
-          <li>• Formulaires de demande d'aides</li>
+          <li>• Formulaires de demande d&apos;aides</li>
           <li>• Documents scolaires (PPS, PAI...)</li>
         </ul>
       </div>

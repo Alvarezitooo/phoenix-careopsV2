@@ -60,7 +60,7 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">4. Propriété intellectuelle</h2>
             <p className="text-slate-700">
-              L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur
+              L&apos;ensemble de ce site relève de la législation française et internationale sur le droit d&apos;auteur
               et la propriété intellectuelle. Tous les droits de reproduction sont réservés, y compris pour
               les documents téléchargeables et les représentations iconographiques et photographiques.
             </p>
@@ -69,8 +69,8 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">5. Données personnelles</h2>
             <p className="text-slate-700">
-              Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un
-              droit d'accès, de rectification et de suppression de vos données personnelles. Pour exercer
+              Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d&apos;un
+              droit d&apos;accès, de rectification et de suppression de vos données personnelles. Pour exercer
               ce droit, consultez notre{' '}
               <Link href="/politique-confidentialite" className="text-rose-600 hover:text-rose-700 underline">
                 Politique de Confidentialité
@@ -81,17 +81,17 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">6. Cookies</h2>
             <p className="text-slate-700">
-              Ce site utilise des cookies pour améliorer l'expérience utilisateur. En naviguant sur ce site,
-              vous acceptez l'utilisation de cookies conformément à notre politique de confidentialité.
+              Ce site utilise des cookies pour améliorer l&apos;expérience utilisateur. En naviguant sur ce site,
+              vous acceptez l&apos;utilisation de cookies conformément à notre politique de confidentialité.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-slate-900 mb-4">7. Conditions d'utilisation</h2>
+            <h2 className="text-2xl font-semibold text-slate-900 mb-4">7. Conditions d&apos;utilisation</h2>
             <p className="text-slate-700">
-              L'utilisation de ce site est soumise à nos{' '}
+              L&apos;utilisation de ce site est soumise à nos{' '}
               <Link href="/cgu" className="text-rose-600 hover:text-rose-700 underline">
-                Conditions Générales d'Utilisation
+                Conditions Générales d&apos;Utilisation
               </Link>.
             </p>
           </section>

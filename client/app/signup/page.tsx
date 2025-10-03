@@ -219,7 +219,7 @@ export default function SignupPage() {
             <p className="text-xs text-slate-500">
               En créant un compte, vous acceptez nos{' '}
               <Link href="/cgu" className="text-rose-600 hover:text-rose-700 underline">
-                conditions d'utilisation
+                conditions d&apos;utilisation
               </Link>{' '}
               et notre{' '}
               <Link href="/politique-confidentialite" className="text-rose-600 hover:text-rose-700 underline">
@@ -231,7 +231,7 @@ export default function SignupPage() {
 
         <div className="mt-8 text-center">
           <Link href="/" className="text-slate-600 hover:text-slate-700 text-sm">
-            ← Retour à l'accueil
+            ← Retour à l&apos;accueil
           </Link>
         </div>
       </div>

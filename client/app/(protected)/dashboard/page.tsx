@@ -270,7 +270,7 @@ export default function DashboardPage() {
                   <div className="flex items-start gap-3 mb-4">
                     <Sparkles className="h-6 w-6 flex-shrink-0 mt-1" />
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold mb-2">📊 Votre situation en un coup d'œil</h3>
+                      <h3 className="text-xl font-bold mb-2">📊 Votre situation en un coup d&apos;œil</h3>
 
                       {insightsLoading ? (
                         <div className="space-y-2 animate-pulse">
@@ -662,12 +662,12 @@ export default function DashboardPage() {
                 router.refresh();
               } catch (error) {
                 console.error('Erreur ajout aide:', error);
-                alert('Erreur lors de l\'ajout de l\'aide');
+                alert('Erreur lors de l&apos;ajout de l&apos;aide');
               }
             }} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Nom de l'aide *
+                  Nom de l&apos;aide *
                 </label>
                 <input
                   type="text"
@@ -707,7 +707,7 @@ export default function DashboardPage() {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Date d'échéance (optionnel)
+                  Date d&apos;échéance (optionnel)
                 </label>
                 <input
                   type="date"
@@ -728,7 +728,7 @@ export default function DashboardPage() {
                   type="submit"
                   className="flex-1 px-4 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-all font-medium"
                 >
-                  Ajouter l'aide
+                  Ajouter l&apos;aide
                 </button>
               </div>
             </form>
@@ -774,7 +774,7 @@ export default function DashboardPage() {
                 router.refresh();
               } catch (error) {
                 console.error('Erreur ajout échéance:', error);
-                alert('Erreur lors de l\'ajout de l\'échéance');
+                alert('Erreur lors de l&apos;ajout de l&apos;échéance');
               }
             }} className="space-y-4">
               <div>
@@ -844,7 +844,7 @@ export default function DashboardPage() {
                   type="submit"
                   className="flex-1 px-4 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-all font-medium"
                 >
-                  Créer l'échéance
+                  Créer l&apos;échéance
                 </button>
               </div>
             </form>

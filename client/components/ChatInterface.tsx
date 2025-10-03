@@ -281,7 +281,7 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
         onClick={() => handleQuickAction('cumul_aides')}
         className="p-3 text-left rounded-xl border border-slate-200 hover:border-rose-300 hover:bg-white transition-all"
       >
-        <div className="font-medium text-slate-800">🔄 Cumul d'aides</div>
+        <div className="font-medium text-slate-800">🔄 Cumul d&apos;aides</div>
         <div className="text-sm text-slate-600">AEEH + CAF + autres</div>
       </button>
 
@@ -350,7 +350,7 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
               Bonjour ! Je suis Phoenix 🕊️
             </h3>
             <p className="text-slate-600 mb-6 max-w-md mx-auto">
-              <strong>Conseiller social expert</strong> combinant l'expertise MDPH + CAF + droits parentaux.
+              <strong>Conseiller social expert</strong> combinant l&apos;expertise MDPH + CAF + droits parentaux.
               Je vous accompagne pour toutes vos démarches : AEEH, allocations, AESH, recours, et bien plus !
             </p>
             <QuickActions />

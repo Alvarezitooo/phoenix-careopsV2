@@ -151,7 +151,7 @@ export default function LoginPage() {
 
         <div className="mt-8 text-center">
           <Link href="/" className="text-slate-600 hover:text-slate-700 text-sm">
-            ← Retour à l'accueil
+            ← Retour à l&apos;accueil
           </Link>
         </div>
       </div>

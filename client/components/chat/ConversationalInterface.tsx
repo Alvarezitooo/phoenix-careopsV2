@@ -201,7 +201,7 @@ Sources vérifiées et mises à jour automatiquement.`;
                 </h2>
                 <p className="text-slate-600 max-w-md mx-auto">
                   Posez votre question sur les droits, démarches et aides liées au handicap.
-                  Je m'appuie sur toute la réglementation française à jour.
+                  Je m&apos;appuie sur toute la réglementation française à jour.
                 </p>
               </div>
 

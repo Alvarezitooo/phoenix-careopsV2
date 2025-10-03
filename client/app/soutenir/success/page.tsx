@@ -34,7 +34,7 @@ function SuccessContent() {
           <Heart className="h-10 w-10 text-rose-500 mx-auto mb-3" />
           <p className="text-slate-700">
             Grâce à vous, PhoenixCare peut continuer à accompagner gratuitement
-            des centaines de familles d'enfants en situation de handicap.
+            des centaines de familles d&apos;enfants en situation de handicap.
           </p>
         </div>
 
@@ -49,7 +49,7 @@ function SuccessContent() {
             href="/"
             className="block w-full text-slate-600 hover:text-slate-900 py-3 rounded-xl font-medium transition-colors"
           >
-            Retour à l'accueil
+            Retour à l&apos;accueil
           </Link>
         </div>
 

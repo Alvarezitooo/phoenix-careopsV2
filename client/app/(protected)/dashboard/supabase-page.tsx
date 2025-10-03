@@ -202,7 +202,7 @@ export default function SupabaseDashboardPage() {
                 onClick={() => askPhoenix('Quelles autres aides puis-je demander pour ma situation ?')}
                 className="bg-rose-500 text-white px-4 py-2 rounded-lg hover:bg-rose-600 transition-colors"
               >
-                + Découvrir d'autres aides
+                + Découvrir d&apos;autres aides
               </button>
             </div>
             <div className="grid gap-4">

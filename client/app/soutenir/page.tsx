@@ -74,7 +74,7 @@ export default function SoutenirPage() {
             🚀 Phoenix - Bêta Test en Cours
           </h2>
           <p className="text-lg text-slate-600 text-center max-w-2xl mx-auto">
-            PhoenixCare est en phase de test pour aider les familles d'enfants
+            PhoenixCare est en phase de test pour aider les familles d&apos;enfants
             en situation de handicap à naviguer les démarches administratives.
           </p>
           <div className="mt-6 text-center">
@@ -128,7 +128,7 @@ export default function SoutenirPage() {
             <Star className="h-12 w-12 text-purple-500 mb-4" />
             <h3 className="text-xl font-semibold text-slate-900 mb-2">Soutien Héroïque</h3>
             <p className="text-slate-600 mb-4">
-              Devenez mécène de Phoenix et de l'inclusion
+              Devenez mécène de Phoenix et de l&apos;inclusion
             </p>
             <div className="text-2xl font-bold text-slate-900 mb-4">20€/mois</div>
             <button
@@ -167,9 +167,9 @@ export default function SoutenirPage() {
           </h2>
           <div className="max-w-2xl mx-auto bg-white rounded-xl p-8 shadow-sm border border-slate-200">
             <p className="text-lg text-slate-700 italic mb-4">
-              "En tant que papa d'un enfant en situation de handicap, je connais
+              &quot;En tant que papa d&apos;un enfant en situation de handicap, je connais
               ce défi administratif. Phoenix est né de ce vécu : simplifier
-              l'accès aux aides pour toutes les familles qui font face au même défi."
+              l&apos;accès aux aides pour toutes les familles qui font face au même défi.&quot;
             </p>
             <div className="font-semibold text-slate-900">— Matthieu, créateur de Phoenix</div>
           </div>

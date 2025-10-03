@@ -27,15 +27,15 @@ export default function CGUPage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center mb-8">
           <FileText className="h-10 w-10 text-rose-500 mr-4" />
-          <h1 className="text-4xl font-bold text-slate-900">Conditions Générales d'Utilisation</h1>
+          <h1 className="text-4xl font-bold text-slate-900">Conditions Générales d&apos;Utilisation</h1>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm p-8 space-y-8">
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">1. Objet</h2>
             <p className="text-slate-700">
-              Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation
-              de la plateforme PhoenixCare, service d'accompagnement numérique pour les familles d'enfants
+              Les présentes Conditions Générales d&apos;Utilisation (CGU) régissent l&apos;accès et l&apos;utilisation
+              de la plateforme PhoenixCare, service d&apos;accompagnement numérique pour les familles d&apos;enfants
               en situation de handicap.
             </p>
             <p className="text-slate-700 mt-2">
@@ -47,9 +47,9 @@ export default function CGUPage() {
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">2. Accès au service</h2>
             <div className="text-slate-700 space-y-2">
               <p><strong>2.1 Inscription</strong></p>
-              <p>L'accès à PhoenixCare nécessite la création d'un compte. Vous devez :</p>
+              <p>L&apos;accès à PhoenixCare nécessite la création d&apos;un compte. Vous devez :</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Être âgé(e) d'au moins 18 ans ou avoir le consentement parental</li>
+                <li>Être âgé(e) d&apos;au moins 18 ans ou avoir le consentement parental</li>
                 <li>Fournir des informations exactes et à jour</li>
                 <li>Maintenir la confidentialité de vos identifiants</li>
                 <li>Ne pas créer plusieurs comptes</li>
@@ -57,8 +57,8 @@ export default function CGUPage() {
 
               <p className="mt-4"><strong>2.2 Gratuité</strong></p>
               <p>
-                PhoenixCare est actuellement gratuit. Nous nous réservons le droit d'introduire des
-                fonctionnalités payantes à l'avenir, avec notification préalable.
+                PhoenixCare est actuellement gratuit. Nous nous réservons le droit d&apos;introduire des
+                fonctionnalités payantes à l&apos;avenir, avec notification préalable.
               </p>
 
               <p className="mt-4"><strong>2.3 Disponibilité</strong></p>
@@ -85,7 +85,7 @@ export default function CGUPage() {
               <p>Il est strictement interdit de :</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Utiliser le service à des fins illégales ou frauduleuses</li>
-                <li>Tenter d'accéder aux comptes d'autres utilisateurs</li>
+                <li>Tenter d&apos;accéder aux comptes d&apos;autres utilisateurs</li>
                 <li>Extraire massivement des données (scraping, bots)</li>
                 <li>Diffuser des virus ou logiciels malveillants</li>
                 <li>Contourner les mesures de sécurité</li>
@@ -123,18 +123,18 @@ export default function CGUPage() {
             <div className="text-slate-700 space-y-2">
               <p><strong>5.1 Nature du service</strong></p>
               <p>
-                L'assistant IA utilise Google Gemini pour fournir des informations. Ces réponses sont
+                L&apos;assistant IA utilise Google Gemini pour fournir des informations. Ces réponses sont
                 générées automatiquement et peuvent contenir des erreurs.
               </p>
 
               <p className="mt-4"><strong>5.2 Avertissement médical</strong></p>
               <p className="font-semibold text-rose-700">
                 ⚠️ PhoenixCare ne fournit PAS de conseils médicaux. Les informations données par
-                l'assistant IA sont à titre informatif uniquement. Consultez toujours un professionnel
+                l&apos;assistant IA sont à titre informatif uniquement. Consultez toujours un professionnel
                 de santé qualifié pour toute question médicale.
               </p>
 
-              <p className="mt-4"><strong>5.3 Limites d'utilisation</strong></p>
+              <p className="mt-4"><strong>5.3 Limites d&apos;utilisation</strong></p>
               <p>
                 Des limites de requêtes sont appliquées pour garantir la qualité du service pour tous
                 (actuellement 100 requêtes/minute). Un usage abusif peut entraîner une suspension temporaire.
@@ -147,7 +147,7 @@ export default function CGUPage() {
             <div className="text-slate-700 space-y-2">
               <p>
                 PhoenixCare, son logo, son interface et tous les éléments qui le composent sont protégés
-                par le droit d'auteur et le droit des marques.
+                par le droit d&apos;auteur et le droit des marques.
               </p>
               <p>
                 Toute reproduction, distribution ou modification non autorisée est interdite et constitue
@@ -162,14 +162,14 @@ export default function CGUPage() {
             <div className="text-slate-700 space-y-2">
               <p><strong>7.1 Limitation de responsabilité</strong></p>
               <p>
-                PhoenixCare est fourni "en l'état". Nous ne garantissons pas que le service sera exempt
-                d'erreurs ou d'interruptions. Notre responsabilité est limitée dans les limites autorisées
+                PhoenixCare est fourni &quot;en l&apos;état&quot;. Nous ne garantissons pas que le service sera exempt
+                d&apos;erreurs ou d&apos;interruptions. Notre responsabilité est limitée dans les limites autorisées
                 par la loi.
               </p>
 
               <p className="mt-4"><strong>7.2 Responsabilité utilisateur</strong></p>
               <p>
-                Vous êtes responsable de toute activité effectuée depuis votre compte. En cas d'utilisation
+                Vous êtes responsable de toute activité effectuée depuis votre compte. En cas d&apos;utilisation
                 non autorisée, contactez-nous immédiatement à{' '}
                 <a href="mailto:support@phoenixcare.fr" className="text-rose-600 hover:text-rose-700 underline">
                   support@phoenixcare.fr
@@ -178,7 +178,7 @@ export default function CGUPage() {
 
               <p className="mt-4"><strong>7.3 Force majeure</strong></p>
               <p>
-                Nous ne serons pas tenus responsables en cas de force majeure (panne généralisée d'internet,
+                Nous ne serons pas tenus responsables en cas de force majeure (panne généralisée d&apos;internet,
                 catastrophe naturelle, etc.).
               </p>
             </div>
@@ -187,7 +187,7 @@ export default function CGUPage() {
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">8. Suspension et résiliation</h2>
             <div className="text-slate-700 space-y-2">
-              <p><strong>8.1 Résiliation par l'utilisateur</strong></p>
+              <p><strong>8.1 Résiliation par l&apos;utilisateur</strong></p>
               <p>
                 Vous pouvez supprimer votre compte à tout moment depuis les paramètres. Vos données seront
                 supprimées conformément à notre{' '}
@@ -224,7 +224,7 @@ export default function CGUPage() {
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">10. Modifications des CGU</h2>
             <p className="text-slate-700">
               Nous pouvons modifier ces CGU à tout moment. Les modifications importantes vous seront
-              notifiées par email. La poursuite de l'utilisation du service après notification vaut
+              notifiées par email. La poursuite de l&apos;utilisation du service après notification vaut
               acceptation des nouvelles CGU.
             </p>
           </section>
@@ -243,7 +243,7 @@ export default function CGUPage() {
                 pour tenter de trouver une solution amiable.
               </p>
               <p>
-                À défaut d'accord, le litige sera soumis aux tribunaux compétents de Toulon.
+                À défaut d&apos;accord, le litige sera soumis aux tribunaux compétents de Toulon.
               </p>
             </div>
           </section>

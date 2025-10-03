@@ -193,7 +193,7 @@ export default function ConsentsPage() {
             {uiCopy.consents.no_consents}
           </h3>
           <p className="text-slate-600 mb-6 max-w-md mx-auto">
-            Aucun consentement n'a encore été créé. Commencez par partager l'accès à vos données.
+            Aucun consentement n&apos;a encore été créé. Commencez par partager l&apos;accès à vos données.
           </p>
           <button className="bg-rose-500 text-white px-6 py-3 rounded-xl font-medium hover:bg-rose-600 transition-colors focus:ring-2 focus:ring-rose-300 focus:outline-none">
             {uiCopy.consents.add_consent}
@@ -218,7 +218,7 @@ export default function ConsentsPage() {
             </h3>
             <p className="text-slate-600 mb-4">
               Tous les consentements sont chiffrés et stockés de manière sécurisée.
-              Vous pouvez révoquer l'accès à tout moment.
+              Vous pouvez révoquer l&apos;accès à tout moment.
             </p>
             <div className="flex flex-wrap gap-2">
               {Object.entries(statusConfig).map(([status, config]) => (

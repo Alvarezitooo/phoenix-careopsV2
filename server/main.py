@@ -105,34 +105,24 @@ app.add_middleware(
 )
 
 
-# ===== RATE LIMITING SIMPLE =====
-from collections import defaultdict
-from datetime import datetime, timedelta
-
-rate_limit_store = defaultdict(list)
-
+# ===== RATE LIMITING REDIS =====
 async def check_rate_limit(request: Request):
-    """Rate limiting simple (to be replaced by Redis)"""
+    """🚦 Rate limiting avec Redis (sliding window)"""
     client_ip = request.client.host
     user_id = getattr(request.state, 'user_id', client_ip)
 
-    now = datetime.now()
-    window_start = now - timedelta(seconds=settings.rate_limit_window)
+    # Check rate limit via Redis/memory cache
+    is_limited = await cache.check_rate_limit(
+        user_id=user_id,
+        max_requests=settings.rate_limit_requests,
+        window_seconds=settings.rate_limit_window
+    )
 
-    # Clean old requests
-    rate_limit_store[user_id] = [
-        req_time for req_time in rate_limit_store[user_id]
-        if req_time > window_start
-    ]
-
-    # Check limit
-    if len(rate_limit_store[user_id]) >= settings.rate_limit_requests:
+    if is_limited:
         raise HTTPException(
             status_code=429,
-            detail=f"Rate limit dépassé. Max {settings.rate_limit_requests} requêtes par {settings.rate_limit_window}s"
+            detail=f"⏱️ Rate limit dépassé. Max {settings.rate_limit_requests} requêtes par {settings.rate_limit_window}s. Réessayez dans quelques instants."
         )
-
-    rate_limit_store[user_id].append(now)
 
 
 # ===== AUTH MIDDLEWARE =====
@@ -160,6 +150,7 @@ async def chat_send(
     chat_request: ChatRequest,
     request: Request,
     background_tasks: BackgroundTasks,
+    current_user = Depends(get_current_user_optional),
     rate_limit_check = Depends(check_rate_limit)
 ):
     """🚀 Endpoint principal pour le chat RAG (ASYNC)"""
@@ -168,7 +159,9 @@ async def chat_send(
     try:
         # Sanitize input
         message = sanitize_input(chat_request.message, max_length=2000)
-        user_id = chat_request.user_id
+
+        # Use authenticated user ID if available, else fallback to request user_id
+        user_id = current_user["id"] if current_user else chat_request.user_id
 
         print(f"📨 Requête reçue: {message[:50]}... (user: {user_id})")
 

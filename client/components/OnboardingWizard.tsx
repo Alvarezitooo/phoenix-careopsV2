@@ -302,7 +302,7 @@ export default function OnboardingWizard({ onComplete }: { onComplete?: () => vo
 
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <p className="text-sm text-green-800">
-                  <strong>✅ C'est presque terminé !</strong> Phoenix est maintenant prêt à vous accompagner
+                  <strong>✅ C&apos;est presque terminé !</strong> Phoenix est maintenant prêt à vous accompagner
                   avec des réponses personnalisées à votre situation.
                 </p>
               </div>

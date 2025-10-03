@@ -34,7 +34,7 @@ export default function PolitiqueConfidentialitePage() {
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">Introduction</h2>
             <p className="text-slate-700">
-              PhoenixCare s'engage à protéger la confidentialité et la sécurité de vos données personnelles.
+              PhoenixCare s&apos;engage à protéger la confidentialité et la sécurité de vos données personnelles.
               Cette politique explique comment nous collectons, utilisons et protégeons vos informations
               conformément au Règlement Général sur la Protection des Données (RGPD).
             </p>
@@ -48,7 +48,7 @@ export default function PolitiqueConfidentialitePage() {
                 <li><strong>Informations de compte :</strong> nom, adresse email, mot de passe (chiffré)</li>
                 <li><strong>Informations sur les enfants :</strong> prénom, nom, date de naissance, informations médicales</li>
                 <li><strong>Documents :</strong> fichiers que vous téléchargez (rapports médicaux, consentements, etc.)</li>
-                <li><strong>Données de conversation :</strong> messages échangés avec l'assistant IA</li>
+                <li><strong>Données de conversation :</strong> messages échangés avec l&apos;assistant IA</li>
                 <li><strong>Données techniques :</strong> adresse IP, navigateur, horodatage des connexions</li>
               </ul>
             </div>
@@ -59,7 +59,7 @@ export default function PolitiqueConfidentialitePage() {
             <div className="text-slate-700 space-y-3">
               <p><strong>Nous utilisons vos données pour :</strong></p>
               <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Fournir et améliorer nos services d'accompagnement</li>
+                <li>Fournir et améliorer nos services d&apos;accompagnement</li>
                 <li>Vous aider à trouver des aides et démarches administratives pertinentes</li>
                 <li>Sécuriser votre compte et prévenir les fraudes</li>
                 <li>Répondre à vos questions via notre assistant IA</li>
@@ -75,8 +75,8 @@ export default function PolitiqueConfidentialitePage() {
               <p>Le traitement de vos données repose sur :</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li><strong>Votre consentement</strong> lors de la création de votre compte</li>
-                <li><strong>L'exécution du contrat</strong> de service entre vous et PhoenixCare</li>
-                <li><strong>L'intérêt légitime</strong> pour améliorer nos services</li>
+                <li><strong>L&apos;exécution du contrat</strong> de service entre vous et PhoenixCare</li>
+                <li><strong>L&apos;intérêt légitime</strong> pour améliorer nos services</li>
                 <li><strong>Les obligations légales</strong> (conservation de certaines données)</li>
               </ul>
             </div>
@@ -90,10 +90,10 @@ export default function PolitiqueConfidentialitePage() {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li><strong>Supabase :</strong> hébergement sécurisé de la base de données (certifié SOC 2 Type II)</li>
                 <li><strong>Google Cloud (Gemini API) :</strong> traitement des conversations IA (anonymisées)</li>
-                <li><strong>Vercel & Railway :</strong> hébergement de l'application</li>
+                <li><strong>Vercel & Railway :</strong> hébergement de l&apos;application</li>
               </ul>
               <p className="mt-3">
-                Tous nos sous-traitants sont conformes RGPD et situés dans l'UE ou couverts par des clauses
+                Tous nos sous-traitants sont conformes RGPD et situés dans l&apos;UE ou couverts par des clauses
                 contractuelles types.
               </p>
             </div>
@@ -132,11 +132,11 @@ export default function PolitiqueConfidentialitePage() {
             <div className="text-slate-700 space-y-3">
               <p><strong>Vous disposez des droits suivants :</strong></p>
               <ul className="list-disc list-inside space-y-2 ml-4">
-                <li><strong>Droit d'accès :</strong> obtenir une copie de vos données</li>
+                <li><strong>Droit d&apos;accès :</strong> obtenir une copie de vos données</li>
                 <li><strong>Droit de rectification :</strong> corriger vos données inexactes</li>
-                <li><strong>Droit à l'effacement :</strong> supprimer votre compte et vos données</li>
+                <li><strong>Droit à l&apos;effacement :</strong> supprimer votre compte et vos données</li>
                 <li><strong>Droit à la portabilité :</strong> récupérer vos données dans un format lisible</li>
-                <li><strong>Droit d'opposition :</strong> refuser certains traitements</li>
+                <li><strong>Droit d&apos;opposition :</strong> refuser certains traitements</li>
                 <li><strong>Droit à la limitation :</strong> restreindre temporairement le traitement</li>
               </ul>
               <p className="mt-4">
@@ -156,12 +156,12 @@ export default function PolitiqueConfidentialitePage() {
             <div className="text-slate-700 space-y-2">
               <p><strong>Cookies essentiels (obligatoires) :</strong></p>
               <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Session d'authentification (Supabase)</li>
+                <li>Session d&apos;authentification (Supabase)</li>
                 <li>Sécurité CSRF</li>
               </ul>
               <p className="mt-3"><strong>Cookies facultatifs (actuellement : aucun)</strong></p>
               <p className="text-sm text-slate-600 mt-2">
-                Nous n'utilisons pas Google Analytics ni aucun cookie de suivi tiers.
+                Nous n&apos;utilisons pas Google Analytics ni aucun cookie de suivi tiers.
               </p>
             </div>
           </section>
@@ -183,7 +183,7 @@ export default function PolitiqueConfidentialitePage() {
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">10. Mineurs</h2>
             <p className="text-slate-700">
               PhoenixCare est destiné aux parents/tuteurs légaux. Si vous avez moins de 18 ans, vous devez
-              obtenir le consentement de vos parents avant d'utiliser le service.
+              obtenir le consentement de vos parents avant d&apos;utiliser le service.
             </p>
           </section>
 
@@ -191,7 +191,7 @@ export default function PolitiqueConfidentialitePage() {
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">11. Modifications</h2>
             <p className="text-slate-700">
               Nous pouvons modifier cette politique. En cas de changement important, nous vous en informerons
-              par email et/ou notification sur l'application.
+              par email et/ou notification sur l&apos;application.
             </p>
           </section>
 
@@ -204,7 +204,7 @@ export default function PolitiqueConfidentialitePage() {
               <p>Email : <a href="mailto:privacy@phoenixcare.fr" className="text-rose-600 hover:text-rose-700 underline">privacy@phoenixcare.fr</a></p>
               <p className="mt-4">
                 <strong>Autorité de contrôle :</strong> Si vous estimez que vos droits ne sont pas respectés,
-                vous pouvez déposer une réclamation auprès de la CNIL (Commission Nationale de l'Informatique
+                vous pouvez déposer une réclamation auprès de la CNIL (Commission Nationale de l&apos;Informatique
                 et des Libertés) : <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" className="text-rose-600 hover:text-rose-700 underline">www.cnil.fr</a>
               </p>
             </div>

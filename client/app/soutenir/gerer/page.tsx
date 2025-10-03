@@ -113,10 +113,10 @@ export default function GererAbonnementPage() {
 
           <div className="mt-8 pt-8 border-t border-slate-200">
             <h3 className="font-semibold text-slate-900 mb-4">
-              Besoin d'aide ?
+              Besoin d&apos;aide ?
             </h3>
             <p className="text-slate-600 mb-4">
-              Si vous rencontrez un problème, n'hésitez pas à nous contacter :
+              Si vous rencontrez un problème, n&apos;hésitez pas à nous contacter :
             </p>
             <a
               href="mailto:support@phoenixcare.fr"

@@ -172,6 +172,58 @@ class RedisCache:
 
         return stats
 
+    async def check_rate_limit(self, user_id: str, max_requests: int, window_seconds: int) -> bool:
+        """
+        🚦 Rate limiting avec Redis (sliding window)
+        Retourne True si la limite est dépassée, False sinon
+        """
+        rate_key = f"rate:{user_id}"
+        now = datetime.now().timestamp()
+        window_start = now - window_seconds
+
+        if self.use_redis and self.redis_client:
+            try:
+                # Sliding window avec sorted set
+                pipe = self.redis_client.pipeline()
+                # Remove old requests
+                pipe.zremrangebyscore(rate_key, 0, window_start)
+                # Count requests in window
+                pipe.zcard(rate_key)
+                # Add current request
+                pipe.zadd(rate_key, {str(now): now})
+                # Set expiration
+                pipe.expire(rate_key, window_seconds)
+
+                results = await pipe.execute()
+                count = results[1]  # zcard result
+
+                return count >= max_requests
+
+            except Exception as e:
+                print(f"⚠️  Redis rate limit error: {e} - fallback in-memory")
+                self.use_redis = False
+
+        # In-memory fallback (simple implementation)
+        if not hasattr(self, 'rate_limit_memory'):
+            self.rate_limit_memory = {}
+
+        if user_id not in self.rate_limit_memory:
+            self.rate_limit_memory[user_id] = []
+
+        # Clean old requests
+        self.rate_limit_memory[user_id] = [
+            req_time for req_time in self.rate_limit_memory[user_id]
+            if req_time > window_start
+        ]
+
+        # Check limit
+        if len(self.rate_limit_memory[user_id]) >= max_requests:
+            return True
+
+        # Add current request
+        self.rate_limit_memory[user_id].append(now)
+        return False
+
 
 # Instance globale
 cache = RedisCache()
