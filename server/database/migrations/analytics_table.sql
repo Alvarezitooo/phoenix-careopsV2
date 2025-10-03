@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS chat_analytics (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMPTZ DEFAULT NOW(),
 
-    -- User info
+    -- User info (TEXT pour supporter users anonymes + auth users)
     user_id TEXT NOT NULL,
 
     -- Question
@@ -30,10 +30,9 @@ CREATE TABLE IF NOT EXISTS chat_analytics (
 
     -- Détection patterns
     has_suggestions BOOLEAN DEFAULT FALSE,
-    num_suggestions INT DEFAULT 0,
+    num_suggestions INT DEFAULT 0
 
-    -- Index pour requêtes rapides
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+    -- Pas de FK car user_id peut être anonyme (TEXT) ou auth user (UUID as TEXT)
 );
 
 -- Index pour performance
