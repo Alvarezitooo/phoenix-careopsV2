@@ -48,7 +48,12 @@ async def lifespan(app: FastAPI):
     print(f"📚 Base de connaissances: {len(knowledge_base)} documents")
     print(f"🔑 Gemini API: {'✅' if settings.gemini_api_key else '❌'}")
     print(f"🔐 Supabase: {'✅' if settings.supabase_url else '❌'}")
-    print(f"💾 Cache: TTL {settings.cache_ttl_hours}h, Max {settings.cache_max_size} entrées")
+
+    # Connexion Redis
+    await cache.connect()
+    cache_stats = await cache.get_stats()
+    print(f"💾 Cache: {cache_stats['backend'].upper()} - TTL {settings.cache_ttl_hours}h")
+
     print(f"📝 Prompts: {len(PROMPTS)} templates chargés")
     print("=" * 60)
     print(f"📍 Listening on: {settings.host}:{settings.port}")
@@ -57,6 +62,7 @@ async def lifespan(app: FastAPI):
     yield
 
     print("\n🛑 Arrêt du serveur...")
+    await cache.disconnect()
 
 
 # ===== APP =====

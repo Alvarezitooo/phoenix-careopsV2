@@ -20,6 +20,9 @@ requests==2.32.4  # 🔒 Fix CVE-2024-47081 & CVE-2024-35195
 python-dotenv==1.0.0
 tenacity==8.2.3
 
+# Cache
+redis>=5.0.0  # Async Redis client
+
 # Document processing
 pypdf>=5.1.0  # 🔒 Fix: Infinite loop CVE + PyPDF2 deprecated → pypdf
 
