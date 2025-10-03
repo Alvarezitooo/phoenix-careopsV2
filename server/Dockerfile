@@ -35,6 +35,10 @@ COPY --from=builder /opt/venv /opt/venv
 # Copier tout le code de l'application
 COPY . .
 
+# Copier et rendre exécutable l'entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Activer le venv pour tous les process
 ENV PATH="/opt/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
@@ -47,6 +51,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8080/health', timeout=3)"
 
 # ===== COMMANDE DE DÉMARRAGE =====
-# Railway va automatiquement injecter $PORT
-# Utilise python -m pour éviter les problèmes de permissions
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "4", "--log-level", "info"]
+# Utilise un script shell d'entrypoint (French Tech best practice)
+ENTRYPOINT ["/entrypoint.sh"]
