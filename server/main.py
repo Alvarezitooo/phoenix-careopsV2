@@ -36,6 +36,14 @@ from services.memory import (
     MAX_MEMORY_MESSAGES
 )
 from services.supabase import save_conversation_to_supabase
+from services.analytics import (
+    log_chat_interaction,
+    get_top_questions,
+    get_knowledge_gaps,
+    get_cache_performance,
+    get_user_stats,
+    get_overall_stats
+)
 
 
 # ===== LIFECYCLE =====
@@ -303,6 +311,14 @@ SUGGESTIONS:
             user_id, message, answer, sources
         )
 
+        # 📊 LOG ANALYTICS (BACKGROUND TASK - non-bloquant)
+        background_tasks.add_task(
+            log_chat_interaction,
+            user_id, message, answer, sources, suggestions,
+            False,  # cached (on log que les non-cached pour l'instant)
+            int(processing_time * 1000)  # Convert to ms
+        )
+
         print(f"✅ Réponse générée: {len(answer)} chars, {processing_time}s")
 
         return ChatResponse(
@@ -348,6 +364,38 @@ async def clear_memory(user_id: str):
         del conversation_memory[user_id]
         return {"message": f"Mémoire effacée pour {user_id}"}
     return {"message": "Aucune mémoire trouvée"}
+
+
+# ===== ANALYTICS ENDPOINTS =====
+
+@app.get("/api/analytics/overview")
+async def analytics_overview():
+    """📊 Vue d'ensemble des analytics (dashboard summary)"""
+    return get_overall_stats()
+
+
+@app.get("/api/analytics/top-questions")
+async def analytics_top_questions(limit: int = 20):
+    """📈 Top questions les plus posées"""
+    return get_top_questions(limit=limit)
+
+
+@app.get("/api/analytics/knowledge-gaps")
+async def analytics_knowledge_gaps(limit: int = 20):
+    """🔍 Questions sans sources (gaps knowledge base)"""
+    return get_knowledge_gaps(limit=limit)
+
+
+@app.get("/api/analytics/cache-performance")
+async def analytics_cache_perf(days: int = 30):
+    """⚡ Performance du cache par jour"""
+    return get_cache_performance(days=days)
+
+
+@app.get("/api/analytics/user-stats")
+async def analytics_users():
+    """👥 Statistiques par utilisateur"""
+    return get_user_stats()
 
 
 # ===== FALLBACK =====
