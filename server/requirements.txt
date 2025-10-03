@@ -1,4 +1,10 @@
-# Core web framework (Flask only, FastAPI not used)
+# Core web framework (FastAPI migration) - FORCE REBUILD
+fastapi==0.115.0
+uvicorn[standard]==0.32.0  # ASGI server avec websockets
+pydantic==2.9.2  # Validation automatique
+pydantic-settings==2.6.0  # Config management
+
+# Legacy Flask (à supprimer après migration complète)
 Flask==3.0.0
 gunicorn>=23.0.0  # 🔒 Fix: Request smuggling CVE (was 21.2.0)
 flask-cors>=5.0.0  # 🔒 Fix: Access-Control-Allow-Private-Network (was 4.0.0)
