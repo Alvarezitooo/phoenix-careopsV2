@@ -1,4 +1,4 @@
-# ---- Base ----
+# ---- Base ---- (force rebuild)
 FROM python:3.11-slim-bookworm
 
 # Confiance & perf
