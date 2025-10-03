@@ -2,7 +2,7 @@
 🚀 PHOENIXCARE FASTAPI SERVER
 Migration progressive de Flask vers FastAPI
 """
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
@@ -161,6 +161,7 @@ async def health_check():
 async def chat_send(
     chat_request: ChatRequest,
     request: Request,
+    background_tasks: BackgroundTasks,
     rate_limit_check = Depends(check_rate_limit)
 ):
     """🚀 Endpoint principal pour le chat RAG (ASYNC)"""
@@ -296,11 +297,11 @@ SUGGESTIONS:
         # 💭 AJOUTER À LA MÉMOIRE
         add_to_conversation(user_id, message, answer)
 
-        # 💾 SAUVEGARDER DANS SUPABASE (non-bloquant)
-        try:
-            save_conversation_to_supabase(user_id, message, answer, sources)
-        except Exception as e:
-            print(f"⚠️ Erreur sauvegarde Supabase: {e}")
+        # 💾 SAUVEGARDER DANS SUPABASE (BACKGROUND TASK - non-bloquant)
+        background_tasks.add_task(
+            save_conversation_to_supabase,
+            user_id, message, answer, sources
+        )
 
         print(f"✅ Réponse générée: {len(answer)} chars, {processing_time}s")
 

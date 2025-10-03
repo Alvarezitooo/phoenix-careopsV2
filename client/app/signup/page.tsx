@@ -3,20 +3,28 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Heart, Mail, Lock, User, Loader2 } from 'lucide-react';
+import { Heart, Mail, Lock, User, Loader2, AlertCircle } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useSupabaseAuth } from '@/context/SupabaseAuthContext';
+import { signupSchema, type SignupFormData } from '@/lib/validations/auth';
 
 export default function SignupPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
   const auth = useSupabaseAuth();
   const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError: setFormError,
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+    mode: 'onBlur',
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -28,28 +36,30 @@ export default function SignupPage() {
 
   const { signUp } = auth;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const onSubmit = async (data: SignupFormData) => {
     setMessage(null);
 
     try {
-      const { data, error } = await signUp(email, password, name);
+      const { data: authData, error } = await signUp(data.email, data.password, data.name);
 
       if (error) {
-        throw error;
+        if (error.message.includes('email')) {
+          setFormError('email', { message: error.message });
+        } else {
+          setFormError('root', { message: error.message });
+        }
+        return;
       }
 
-      if (data.user && !data.user.email_confirmed_at) {
-        setMessage('Vérifiez votre email pour confirmer votre compte avant de vous connecter.');
+      if (authData.user && !authData.user.email_confirmed_at) {
+        setMessage('✉️ Vérifiez votre email pour confirmer votre compte avant de vous connecter.');
       } else {
         router.push('/dashboard');
       }
     } catch (error: any) {
-      setError(error.message || 'Erreur lors de la création du compte');
-    } finally {
-      setLoading(false);
+      setFormError('root', {
+        message: error.message || 'Erreur lors de la création du compte',
+      });
     }
   };
 
@@ -67,9 +77,10 @@ export default function SignupPage() {
             </p>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-700 text-sm">{error}</p>
+          {errors.root && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+              <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-red-700 text-sm">{errors.root.message}</p>
             </div>
           )}
 
@@ -79,7 +90,7 @@ export default function SignupPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
                 Nom complet
@@ -89,13 +100,19 @@ export default function SignupPage() {
                 <input
                   id="name"
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  {...register('name')}
+                  className={`w-full pl-11 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent ${
+                    errors.name ? 'border-red-300' : 'border-slate-300'
+                  }`}
                   placeholder="Votre nom"
-                  required
                 />
               </div>
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -107,13 +124,19 @@ export default function SignupPage() {
                 <input
                   id="email"
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  {...register('email')}
+                  className={`w-full pl-11 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent ${
+                    errors.email ? 'border-red-300' : 'border-slate-300'
+                  }`}
                   placeholder="votre@email.com"
-                  required
                 />
               </div>
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -125,25 +148,54 @@ export default function SignupPage() {
                 <input
                   id="password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  {...register('password')}
+                  className={`w-full pl-11 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent ${
+                    errors.password ? 'border-red-300' : 'border-slate-300'
+                  }`}
                   placeholder="••••••••"
-                  minLength={6}
-                  required
                 />
               </div>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.password.message}
+                </p>
+              )}
               <p className="text-xs text-slate-500 mt-1">
-                Minimum 6 caractères
+                Minimum 8 caractères avec majuscule, minuscule et chiffre
               </p>
+            </div>
+
+            <div>
+              <label htmlFor="passwordConfirm" className="block text-sm font-medium text-slate-700 mb-2">
+                Confirmer le mot de passe
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <input
+                  id="passwordConfirm"
+                  type="password"
+                  {...register('passwordConfirm')}
+                  className={`w-full pl-11 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent ${
+                    errors.passwordConfirm ? 'border-red-300' : 'border-slate-300'
+                  }`}
+                  placeholder="••••••••"
+                />
+              </div>
+              {errors.passwordConfirm && (
+                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <AlertCircle className="h-4 w-4" />
+                  {errors.passwordConfirm.message}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className="w-full bg-rose-500 text-white py-3 rounded-xl font-medium hover:bg-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {loading ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin mr-2" />
                   Création en cours...
