@@ -1,6 +1,9 @@
 # ---- Base ---- (force rebuild)
 FROM python:3.11-slim-bookworm
 
+# CACHE BUSTER - Change cette date pour forcer rebuild
+ENV CACHE_BUST=2025-10-03-v1
+
 # Confiance & perf
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -20,7 +23,7 @@ WORKDIR /app
 #    (on copie uniquement le requirements pour maximiser le cache)
 COPY requirements.txt ./requirements.txt
 RUN python -m pip install --upgrade pip setuptools wheel \
- && python -m pip install -r requirements.txt
+ && python -m pip install --no-cache-dir -r requirements.txt
 
 # 2) Copier le code (uniquement après install des deps)
 COPY . .
