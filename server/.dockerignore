@@ -1,0 +1,33 @@
+# VCS & artefacts
+.git
+.gitignore
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv
+venv/
+env/
+
+# Node/Front (si jamais)
+node_modules/
+dist/
+build/
+
+# Tests & cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.bak
+
+# IDE
+.vscode/
+.idea/
+.aider*
+
+# Railway/Docker
+Dockerfile
+.dockerignore
