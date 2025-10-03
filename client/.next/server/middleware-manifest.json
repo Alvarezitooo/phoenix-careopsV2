@@ -1,6 +1,32 @@
 {
   "version": 3,
-  "middleware": {},
+  "middleware": {
+    "/": {
+      "files": [
+        "server/edge-runtime-webpack.js",
+        "server/middleware.js"
+      ],
+      "name": "middleware",
+      "page": "/",
+      "matchers": [
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/((?!api|_next\\/static|_next\\/image|favicon.ico).*))(.json)?[\\/#\\?]?$",
+          "originalSource": "/((?!api|_next/static|_next/image|favicon.ico).*)"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "phoenix-care-1759490443455",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "Z4e3CipAJMcctrRfHPIi2nP0haiTAJM9Gt3A3ELhddA=",
+        "__NEXT_PREVIEW_MODE_ID": "23d2cd90a0c246bc4c62c9772eecb0d2",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "c413bcf043495a8c59b4576e004e4ef507f1c993414de3f4c4ec442e4db78537",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "d288c381402ea532b5fd4202c94b7efa28ab4d77e3cc4543a1efbb2c13d208e6"
+      }
+    }
+  },
   "functions": {},
-  "sortedMiddleware": []
+  "sortedMiddleware": [
+    "/"
+  ]
 }

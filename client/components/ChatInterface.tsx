@@ -31,22 +31,6 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
     isEmpty
   } = useChat({ userId, autoLoadHistory: true, userContext });
 
-  if (!userId) {
-    return (
-      <div className={`flex items-center justify-center h-full bg-slate-50 ${className}`}>
-        <div className="text-center max-w-md space-y-4">
-          <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto">
-            <Heart className="h-8 w-8 text-rose-500" />
-          </div>
-          <h2 className="text-xl font-semibold text-slate-900">Session expirée</h2>
-          <p className="text-slate-600">
-            Merci de vous reconnecter pour continuer à discuter avec Phoenix. Votre sécurité passe avant tout.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   // Auto-scroll vers le bas
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -69,6 +53,22 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
       inputRef.current?.focus();
     }
   }, [isLoading]);
+
+  if (!userId) {
+    return (
+      <div className={`flex items-center justify-center h-full bg-slate-50 ${className}`}>
+        <div className="text-center max-w-md space-y-4">
+          <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto">
+            <Heart className="h-8 w-8 text-rose-500" />
+          </div>
+          <h2 className="text-xl font-semibold text-slate-900">Session expirée</h2>
+          <p className="text-slate-600">
+            Merci de vous reconnecter pour continuer à discuter avec Phoenix. Votre sécurité passe avant tout.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,8 +1,7 @@
 'use client';
 
-// Force cette page à être dynamique (pas de génération statique)
 export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+// Force cette page à être dynamique (pas de génération statique)
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
