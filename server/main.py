@@ -14,7 +14,8 @@ import re
 from config.settings import settings
 from models.schemas import (
     ChatRequest, ChatResponse,
-    HealthResponse, CacheStats, MemoryStats
+    HealthResponse, CacheStats, MemoryStats,
+    FeedbackRequest, FeedbackResponse
 )
 from core.cache import cache
 
@@ -42,7 +43,8 @@ from services.analytics import (
     get_knowledge_gaps,
     get_cache_performance,
     get_user_stats,
-    get_overall_stats
+    get_overall_stats,
+    submit_feedback
 )
 
 
@@ -133,20 +135,8 @@ async def check_rate_limit(request: Request):
     rate_limit_store[user_id].append(now)
 
 
-# ===== AUTH MIDDLEWARE (simplifié pour l'instant) =====
-async def get_user_from_token(request: Request):
-    """Extraction user_id depuis le token (simplifié)"""
-    # TODO: Implémenter vraie validation JWT
-    auth_header = request.headers.get("Authorization", "")
-
-    if auth_header.startswith("Bearer "):
-        token = auth_header.replace("Bearer ", "")
-        # Pour l'instant, on accepte tout et on retourne un user_id basique
-        # À remplacer par vraie validation JWT
-        return {"id": "user_from_token", "email": "user@example.com"}
-
-    # Fallback pour dev
-    return {"id": "anonymous", "email": None}
+# ===== AUTH MIDDLEWARE =====
+from services.auth import get_current_user, get_current_user_optional, require_admin
 
 
 # ===== ENDPOINTS =====
@@ -396,6 +386,52 @@ async def analytics_cache_perf(days: int = 30):
 async def analytics_users():
     """👥 Statistiques par utilisateur"""
     return get_user_stats()
+
+
+# ===== FEEDBACK ENDPOINT =====
+
+@app.post("/api/chat/feedback", response_model=FeedbackResponse)
+async def chat_feedback(feedback: FeedbackRequest):
+    """
+    💬 Soumettre un feedback utilisateur sur une réponse
+
+    Body:
+    {
+        "user_id": "user123",
+        "question": "Comment obtenir l'AEEH ?",
+        "response": "L'AEEH est...",
+        "rating": 5,
+        "comment": "Très utile !"
+    }
+    """
+    try:
+        feedback_id = submit_feedback(
+            user_id=feedback.user_id,
+            question=feedback.question,
+            response=feedback.response,
+            rating=feedback.rating,
+            comment=feedback.comment
+        )
+
+        if feedback_id:
+            return FeedbackResponse(
+                success=True,
+                message="Merci pour votre feedback !",
+                feedback_id=feedback_id
+            )
+        else:
+            return FeedbackResponse(
+                success=False,
+                message="Impossible d'enregistrer le feedback (interaction non trouvée)",
+                feedback_id=None
+            )
+
+    except Exception as e:
+        print(f"❌ Erreur feedback endpoint: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur lors de l'enregistrement du feedback: {str(e)}"
+        )
 
 
 # ===== FALLBACK =====

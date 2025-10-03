@@ -217,3 +217,61 @@ def get_overall_stats() -> Dict[str, Any]:
     except Exception as e:
         print(f"❌ Erreur get_overall_stats: {e}")
         return {}
+
+
+def submit_feedback(
+    user_id: str,
+    question: str,
+    response: str,
+    rating: int,
+    comment: Optional[str] = None
+) -> Optional[str]:
+    """
+    💬 Enregistre le feedback utilisateur sur une interaction
+
+    Args:
+        user_id: ID utilisateur
+        question: Question posée
+        response: Réponse donnée
+        rating: Note 1-5
+        comment: Commentaire optionnel
+
+    Returns:
+        ID du feedback ou None si erreur
+    """
+    client = get_supabase_client()
+    if not client:
+        print("⚠️  Supabase non configuré - feedback non enregistré")
+        return None
+
+    try:
+        # Chercher l'interaction correspondante pour la mettre à jour
+        result = client.table("chat_analytics") \
+            .select("id") \
+            .eq("user_id", user_id) \
+            .eq("question", question) \
+            .order("created_at", desc=True) \
+            .limit(1) \
+            .execute()
+
+        if result.data and len(result.data) > 0:
+            # Update existing interaction
+            interaction_id = result.data[0]["id"]
+            update_result = client.table("chat_analytics") \
+                .update({
+                    "feedback_rating": rating,
+                    "feedback_comment": comment
+                }) \
+                .eq("id", interaction_id) \
+                .execute()
+
+            if update_result.data:
+                print(f"✅ Feedback enregistré: {rating}/5 pour interaction {interaction_id}")
+                return interaction_id
+        else:
+            print("⚠️  Aucune interaction trouvée pour ce feedback")
+            return None
+
+    except Exception as e:
+        print(f"❌ Erreur submit_feedback: {e}")
+        return None

@@ -101,6 +101,24 @@ class MemoryStats(BaseModel):
     avg_messages_per_user: float
 
 
+# ===== Feedback Models =====
+class FeedbackRequest(BaseModel):
+    """Feedback utilisateur sur une réponse"""
+    interaction_id: Optional[str] = None  # ID de l'interaction dans analytics
+    user_id: str
+    question: str
+    response: str
+    rating: int = Field(..., ge=1, le=5, description="Note de 1 (mauvais) à 5 (excellent)")
+    comment: Optional[str] = Field(None, max_length=1000)
+
+
+class FeedbackResponse(BaseModel):
+    """Confirmation de feedback"""
+    success: bool
+    message: str
+    feedback_id: Optional[str] = None
+
+
 # ===== Health & Status =====
 class HealthResponse(BaseModel):
     """État de santé du serveur"""

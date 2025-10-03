@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     # Supabase
     supabase_url: str = ""
     supabase_anon_key: str = ""
+    supabase_jwt_secret: str = ""  # JWT secret from Supabase Dashboard → Settings → API
 
     # Gemini AI
     gemini_api_key: str = ""
