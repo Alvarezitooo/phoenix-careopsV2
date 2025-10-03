@@ -1,46 +1,22 @@
 # ===================================
 # 🚀 DOCKERFILE PHOENIXCARE - FASTAPI
 # ===================================
-# Multi-stage build optimisé pour Railway
+# Single-stage build (SIMPLE = FIABLE)
 # Python 3.11 + FastAPI + Uvicorn
 
-# ===== STAGE 1: BUILD =====
-FROM python:3.11-slim as builder
-
-WORKDIR /app
-
-# Installation des dépendances système pour build
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copier requirements et installer dans un venv
-COPY requirements.txt .
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Installation des packages Python
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-
-# ===== STAGE 2: RUNTIME =====
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copier le venv depuis le stage builder (FIX du problème Railway/Nixpacks!)
-COPY --from=builder /opt/venv /opt/venv
-
-# Copier tout le code de l'application
+# Copier requirements et code
+COPY requirements.txt .
 COPY . .
 
-# Copier et rendre exécutable l'entrypoint (permissions 755 explicites)
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod 755 /entrypoint.sh
+# Installer directement (pas de venv, on est déjà isolé dans Docker)
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Activer le venv pour tous les process
-ENV PATH="/opt/venv/bin:$PATH"
+# Variables d'environnement
 ENV PYTHONUNBUFFERED=1
 
 # Port exposé (Railway utilise $PORT dynamique)
@@ -51,5 +27,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8080/health', timeout=3)"
 
 # ===== COMMANDE DE DÉMARRAGE =====
-# Railway fix : appelle DIRECTEMENT le python du venv + wrapper pour $PORT
-CMD ["/bin/sh", "-c", "/opt/venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080} --workers 4 --log-level info"]
+# Single-stage = python directement disponible + shell pour $PORT
+CMD ["/bin/sh", "-c", "python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080} --workers 4 --log-level info"]
