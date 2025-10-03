@@ -35,9 +35,9 @@ COPY --from=builder /opt/venv /opt/venv
 # Copier tout le code de l'application
 COPY . .
 
-# Copier et rendre exécutable l'entrypoint
+# Copier et rendre exécutable l'entrypoint (permissions 755 explicites)
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN chmod 755 /entrypoint.sh
 
 # Activer le venv pour tous les process
 ENV PATH="/opt/venv/bin:$PATH"
@@ -51,5 +51,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8080/health', timeout=3)"
 
 # ===== COMMANDE DE DÉMARRAGE =====
-# Utilise un script shell d'entrypoint (French Tech best practice)
-ENTRYPOINT ["/entrypoint.sh"]
+# FORCE bash explicite pour contourner les problèmes de permissions Railway
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
