@@ -51,5 +51,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8080/health', timeout=3)"
 
 # ===== COMMANDE DE DÉMARRAGE =====
-# Railway workaround : utilise sh -c avec . au lieu de source (sh compatible)
-CMD ["/bin/sh", "-c", "cd /app && . /opt/venv/bin/activate && exec python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080} --workers 4 --log-level info"]
+# Railway fix : appelle DIRECTEMENT le python du venv + wrapper pour $PORT
+CMD ["/bin/sh", "-c", "/opt/venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080} --workers 4 --log-level info"]
