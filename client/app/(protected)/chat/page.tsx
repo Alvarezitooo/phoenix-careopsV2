@@ -2,6 +2,7 @@
 
 import { Suspense } from 'react';
 import ChatInterface from '@/components/ChatInterface';
+import FeedbackButton from '@/components/FeedbackButton';
 import { useSupabaseAuth } from '@/context/SupabaseAuthContext';
 import { useSearchParams } from 'next/navigation';
 import { useUserAides, useUserDocuments, useUserDeadlines, useFamilyProfile } from '@/hooks/useSupabaseData';
@@ -41,6 +42,7 @@ function ChatContent() {
           profile
         }}
       />
+      <FeedbackButton />
     </div>
   );
 }
