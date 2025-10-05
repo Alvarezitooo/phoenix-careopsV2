@@ -70,19 +70,19 @@ export default function FeedbackButton({
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 z-50"
+              className="fixed inset-4 md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2 md:inset-auto bg-white rounded-2xl shadow-2xl max-w-md w-full md:mx-auto z-50 flex flex-col max-h-[90vh]"
             >
               {/* Bouton fermer */}
               <button
                 onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors z-10"
                 aria-label="Fermer"
               >
                 <X className="h-5 w-5" />
               </button>
 
-              {/* Contenu */}
-              <div className="text-center space-y-6">
+              {/* Contenu scrollable */}
+              <div className="text-center space-y-6 p-6 md:p-8 overflow-y-auto">
                 <div>
                   <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <MessageCircle className="h-8 w-8 text-rose-600" />
