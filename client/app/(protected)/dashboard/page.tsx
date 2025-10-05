@@ -78,9 +78,10 @@ export default function DashboardPage() {
     return 'text-slate-600 bg-slate-50';
   };
 
-  const handleDocumentAnalyzed = (analysis: string) => {
+  const handleDocumentUploaded = () => {
     setShowDocumentUpload(false);
-    // TODO: Ajouter le document à la base Supabase
+    // Rafraîchir la liste de documents en rechargeant la page
+    window.location.reload();
   };
 
   // 🔄 Générer insights auto au chargement (si données disponibles)
@@ -489,11 +490,12 @@ export default function DashboardPage() {
                           {doc.statut.replace('_', ' ')}
                         </span>
                         <button
-                          onClick={() => askPhoenix(`Peux-tu m'expliquer ce document ${doc.nom} et me dire ce que je dois faire ?`)}
-                          className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
-                          title="Analyser avec Phoenix"
+                          onClick={() => askPhoenix(`Analyse ce document : ${doc.nom} (type: ${doc.type}). Explique-moi son contenu et les actions à réaliser.`)}
+                          className="flex items-center space-x-1 px-3 py-1.5 text-xs font-medium text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors"
+                          title="Analyser avec Phoenix IA"
                         >
-                          <HelpCircle className="h-4 w-4" />
+                          <Sparkles className="h-3.5 w-3.5" />
+                          <span>Analyser</span>
                         </button>
                       </div>
                     </div>
@@ -876,9 +878,9 @@ export default function DashboardPage() {
       {/* Modal Upload Document */}
       {showDocumentUpload && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 max-w-lg w-full max-h-96 overflow-y-auto">
+          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Analyser un document</h3>
+              <h3 className="text-lg font-semibold">Ajouter un document</h3>
               <button
                 onClick={() => setShowDocumentUpload(false)}
                 className="text-slate-400 hover:text-slate-600"
@@ -887,7 +889,7 @@ export default function DashboardPage() {
               </button>
             </div>
             <DocumentUpload
-              onDocumentAnalyzed={handleDocumentAnalyzed}
+              onDocumentUploaded={handleDocumentUploaded}
               userId={user?.id || ''}
             />
           </div>

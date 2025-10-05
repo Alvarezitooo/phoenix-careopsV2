@@ -4,12 +4,12 @@ import { useState, useRef } from 'react';
 import { Upload, FileText, Camera, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface DocumentUploadProps {
-  onDocumentAnalyzed: (analysis: string) => void;
+  onDocumentUploaded: () => void;
   userId: string;
 }
 
-export default function DocumentUpload({ onDocumentAnalyzed, userId }: DocumentUploadProps) {
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+export default function DocumentUpload({ onDocumentUploaded, userId }: DocumentUploadProps) {
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,64 +30,52 @@ export default function DocumentUpload({ onDocumentAnalyzed, userId }: DocumentU
       return;
     }
 
-    setIsAnalyzing(true);
+    setIsUploading(true);
     setError(null);
     setSuccess(null);
 
     try {
-      // Conversion en base64 pour envoi
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const content = e.target?.result as string;
+      // Déterminer le type de document
+      const documentType = file.type.includes('image') ? 'scan' :
+                         file.type.includes('pdf') ? 'pdf' : 'text';
 
-        // Déterminer le type de document
-        const documentType = file.type.includes('image') ? 'scan' :
-                           file.type.includes('pdf') ? 'pdf' : 'text';
+      // 🔐 Récupérer Supabase
+      const { supabase } = await import('@/lib/supabase');
+      const { data: { session } } = await supabase.auth.getSession();
 
-        // 🔐 Récupérer le token Supabase
-        const { supabase } = await import('@/lib/supabase');
-        const { data: { session } } = await supabase.auth.getSession();
-        const token = session?.access_token;
+      if (!session) {
+        throw new Error('Vous devez être connecté pour uploader un document');
+      }
 
-        if (!token) {
-          throw new Error('Vous devez être connecté pour analyser un document');
-        }
+      console.log('📤 Upload document:', file.name);
 
-        console.log('📤 Upload document avec token:', token.substring(0, 20) + '...');
-
-        // Appel à l'API d'analyse
-        const response = await fetch('/api/chat/analyze-document', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            document: content,
-            userId,
-            documentType,
-            fileName: file.name
-          }),
+      // 💾 Sauvegarder dans Supabase user_documents
+      const { error: dbError } = await supabase
+        .from('user_documents')
+        .insert({
+          user_id: userId,
+          nom: file.name,
+          type: documentType,
+          statut: 'valide',
+          date: new Date().toISOString(),
         });
 
-        if (!response.ok) {
-          throw new Error('Erreur lors de l\'analyse du document');
-        }
+      if (dbError) {
+        throw new Error('Erreur lors de la sauvegarde du document');
+      }
 
-        const data = await response.json();
+      setSuccess('Document ajouté avec succès !');
 
-        setSuccess('Document analysé avec succès !');
-        onDocumentAnalyzed(data.analysis || data.fullAnalysis);
-
-      };
-
-      reader.readAsDataURL(file);
+      // Petit délai pour que l'utilisateur voit le message
+      setTimeout(() => {
+        onDocumentUploaded();
+      }, 800);
 
     } catch (err: any) {
-      console.error('Erreur analyse document:', err);
-      setError(err.message || 'Erreur lors de l\'analyse du document');
+      console.error('Erreur upload document:', err);
+      setError(err.message || 'Erreur lors de l\'upload du document');
     } finally {
-      setIsAnalyzing(false);
+      setIsUploading(false);
     }
   };
 
@@ -120,10 +108,10 @@ export default function DocumentUpload({ onDocumentAnalyzed, userId }: DocumentU
           className="hidden"
         />
 
-        {isAnalyzing ? (
+        {isUploading ? (
           <div className="space-y-3">
             <Loader2 className="h-12 w-12 text-rose-500 animate-spin mx-auto" />
-            <p className="text-slate-600">Phoenix analyse votre document...</p>
+            <p className="text-slate-600">Enregistrement en cours...</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -164,7 +152,7 @@ export default function DocumentUpload({ onDocumentAnalyzed, userId }: DocumentU
 
       {/* Exemples de documents */}
       <div className="text-xs text-slate-500">
-        <p className="font-medium mb-2">Phoenix peut analyser :</p>
+        <p className="font-medium mb-2">Types de documents acceptés :</p>
         <ul className="space-y-1">
           <li>• Notifications et décisions MDPH</li>
           <li>• Certificats médicaux et bilans</li>
@@ -172,6 +160,7 @@ export default function DocumentUpload({ onDocumentAnalyzed, userId }: DocumentU
           <li>• Formulaires de demande d&apos;aides</li>
           <li>• Documents scolaires (PPS, PAI...)</li>
         </ul>
+        <p className="text-slate-400 mt-2">Vous pourrez demander une analyse par Phoenix après l&apos;upload.</p>
       </div>
     </div>
   );
