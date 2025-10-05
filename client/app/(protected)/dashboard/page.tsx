@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import DocumentUpload from '@/components/DocumentUpload';
 import InterconnectionDemo from '@/components/InterconnectionDemo';
 import OnboardingWizard from '@/components/OnboardingWizard';
+import DashboardSidebar from '@/components/DashboardSidebar';
 import ReactMarkdown from 'react-markdown';
 
 export default function DashboardPage() {
@@ -124,12 +125,6 @@ export default function DashboardPage() {
   const isNewUser = !aidesLoading && !documentsLoading &&
     !aides?.length && !documents?.length && !deadlines?.length;
 
-  const tabs = [
-    { id: 'resume', label: 'Résumé', icon: User },
-    { id: 'aides', label: 'Mes Aides', icon: Euro },
-    { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'planning', label: 'Planning', icon: Calendar }
-  ];
 
   // Afficher wizard si nouveau utilisateur (pas de profil)
   if (!profileLoading && !profile && !showOnboarding) {
@@ -155,8 +150,18 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="h-full bg-slate-50 overflow-auto">
-      <div className="max-w-6xl mx-auto p-6">
+    <div className="h-full flex bg-slate-50">
+      {/* Sidebar */}
+      <DashboardSidebar
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+        userEmail={user?.email}
+        userName={profile?.name}
+      />
+
+      {/* Main content */}
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-6xl mx-auto p-6 md:p-8">
         {/* Bannière Bêta Feedback */}
         <div className="mb-6 bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-xl p-4 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
@@ -179,60 +184,22 @@ export default function DashboardPage() {
         </div>
 
         {/* Header */}
-        <div className="mb-8 flex justify-between items-start">
+        <div className="mb-8 flex justify-between items-start pt-12 md:pt-0">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Mon Dossier Familial</h1>
-            <p className="text-slate-600 mt-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Mon Dossier Familial</h1>
+            <p className="text-slate-600 mt-2 text-sm md:text-base">
               Bienvenue {user?.email || profile?.name}, voici un aperçu de votre situation
             </p>
           </div>
           <button
             onClick={() => router.push('/profil')}
-            className="flex items-center space-x-2 px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+            className="hidden md:flex items-center space-x-2 px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
           >
             <Edit2 className="h-4 w-4 text-slate-600" />
             <span className="text-slate-700 font-medium">Mon Profil</span>
           </button>
         </div>
 
-        {/* Tabs - Responsive */}
-        <div className="mb-8">
-          {/* Desktop tabs */}
-          <div className="hidden md:flex space-x-1 bg-white rounded-xl p-1 shadow-sm">
-            {tabs.map(tab => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setSelectedTab(tab.id)}
-                  className={`flex items-center space-x-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
-                    selectedTab === tab.id
-                      ? 'bg-rose-500 text-white shadow-md'
-                      : 'text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Mobile dropdown */}
-          <div className="md:hidden bg-white rounded-xl shadow-sm">
-            <select
-              value={selectedTab}
-              onChange={(e) => setSelectedTab(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border-0 font-medium text-slate-900 focus:ring-2 focus:ring-rose-500"
-            >
-              {tabs.map(tab => (
-                <option key={tab.id} value={tab.id}>
-                  {tab.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
 
         {/* Contenu Résumé */}
         {selectedTab === 'resume' && (
@@ -248,7 +215,7 @@ export default function DashboardPage() {
                     Phoenix est prêt à vous aider. Voici comment démarrer :
                   </p>
 
-                  <div className="grid md:grid-cols-3 gap-3 mb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                     <button
                       onClick={() => router.push('/chat?q=Quelles aides puis-je demander pour mon enfant ?')}
                       className="bg-white/20 hover:bg-white/30 p-4 rounded-xl text-left transition-all duration-200 hover:scale-105 backdrop-blur-sm"
@@ -895,6 +862,8 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -134,7 +134,7 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
     return (
       <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
         <div className={`
-          max-w-[85%] rounded-2xl px-4 py-3 relative
+          max-w-[95%] sm:max-w-[85%] rounded-2xl px-4 py-3 relative
           ${isUser
             ? 'bg-rose-500 text-white'
             : 'bg-white shadow-sm border border-slate-200'
@@ -244,7 +244,7 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
   };
 
   const QuickActions = () => (
-    <div className="grid grid-cols-2 gap-2 p-4 bg-slate-50 rounded-lg mb-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-4 bg-slate-50 rounded-lg mb-4">
       <button
         onClick={() => handleQuickAction('aeeh_calc')}
         className="p-3 text-left rounded-xl border border-slate-200 hover:border-rose-300 hover:bg-white transition-all"
