@@ -150,7 +150,7 @@ export default function DashboardPage() {
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
         userEmail={user?.email}
-        userName={profile?.name}
+        userName={profile?.name || undefined}
       />
 
       {/* Main content */}
