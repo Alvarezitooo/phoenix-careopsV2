@@ -606,6 +606,7 @@ export default function DashboardPage() {
             </div>
           </div>
         )}
+      </div>
 
       {/* Modal Ajouter Aide */}
       {showAddAide && (
