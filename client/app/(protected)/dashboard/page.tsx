@@ -156,6 +156,27 @@ export default function DashboardPage() {
   return (
     <div className="h-full bg-slate-50 overflow-auto">
       <div className="max-w-6xl mx-auto p-6">
+        {/* Bannière Bêta Feedback */}
+        <div className="mb-6 bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-xl p-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-bold">
+              BÊTA
+            </div>
+            <div>
+              <p className="text-slate-800 font-medium">Votre avis compte !</p>
+              <p className="text-slate-600 text-sm">Aidez-nous à améliorer PhoenixIA en 3 minutes</p>
+            </div>
+          </div>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSd2lcEiNqX1PGq1x2hegIhITsXdlbcqpBL8ri6T1aEmYnxFxg/viewform?usp=header"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 flex items-center gap-2"
+          >
+            📝 Donner mon avis
+          </a>
+        </div>
+
         {/* Header */}
         <div className="mb-8 flex justify-between items-start">
           <div>
