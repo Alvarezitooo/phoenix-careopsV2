@@ -125,12 +125,6 @@ export default function DashboardPage() {
   const isNewUser = !aidesLoading && !documentsLoading &&
     !aides?.length && !documents?.length && !deadlines?.length;
 
-
-  // Afficher wizard si nouveau utilisateur (pas de profil)
-  if (!profileLoading && !profile && !showOnboarding) {
-    setShowOnboarding(true);
-  }
-
   if (profileLoading) {
     return (
       <div className="h-full bg-slate-50 flex items-center justify-center">
