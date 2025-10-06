@@ -9,8 +9,9 @@ Flask==3.0.0
 gunicorn>=23.0.0  # 🔒 Fix: Request smuggling CVE (was 21.2.0)
 flask-cors>=5.0.0  # 🔒 Fix: Access-Control-Allow-Private-Network (was 4.0.0)
 
-# Gemini AI
+# Gemini AI + Semantic Search
 google-generativeai==0.8.3
+numpy>=1.24.0  # Pour calculs embeddings (similarité cosinus)
 
 # Database
 supabase>=2.0.0

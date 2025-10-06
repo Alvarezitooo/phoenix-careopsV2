@@ -99,6 +99,16 @@ def load_knowledge_base() -> dict:
 
 knowledge_base = load_knowledge_base()
 
+# ===== RECHERCHE SÉMANTIQUE =====
+from services.semantic_search import initialize_semantic_search, hybrid_search
+
+# Initialiser les embeddings au démarrage
+if knowledge_base:
+    try:
+        initialize_semantic_search(knowledge_base)
+    except Exception as e:
+        print(f"⚠️ Recherche sémantique indisponible, fallback sur keyword matching: {e}")
+
 # ===== FONCTIONS RAG =====
 def fuzzy_match(s1: str, s2: str) -> float:
     """Calcule similarité fuzzy entre deux strings (0-1)"""
@@ -124,8 +134,26 @@ def extract_suggestions(text: str) -> tuple[str, list]:
 
     return main_answer, suggestions[:3]
 
-def find_relevant_documents(query: str) -> list:
-    """🔍 Recherche améliorée avec fuzzy matching dans la base de connaissances"""
+def find_relevant_documents(query: str, use_semantic: bool = True) -> list:
+    """
+    🔍 Recherche intelligente dans la base de connaissances
+
+    Args:
+        query: Question de l'utilisateur
+        use_semantic: Si True, utilise recherche hybride (sémantique + keyword)
+                     Si False, fallback sur keyword matching uniquement
+
+    Returns:
+        Liste des 3 documents les plus pertinents
+    """
+    # Tenter recherche hybride (sémantique + keyword)
+    if use_semantic:
+        try:
+            return hybrid_search(query, knowledge_base, top_k=3, semantic_weight=0.7)
+        except Exception as e:
+            print(f"⚠️ Recherche sémantique échouée, fallback sur keyword: {e}")
+
+    # Fallback: keyword matching classique (ancienne méthode)
     query_lower = query.lower()
     relevant_docs = []
 
