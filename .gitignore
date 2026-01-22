@@ -41,3 +41,26 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 *.bak
+venv/
+env/
+
+# Supabase
+supabase/.env.local
+supabase/.branches/
+supabase/.temp/
+
+# Railway
+.railway/
+
+# Secrets & credentials
+*.pem
+*.key
+*.cert
+.env.railway.*
+credentials.json
+secrets.yaml
+
+# Cache & temp
+*.cache
+.ruff_cache/
+*.pyc
