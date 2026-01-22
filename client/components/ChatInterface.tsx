@@ -55,6 +55,31 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
     }
   }, [isLoading]);
 
+  // Définir les callbacks AVANT tout return conditionnel (règle des hooks React)
+  const handleSuggestionClick = useCallback((suggestion: string) => {
+    setInputValue(suggestion);
+    inputRef.current?.focus();
+  }, []);
+
+  const handleActionClick = useCallback(async (action: 'do_now' | 'later' | 'cant_do', step: string) => {
+    let messageToSend = '';
+    switch (action) {
+      case 'do_now':
+        messageToSend = `J'ai fait l'étape : "${step}"`;
+        break;
+      case 'later':
+        messageToSend = `Je ferai l'étape : "${step}" plus tard.`;
+        break;
+      case 'cant_do':
+        messageToSend = `Je n'arrive pas à faire l'étape : "${step}". Peux-tu m'aider autrement ?`;
+        break;
+    }
+    if (messageToSend) {
+      setInputValue('');
+      await sendMessage(messageToSend);
+    }
+  }, [sendMessage]);
+
   if (!userId) {
     return (
       <div className={`flex items-center justify-center h-full bg-slate-50 ${className}`}>
@@ -88,30 +113,6 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
       handleSubmit(e);
     }
   };
-
-  const handleSuggestionClick = useCallback((suggestion: string) => {
-    setInputValue(suggestion);
-    inputRef.current?.focus();
-  }, []);
-
-  const handleActionClick = useCallback(async (action: 'do_now' | 'later' | 'cant_do', step: string) => {
-    let messageToSend = '';
-    switch (action) {
-      case 'do_now':
-        messageToSend = `J&apos;ai fait l&apos;étape : &quot;${step}&quot;`;
-        break;
-      case 'later':
-        messageToSend = `Je ferai l&apos;étape : &quot;${step}&quot; plus tard.`;
-        break;
-      case 'cant_do':
-        messageToSend = `Je n&apos;arrive pas à faire l&apos;étape : &quot;${step}&quot;. Peux-tu m&apos;aider autrement ?`;
-        break;
-    }
-    if (messageToSend) {
-      setInputValue('');
-      await sendMessage(messageToSend);
-    }
-  }, [sendMessage]);
 
   const handleQuickAction = async (action: string) => {
     const expertQuickMessages = {

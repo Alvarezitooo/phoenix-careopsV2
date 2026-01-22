@@ -36,11 +36,11 @@ export default function HomePage() {
           setGuidedState(null); // No guided state found
         } else {
           const errorData = await response.json();
-          setErrorGuidedState(errorData.detail || 'Erreur lors de la récupération de l\'état guidé.');
+          setErrorGuidedState(errorData.detail || 'Erreur lors de la récupération de l&apos;état guidé.');
         }
       } catch (error) {
         console.error("Failed to fetch guided state:", error);
-        setErrorGuidedState('Impossible de se connecter au serveur pour récupérer l\'état guidé.');
+        setErrorGuidedState('Impossible de se connecter au serveur pour récupérer l&apos;état guidé.');
       } finally {
         setIsLoadingGuidedState(false);
       }
@@ -98,7 +98,7 @@ export default function HomePage() {
 
         <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight mb-8 max-w-3xl">
-            Comment puis-je vous accompagner aujourd'hui ?
+            Comment puis-je vous accompagner aujourd&apos;hui ?
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
@@ -187,13 +187,13 @@ export default function HomePage() {
           // Else, display the 3 action cards
           <>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight mb-8 max-w-3xl">
-              Comment puis-je vous accompagner aujourd'hui ?
+              Comment puis-je vous accompagner aujourd&apos;hui ?
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
               {/* Card 1: Administratif */}
               <button
-                onClick={() => handleCardClick("J'ai besoin d'aide pour mes démarches administratives.")}
+                onClick={() => handleCardClick("J&apos;ai besoin d&apos;aide pour mes démarches administratives.")}
                 className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 hover:shadow-lg hover:border-rose-300 transition-all duration-200 flex flex-col items-center text-center space-y-4"
               >
                 <FileText className="h-12 w-12 text-blue-500" />
