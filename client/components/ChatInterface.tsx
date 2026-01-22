@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, RotateCcw, FileText, Heart, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
 import { useChat } from '@/hooks/useChat';
 import { formatTimestamp, isRecentMessage } from '@/lib/chatApi';
+import GuidedMessage from '@/components/GuidedMessage'; // Import the new component
 
 interface ChatInterfaceProps {
   userId?: string;
@@ -88,6 +88,30 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
     }
   };
 
+  const handleSuggestionClick = useCallback((suggestion: string) => {
+    setInputValue(suggestion);
+    inputRef.current?.focus();
+  }, []);
+
+  const handleActionClick = useCallback(async (action: 'do_now' | 'later' | 'cant_do', step: string) => {
+    let messageToSend = '';
+    switch (action) {
+      case 'do_now':
+        messageToSend = `J'ai fait l'étape : "${step}"`;
+        break;
+      case 'later':
+        messageToSend = `Je ferai l'étape : "${step}" plus tard.`;
+        break;
+      case 'cant_do':
+        messageToSend = `Je n'arrive pas à faire l'étape : "${step}". Peux-tu m'aider autrement ?`;
+        break;
+    }
+    if (messageToSend) {
+      setInputValue('');
+      await sendMessage(messageToSend);
+    }
+  }, [sendMessage]);
+
   const handleQuickAction = async (action: string) => {
     const expertQuickMessages = {
       hello: "Bonjour Phoenix, j'aurais besoin d'aide pour accompagner mon enfant.",
@@ -149,47 +173,23 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
             </div>
           )}
 
-          <div className={`prose prose-sm max-w-none leading-relaxed ${
-            isUser ? 'text-white' : 'text-slate-800'
-          }`}>
-            <ReactMarkdown>{message.content}</ReactMarkdown>
-          </div>
-
-          {/* Sources RAG */}
-          {!isUser && message.sources && message.sources.length > 0 && (
-            <div className="mt-3 pt-2 border-t border-slate-100">
-              <div className="text-xs text-slate-500 mb-2">📚 Sources consultées :</div>
-              <div className="flex flex-wrap gap-1">
-                {message.sources.map((source: string, idx: number) => (
-                  <span
-                    key={idx}
-                    className="inline-block bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs border border-blue-200"
-                  >
-                    📄 {source.length > 40 ? source.substring(0, 40) + '...' : source}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Suggestions intelligentes */}
-          {!isUser && message.suggestions && message.suggestions.length > 0 && (
-            <div className="mt-3 pt-2 border-t border-slate-100">
-              <div className="text-xs text-slate-500 mb-2">💡 Questions suggérées :</div>
-              <div className="flex flex-col gap-2">
-                {message.suggestions.map((suggestion: string, idx: number) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setInputValue(suggestion);
-                      inputRef.current?.focus();
-                    }}
-                    className="text-left text-sm bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-2 rounded-lg transition-colors border border-rose-200 hover:border-rose-300"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
+          {/* Render GuidedMessage for AI responses */}
+          {!isUser ? (
+            <GuidedMessage
+              answer={message.response} // Use message.response for the main answer
+              situation={message.situation}
+              priority={message.priority}
+              next_step={message.next_step}
+              sources={message.sources || []}
+              suggestions={message.suggestions || []}
+              onActionClick={handleActionClick}
+              onSuggestionClick={handleSuggestionClick}
+            />
+          ) : (
+            <div className={`prose prose-sm max-w-none leading-relaxed ${
+              isUser ? 'text-white' : 'text-slate-800'
+            }`}>
+              <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
           )}
 
@@ -202,36 +202,9 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
             )}
           </div>
 
-          {/* Suggestions prédictives */}
-          {!isUser && index === messages.length - 1 && message.content.toLowerCase().includes('aeeh') && (
-            <div className="mt-3 pt-2 border-t border-slate-100">
-              <div className="text-xs text-slate-500 mb-2">💡 Questions fréquentes ensuite :</div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => sendMessage("Combien de temps pour avoir une réponse MDPH ?")}
-                  className="text-xs bg-rose-50 text-rose-700 px-2 py-1 rounded hover:bg-rose-100 transition-colors"
-                >
-                  ⏱️ Délais MDPH ?
-                </button>
-                <button
-                  onClick={() => sendMessage("Puis-je cumuler AEEH et allocations familiales ?")}
-                  className="text-xs bg-rose-50 text-rose-700 px-2 py-1 rounded hover:bg-rose-100 transition-colors"
-                >
-                  🔄 Cumul possibles ?
-                </button>
-                <button
-                  onClick={() => sendMessage("Comment faire un recours si refus AEEH ?")}
-                  className="text-xs bg-rose-50 text-rose-700 px-2 py-1 rounded hover:bg-rose-100 transition-colors"
-                >
-                  ⚖️ En cas de refus ?
-                </button>
-              </div>
-            </div>
-          )}
-
           {!isUser && index === messages.length - 1 && (
             <button
-              onClick={() => saveMemory(message.content, 'helpful_response')}
+              onClick={() => saveMemory(message.response, 'helpful_response')} // Use message.response
               className="absolute -bottom-2 -right-2 bg-rose-100 hover:bg-rose-200 text-rose-600 rounded-full p-1 transition-colors"
               title="Sauvegarder cette réponse"
             >
@@ -397,7 +370,11 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
 
       {/* Input */}
       <div className="bg-white border-t border-slate-200 px-6 py-4">
-        {showQuickActions && !isEmpty && <QuickActions />}
+        {showQuickActions && !isEmpty && (
+          <div className="mb-4">
+            <QuickActions />
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex gap-3">
           <div className="flex-1 relative">
@@ -445,3 +422,4 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
     </div>
   );
 }
+

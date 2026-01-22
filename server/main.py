@@ -23,7 +23,6 @@ from core.cache import cache
 from services.rag import (
     find_relevant_documents,
     generate_with_gemini,
-    extract_suggestions,
     sanitize_input,
     validate_context,
     PROMPTS,
@@ -46,6 +45,7 @@ from services.analytics import (
     get_overall_stats,
     submit_feedback
 )
+from services.intent_service import detect_intent
 
 
 # ===== LIFECYCLE =====
@@ -160,6 +160,10 @@ async def chat_send(
         # Sanitize input
         message = sanitize_input(chat_request.message, max_length=2000)
 
+        # Detect intent
+        detected_intent = detect_intent(message)
+        print(f"🎯 Intention détectée: {detected_intent}")
+
         # Use authenticated user ID if available, else fallback to request user_id
         user_id = current_user["id"] if current_user else chat_request.user_id
 
@@ -173,7 +177,10 @@ async def chat_send(
                 response=cached_response['answer'],
                 sources=cached_response.get('sources', []),
                 suggestions=cached_response.get('suggestions', []),
-                cached=True
+                cached=True,
+                situation=cached_response.get('situation'),
+                priority=cached_response.get('priority'),
+                next_step=cached_response.get('next_step')
             )
 
         # 💭 Récupérer l'historique de conversation
@@ -224,7 +231,8 @@ async def chat_send(
                 context_text="",
                 sources_list=sources_list,
                 context=context,
-                message=message
+                message=message,
+                intent_info=detected_intent # New intent info
             )
         else:
             # Sans sources
@@ -245,31 +253,19 @@ async def chat_send(
             prompt = prompt_template.format(
                 history_text=history_text,
                 memories_text=memories_text,
-                message=message
+                message=message,
+                intent_info=detected_intent # New intent info
             )
 
-        # 🔐 Génération avec Gemini (encore sync, à migrer plus tard)
-        try:
-            full_response = generate_with_gemini(prompt, max_retries=3)
-        except Exception as e:
-            print(f"❌ Échec Gemini: {e}")
-            full_response = """Je rencontre des difficultés techniques.
+        # 🔐 Génération avec Gemini
+        gemini_response_dict = generate_with_gemini(prompt, max_retries=3)
 
-Voici ce que je recommande :
-1. **Réessayez dans quelques instants**
-2. **Contactez votre MDPH** au 0 800 360 360
-3. **Visitez service-public.fr**
-
-SUGGESTIONS:
-- Quelles sont les coordonnées de ma MDPH ?
-- Comment faire une réclamation ?
-- Où trouver de l'aide ?"""
-
-        # Extraire suggestions
-        answer, suggestions = extract_suggestions(full_response)
-
-        # Sources utilisées
-        sources = [doc['title'] for doc in relevant_docs] if relevant_docs else []
+        answer = gemini_response_dict.get("answer", "Je n'ai pas pu générer de réponse.")
+        situation = gemini_response_dict.get("situation")
+        priority = gemini_response_dict.get("priority")
+        next_step = gemini_response_dict.get("next_step")
+        sources = gemini_response_dict.get("sources", [])
+        suggestions = gemini_response_dict.get("suggestions", [])
 
         processing_time = round(time.time() - start_time, 2)
 
@@ -277,6 +273,9 @@ SUGGESTIONS:
             "answer": answer,
             "sources": sources,
             "suggestions": suggestions,
+            "situation": situation,
+            "priority": priority,
+            "next_step": next_step,
             "processing_time": processing_time,
             "timestamp": datetime.now().isoformat(),
             "from_cache": False
@@ -294,12 +293,21 @@ SUGGESTIONS:
             user_id, message, answer, sources
         )
 
+        # 💾 SAUVEGARDER LE DERNIER ÉTAT GUIDÉ (BACKGROUND TASK - non-bloquant)
+        if situation and priority and next_step: # Sauvegarder seulement si les champs sont présents
+            background_tasks.add_task(
+                save_last_guided_state,
+                user_id, situation, priority, next_step
+            )
+
         # 📊 LOG ANALYTICS (BACKGROUND TASK - non-bloquant)
         background_tasks.add_task(
             log_chat_interaction,
             user_id, message, answer, sources, suggestions,
             False,  # cached (on log que les non-cached pour l'instant)
-            int(processing_time * 1000)  # Convert to ms
+            int(processing_time * 1000),  # Convert to ms
+            detected_intent,
+            next_step
         )
 
         print(f"✅ Réponse générée: {len(answer)} chars, {processing_time}s")
@@ -308,7 +316,10 @@ SUGGESTIONS:
             response=answer,
             sources=sources,
             suggestions=suggestions,
-            cached=False
+            cached=False,
+            situation=situation,
+            priority=priority,
+            next_step=next_step
         )
 
     except Exception as e:
@@ -338,6 +349,49 @@ async def get_memory_stats():
         total_messages=total_messages,
         avg_messages_per_user=round(avg, 2)
     )
+
+
+@app.get("/api/guided_state")
+async def get_user_guided_state(current_user = Depends(get_current_user)):
+    """
+    Retrieves the last guided state for the current user.
+    Requires authentication.
+    """
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    user_id = current_user["id"]
+    guided_state = get_last_guided_state(user_id)
+    if guided_state:
+        return guided_state
+    else:
+        raise HTTPException(status_code=404, detail="No guided state found for this user")
+
+
+@app.post("/api/guided_state/update")
+async def update_user_guided_state(
+    guided_state_data: Dict[str, Optional[str]], # Expects {"situation": "...", "priority": "...", "next_step": "..."} or {"clear": True}
+    current_user = Depends(get_current_user)
+):
+    """
+    Updates or clears the last guided state for the current user.
+    Requires authentication.
+    """
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    user_id = current_user["id"]
+
+    if guided_state_data.get("clear"):
+        # Clear the guided state by saving empty values
+        save_last_guided_state(user_id, "", "", "")
+        return {"message": "Guided state cleared successfully"}
+    else:
+        situation = guided_state_data.get("situation", "")
+        priority = guided_state_data.get("priority", "")
+        next_step = guided_state_data.get("next_step", "")
+        save_last_guided_state(user_id, situation, priority, next_step)
+        return {"message": "Guided state updated successfully"}
 
 
 @app.delete("/api/memory/clear/{user_id}")

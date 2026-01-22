@@ -6,6 +6,9 @@ const nextConfig = {
   // ✅ ESLint activé pour garantir qualité code
   // (corrigé suite audit sécurité)
 
+  // Output standalone pour Docker (réduit la taille de l'image)
+  output: 'standalone',
+
   // Optimisation Railway CDN
   images: {
     unoptimized: true,

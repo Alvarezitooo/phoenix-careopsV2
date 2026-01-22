@@ -1,20 +1,5 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/chat/analyze-document/route": "app/api/chat/analyze-document/route.js",
-  "/api/documents/route": "app/api/documents/route.js",
-  "/api/procedures/route": "app/api/procedures/route.js",
-  "/api/chat/message/route": "app/api/chat/message/route.js",
   "/login/page": "app/login/page.js",
-  "/cgu/page": "app/cgu/page.js",
-  "/page": "app/page.js",
-  "/mentions-legales/page": "app/mentions-legales/page.js",
-  "/politique-confidentialite/page": "app/politique-confidentialite/page.js",
-  "/soutenir/gerer/page": "app/soutenir/gerer/page.js",
-  "/signup/page": "app/signup/page.js",
-  "/soutenir/success/page": "app/soutenir/success/page.js",
-  "/soutenir/page": "app/soutenir/page.js",
-  "/(protected)/profil/page": "app/(protected)/profil/page.js",
-  "/(protected)/chat/page": "app/(protected)/chat/page.js",
-  "/(protected)/dashboard/page": "app/(protected)/dashboard/page.js",
-  "/api/chat/history/route": "app/api/chat/history/route.js"
+  "/page": "app/page.js"
 }

@@ -26,7 +26,9 @@ def log_chat_interaction(
     sources: List[str],
     suggestions: List[str],
     cached: bool,
-    processing_time_ms: int
+    processing_time_ms: int,
+    detected_intent: str,
+    next_step: Optional[str]
 ) -> bool:
     """
     📝 Log une interaction chat dans Supabase Analytics
@@ -39,6 +41,8 @@ def log_chat_interaction(
         suggestions: Suggestions retournées
         cached: Vrai si depuis le cache
         processing_time_ms: Temps de traitement en ms
+        detected_intent: Intention détectée pour la question
+        next_step: La prochaine étape suggérée par le guide
 
     Returns:
         True si succès, False sinon
@@ -61,6 +65,8 @@ def log_chat_interaction(
             "processing_time_ms": processing_time_ms,
             "has_suggestions": len(suggestions) > 0,
             "num_suggestions": len(suggestions),
+            "detected_intent": detected_intent,
+            "next_step_proposed": next_step,
         }
 
         result = client.table("chat_analytics").insert(data).execute()

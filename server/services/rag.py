@@ -9,6 +9,7 @@ from difflib import SequenceMatcher
 import google.generativeai as genai
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
+from typing import Dict, Any, Tuple, List
 
 # ===== CONFIGURATION GEMINI =====
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -49,7 +50,24 @@ EXPERTISE COMPLÈTE:
 
 MISSION: Accompagner les familles comme un conseiller MDPH+CAF unifié.
 
-STYLE: Empathique, précis, concret. Toujours proposer des actions et étapes pratiques."""
+STYLE: Empathique, précis, concret. Toujours proposer des actions et étapes pratiques.
+
+Réponds à la question de l'utilisateur en fournissant une réponse complète et structurée.
+La réponse doit être au format JSON STRICT, avec les champs suivants:
+- "answer": La réponse principale à la question de l'utilisateur.
+- "situation": Une phrase ou deux décrivant où en est l'utilisateur dans sa démarche ou le contexte actuel.
+- "priority": Une phrase décrivant ce qui est important maintenant. Si aucune urgence: "Aucune urgence immédiate."
+- "next_step": UNE seule micro-action concrète que l'utilisateur peut faire en moins de 2 minutes, commençant par un verbe à l'infinitif.
+- "sources": Une liste de titres de documents pertinents utilisés pour la réponse.
+- "suggestions": Une liste de 3 suggestions de questions ou d'actions supplémentaires.
+
+Règles STRICTES pour les champs "situation", "priority", "next_step":
+- "situation": 1 à 2 phrases max, langage simple.
+- "priority": 1 phrase max.
+- "next_step": UNE seule micro-action, < 2 minutes, commence par un verbe à l'infinitif.
+
+Ne donne pas de conseils médicaux. Ne fais pas de suppositions non présentes dans le texte.
+"""
 )
 
 # ===== CHARGEMENT PROMPTS =====
@@ -113,26 +131,6 @@ if knowledge_base:
 def fuzzy_match(s1: str, s2: str) -> float:
     """Calcule similarité fuzzy entre deux strings (0-1)"""
     return SequenceMatcher(None, s1.lower(), s2.lower()).ratio()
-
-def extract_suggestions(text: str) -> tuple[str, list]:
-    """Extrait les suggestions de la réponse IA"""
-    if "SUGGESTIONS:" not in text:
-        return text, []
-
-    parts = text.split("SUGGESTIONS:")
-    main_answer = parts[0].strip()
-
-    suggestions = []
-    if len(parts) > 1:
-        suggestions_text = parts[1].strip()
-        for line in suggestions_text.split('\n'):
-            line = line.strip()
-            if line.startswith('-'):
-                suggestion = line[1:].strip()
-                if suggestion:
-                    suggestions.append(suggestion)
-
-    return main_answer, suggestions[:3]
 
 def find_relevant_documents(query: str, use_semantic: bool = True) -> list:
     """
@@ -204,14 +202,48 @@ def find_relevant_documents(query: str, use_semantic: bool = True) -> list:
     relevant_docs.sort(key=lambda x: x["score"], reverse=True)
     return relevant_docs[:3]
 
-def generate_with_gemini_internal(prompt: str) -> str:
-    """Appel Gemini brut (utilisé par le wrapper avec retry)"""
-    response = model.generate_content(prompt, request_options={'timeout': 30})
+def generate_with_gemini_internal(prompt: str) -> Dict[str, Any]:
+    """
+    Appel Gemini brut, attend une réponse JSON structurée.
+    Retourne un dictionnaire avec les champs attendus ou un fallback.
+    """
+    try:
+        response = model.generate_content(prompt, request_options={'timeout': 30})
 
-    if response.text:
-        return response.text
-    else:
-        raise ValueError("Réponse vide de Gemini")
+        if not response.text:
+            raise ValueError("Réponse vide de Gemini")
+
+        # Tenter de parser la réponse comme JSON
+        try:
+            parsed_response = json.loads(response.text)
+            # Valider les champs essentiels
+            if not all(k in parsed_response for k in ["answer", "situation", "priority", "next_step", "sources", "suggestions"]):
+                raise ValueError("Réponse JSON de Gemini incomplète ou mal formée")
+            return parsed_response
+        except json.JSONDecodeError as e:
+            print(f"❌ Erreur de parsing JSON de la réponse Gemini: {e}")
+            print(f"Réponse brute: {response.text[:500]}...")
+            # Fallback si le JSON est invalide
+            return {
+                "answer": response.text,
+                "situation": "On parle de votre demande.",
+                "priority": "Aucune urgence immédiate.",
+                "next_step": "Me dire ce que vous avez déjà fait sur ce sujet.",
+                "sources": [],
+                "suggestions": []
+            }
+
+    except Exception as e:
+        print(f"⚠️ Erreur lors de l'appel Gemini ou du traitement: {e}")
+        # Fallback général en cas d'erreur
+        return {
+            "answer": "Je rencontre des difficultés techniques pour le moment. Veuillez réessayer plus tard.",
+            "situation": "Problème technique.",
+            "priority": "Aucune urgence immédiate.",
+            "next_step": "Réessayer dans quelques instants.",
+            "sources": [],
+            "suggestions": []
+        }
 
 @retry(
     stop=stop_after_attempt(3),
@@ -219,16 +251,24 @@ def generate_with_gemini_internal(prompt: str) -> str:
     retry=retry_if_exception_type((Exception,)),
     reraise=True
 )
-def generate_with_gemini(prompt: str, max_retries: int = 3) -> str:
-    """Génère une réponse avec Gemini avec retry automatique (tenacity)"""
+def generate_with_gemini(prompt: str, max_retries: int = 3) -> Dict[str, Any]:
+    """Génère une réponse avec Gemini avec retry automatique (tenacity) et retourne un dict structuré."""
     try:
         return generate_with_gemini_internal(prompt)
     except Exception as e:
-        print(f"⚠️ Erreur Gemini: {e}")
-        raise
+        print(f"⚠️ Erreur Gemini après retries: {e}")
+        # Fallback si toutes les retries échouent
+        return {
+            "answer": "Malgré plusieurs tentatives, je n'ai pas pu générer de réponse. Veuillez réessayer plus tard.",
+            "situation": "Problème technique persistant.",
+            "priority": "Aucune urgence immédiate.",
+            "next_step": "Contacter le support si le problème persiste.",
+            "sources": [],
+            "suggestions": []
+        }
 
 # ===== SÉCURITÉ =====
-def detect_prompt_injection(text: str) -> tuple[bool, str]:
+def detect_prompt_injection(text: str) -> Tuple[bool, str]:
     """
     🔒 Détecte les tentatives de prompt injection
     Retourne (is_injection, reason)

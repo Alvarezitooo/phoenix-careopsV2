@@ -20,6 +20,9 @@ class ChatResponse(BaseModel):
     sources: List[str] = []
     suggestions: List[str] = []
     cached: bool = False
+    situation: Optional[str] = None
+    priority: Optional[str] = None
+    next_step: Optional[str] = None
 
 
 # ===== Memory Models =====
