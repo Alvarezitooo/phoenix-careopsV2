@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { Heart, FileText, Zap, Frown, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useSupabaseAuth } from '@/context/SupabaseAuthContext'; // Assuming this context exists
-import ResumeCard from '@/components/ResumeCard'; // Import ResumeCard
+import { useSupabaseAuth } from '@/context/SupabaseAuthContext';
+import { supabase } from '@/lib/supabase';
+import ResumeCard from '@/components/ResumeCard';
 
 export default function HomePage() {
   const router = useRouter();
@@ -22,7 +23,15 @@ export default function HomePage() {
       }
 
       try {
-        const token = await user.getIdToken(); // Get the ID token for authorization
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+
+        if (!token) {
+          setErrorGuidedState('Session invalide');
+          setIsLoadingGuidedState(false);
+          return;
+        }
+
         const response = await fetch('/api/guided_state', {
           headers: {
             'Authorization': `Bearer ${token}`,
