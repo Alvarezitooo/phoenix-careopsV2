@@ -9,7 +9,7 @@ import ResumeCard from '@/components/ResumeCard'; // Import ResumeCard
 
 export default function HomePage() {
   const router = useRouter();
-  const { user, isLoading: isAuthLoading } = useSupabaseAuth(); // Get user and auth loading state
+  const { user, loading: isAuthLoading } = useSupabaseAuth(); // Get user and auth loading state
   const [guidedState, setGuidedState] = useState<any>(null);
   const [isLoadingGuidedState, setIsLoadingGuidedState] = useState(true);
   const [errorGuidedState, setErrorGuidedState] = useState<string | null>(null);
