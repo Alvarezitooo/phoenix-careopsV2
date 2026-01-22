@@ -129,7 +129,7 @@ export default function HomePage() {
             >
               <Zap className="h-12 w-12 text-rose-500" />
               <h2 className="text-xl font-semibold text-slate-800">Je suis perdu(e)</h2>
-              <p className="text-slate-600">Besoin d'orientation, de clarté...</p>
+              <p className="text-slate-600">Besoin d&apos;orientation, de clarté...</p>
             </button>
           </div>
         </main>
@@ -218,7 +218,7 @@ export default function HomePage() {
               >
                 <Zap className="h-12 w-12 text-rose-500" />
                 <h2 className="text-xl font-semibold text-slate-800">Je suis perdu(e)</h2>
-                <p className="text-slate-600">Besoin d'orientation, de clarté...</p>
+                <p className="text-slate-600">Besoin d&apos;orientation, de clarté...</p>
               </button>
             </div>
           </>
