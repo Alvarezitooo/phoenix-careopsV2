@@ -4,7 +4,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, RotateCcw, FileText, Heart, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 import { formatTimestamp, isRecentMessage } from '@/lib/chatApi';
-import GuidedMessage from '@/components/GuidedMessage'; // Import the new component
+import GuidedMessage from '@/components/GuidedMessage';
+import ReactMarkdown from 'react-markdown';
 
 interface ChatInterfaceProps {
   userId?: string;
@@ -97,13 +98,13 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
     let messageToSend = '';
     switch (action) {
       case 'do_now':
-        messageToSend = `J'ai fait l'étape : "${step}"`;
+        messageToSend = `J&apos;ai fait l&apos;étape : &quot;${step}&quot;`;
         break;
       case 'later':
-        messageToSend = `Je ferai l'étape : "${step}" plus tard.`;
+        messageToSend = `Je ferai l&apos;étape : &quot;${step}&quot; plus tard.`;
         break;
       case 'cant_do':
-        messageToSend = `Je n'arrive pas à faire l'étape : "${step}". Peux-tu m'aider autrement ?`;
+        messageToSend = `Je n&apos;arrive pas à faire l&apos;étape : &quot;${step}&quot;. Peux-tu m&apos;aider autrement ?`;
         break;
     }
     if (messageToSend) {
@@ -114,10 +115,10 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
 
   const handleQuickAction = async (action: string) => {
     const expertQuickMessages = {
-      hello: "Bonjour Phoenix, j'aurais besoin d'aide pour accompagner mon enfant.",
-      aeeh_calc: "Mon enfant a un handicap. Puis-je avoir l'AEEH et à combien ai-je droit ?",
+      hello: "Bonjour Phoenix, j&apos;aurais besoin d&apos;aide pour accompagner mon enfant.",
+      aeeh_calc: "Mon enfant a un handicap. Puis-je avoir l&apos;AEEH et à combien ai-je droit ?",
       parent_solo: "Je suis parent isolé avec un enfant handicapé. Quelles majorations puis-je avoir ?",
-      aesh_demande: "Mon enfant entre à l'école. Comment demander un AESH ?",
+      aesh_demande: "Mon enfant entre à l&apos;école. Comment demander un AESH ?",
       dossier_mdph: "Je dois constituer un dossier MDPH. Quels documents dois-je préparer ?",
       cumul_aides: "Puis-je cumuler AEEH, allocations familiales et ARS ?",
       recours_mdph: "Ma demande MDPH a été refusée. Comment faire un recours ?",

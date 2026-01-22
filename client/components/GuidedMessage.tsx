@@ -65,7 +65,7 @@ export default function GuidedMessage({
               className="flex-1 bg-red-50 hover:bg-red-100 text-red-700 px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center space-x-2"
             >
               <XCircle className="h-4 w-4" />
-              <span>Je n'y arrive pas</span>
+              <span>Je n&apos;y arrive pas</span>
             </button>
           </div>
         </div>
