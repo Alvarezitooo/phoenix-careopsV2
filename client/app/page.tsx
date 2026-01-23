@@ -1,24 +1,38 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, FileText, Zap, Frown, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSupabaseAuth } from '@/context/SupabaseAuthContext';
 import { supabase } from '@/lib/supabase';
-import ResumeCard from '@/components/ResumeCard';
+import QuietFragmentsCard from '@/components/QuietFragmentsCard';
+import { Heart, Loader2 } from 'lucide-react';
+
+type GuidedState = {
+  situation?: string;
+  priority?: string;
+  next_step?: string;
+};
+
+const formatNextStep = (value?: string) => {
+  if (!value) return '';
+  const clean = value.trim();
+  if (clean.length <= 120) return clean;
+  return `${clean.slice(0, 117).trimEnd()}...`;
+};
 
 export default function HomePage() {
   const router = useRouter();
-  const { user, loading: isAuthLoading } = useSupabaseAuth(); // Get user and auth loading state
-  const [guidedState, setGuidedState] = useState<any>(null);
-  const [isLoadingGuidedState, setIsLoadingGuidedState] = useState(true);
+  const { user, loading: authLoading } = useSupabaseAuth();
+  const [guidedState, setGuidedState] = useState<GuidedState | null>(null);
+  const [guidedLoading, setGuidedLoading] = useState(true);
   const [errorGuidedState, setErrorGuidedState] = useState<string | null>(null);
+  const [isClearingStep, setIsClearingStep] = useState(false);
 
   useEffect(() => {
     const fetchGuidedState = async () => {
-      if (!user || isAuthLoading) {
-        setIsLoadingGuidedState(false);
+      if (!user) {
+        setGuidedLoading(false);
         return;
       }
 
@@ -27,43 +41,99 @@ export default function HomePage() {
         const token = session?.access_token;
 
         if (!token) {
-          setErrorGuidedState('Session invalide');
-          setIsLoadingGuidedState(false);
+          setGuidedLoading(false);
           return;
         }
 
         const response = await fetch('/api/guided_state', {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
         if (response.ok) {
           const data = await response.json();
           setGuidedState(data);
-        } else if (response.status === 404) {
-          setGuidedState(null); // No guided state found
-        } else {
+        } else if (response.status !== 404) {
           const errorData = await response.json();
-          setErrorGuidedState(errorData.detail || 'Erreur lors de la récupération de l&apos;état guidé.');
+          setErrorGuidedState(errorData.detail || 'Impossible de récupérer la dernière étape.');
         }
       } catch (error) {
-        console.error("Failed to fetch guided state:", error);
-        setErrorGuidedState('Impossible de se connecter au serveur pour récupérer l&apos;état guidé.');
+        console.error('Failed to fetch guided state:', error);
+        setErrorGuidedState('Connexion instable. Réessaye plus tard.');
       } finally {
-        setIsLoadingGuidedState(false);
+        setGuidedLoading(false);
       }
     };
 
     fetchGuidedState();
-  }, [user, isAuthLoading]);
+  }, [user]);
 
-  const handleCardClick = (initialMessage: string) => {
-    router.push(`/chat?initialMessage=${encodeURIComponent(initialMessage)}`);
+  const handleResume = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    if (guidedState?.next_step) {
+      router.push(`/chat?q=${encodeURIComponent(`Reprenons ici : ${guidedState.next_step}`)}`);
+    } else {
+      router.push('/chat');
+    }
   };
 
-  // Show loading spinner while auth or guided state is loading
-  if (isAuthLoading || isLoadingGuidedState) {
+  const handleForgetStep = async () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+
+    setIsClearingStep(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) throw new Error('Session expirée');
+
+      const response = await fetch('/api/guided_state/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ clear: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur de réinitialisation');
+      }
+
+      setGuidedState(null);
+      setErrorGuidedState(null);
+      router.refresh();
+    } catch (error) {
+      console.error('Impossible d\'oublier l\'étape', error);
+      setErrorGuidedState('Impossible d\'oublier cette étape pour le moment.');
+    } finally {
+      setIsClearingStep(false);
+    }
+  };
+
+  const handleChangeSubject = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    router.push('/chat?q=Changeons de sujet. Aide-moi sur autre chose.');
+  };
+
+  const handleNeed = (message: string) => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    router.push(`/chat?q=${encodeURIComponent(message)}`);
+  };
+
+  if (authLoading || guidedLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
         <Loader2 className="h-10 w-10 text-rose-500 animate-spin" />
@@ -72,172 +142,142 @@ export default function HomePage() {
     );
   }
 
-  // If user is not logged in, show the default landing page (or redirect to login)
-  if (!user) {
-    // This part should ideally redirect to login or show a login prompt
-    // For now, it will show the default cards, but a user won't be able to chat without login
-    // The chat page itself handles the login check.
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
-        {/* Header - Reused/Adapted */}
-        <header className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <div className="flex items-center space-x-2">
-                <Heart className="h-8 w-8 text-rose-500" />
-                <span className="text-xl font-semibold text-slate-900">PhoenixCare</span>
-              </div>
-              <div className="space-x-3">
-                <Link
-                  href="/login"
-                  className="text-slate-600 hover:text-slate-900 font-medium"
-                >
+  return (
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-slate-900">
+            <Heart className="h-6 w-6 text-rose-500" />
+            <span className="font-semibold tracking-tight">PhoenixCare</span>
+          </div>
+          <div className="space-x-4 text-sm">
+            {user ? (
+              <Link href="/dashboard" className="text-slate-600 hover:text-slate-900">
+                Accéder à ma base
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="text-slate-600 hover:text-slate-900">
                   Connexion
                 </Link>
                 <Link
                   href="/signup"
-                  className="bg-rose-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-rose-600 transition-colors focus:ring-2 focus:ring-rose-300 focus:outline-none"
+                  className="inline-flex items-center rounded-full bg-rose-500 px-4 py-2 text-white hover:bg-rose-600"
                 >
                   Créer un compte
                 </Link>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight mb-8 max-w-3xl">
-            Comment puis-je vous accompagner aujourd&apos;hui ?
-          </h1>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
-            {/* Card 1: Administratif */}
-            <button
-              onClick={() => router.push('/login')} // Redirect to login if not authenticated
-              className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 hover:shadow-lg hover:border-rose-300 transition-all duration-200 flex flex-col items-center text-center space-y-4"
-            >
-              <FileText className="h-12 w-12 text-blue-500" />
-              <h2 className="text-xl font-semibold text-slate-800">Administratif</h2>
-              <p className="text-slate-600">MDPH, CAF, allocations, dossiers...</p>
-            </button>
-
-            {/* Card 2: Fatigue */}
-            <button
-              onClick={() => router.push('/login')} // Redirect to login if not authenticated
-              className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 hover:shadow-lg hover:border-rose-300 transition-all duration-200 flex flex-col items-center text-center space-y-4"
-            >
-              <Frown className="h-12 w-12 text-yellow-500" />
-              <h2 className="text-xl font-semibold text-slate-800">Fatigue & Épuisement</h2>
-              <p className="text-slate-600">Besoin de souffler, de soutien moral...</p>
-            </button>
-
-            {/* Card 3: Perdu */}
-            <button
-              onClick={() => router.push('/login')} // Redirect to login if not authenticated
-              className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 hover:shadow-lg hover:border-rose-300 transition-all duration-200 flex flex-col items-center text-center space-y-4"
-            >
-              <Zap className="h-12 w-12 text-rose-500" />
-              <h2 className="text-xl font-semibold text-slate-800">Je suis perdu(e)</h2>
-              <p className="text-slate-600">Besoin d&apos;orientation, de clarté...</p>
-            </button>
-          </div>
-        </main>
-
-        <footer className="bg-slate-900 text-white py-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p className="text-slate-400 text-sm">© {new Date().getFullYear()} PhoenixCare. Tous droits réservés.</p>
-          </div>
-        </footer>
-      </div>
-    );
-  }
-
-  // If user is logged in and guided state is loaded
-  return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Header - Reused/Adapted */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-2">
-              <Heart className="h-8 w-8 text-rose-500" />
-              <span className="text-xl font-semibold text-slate-900">PhoenixCare</span>
-            </div>
-            <div className="space-x-3">
-              <Link
-                href="/login"
-                className="text-slate-600 hover:text-slate-900 font-medium"
-              >
-                Connexion
-              </Link>
-              <Link
-                href="/signup"
-                className="bg-rose-500 text-white px-4 py-2 rounded-xl font-medium hover:bg-rose-600 transition-colors focus:ring-2 focus:ring-rose-300 focus:outline-none"
-              >
-                Créer un compte
-              </Link>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-        {errorGuidedState && (
-          <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg mb-4">
-            <p>{errorGuidedState}</p>
-          </div>
-        )}
+      <main className="flex-1">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+            <p className="text-sm uppercase tracking-wide text-slate-500">Base arrière</p>
+            <h1 className="text-4xl font-semibold text-slate-900">On est là.</h1>
+            <p className="text-lg text-slate-700">
+              PhoenixCare n&apos;est pas un agenda. C&apos;est un endroit où déposer, faire une pause et reprendre quand
+              vous le décidez.
+            </p>
+            {guidedState?.situation && (
+              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm text-slate-600">
+                <p className="font-medium text-slate-900">Dernier repère retenu</p>
+                <p className="mt-1">{guidedState.situation}</p>
+              </div>
+            )}
+            {errorGuidedState && (
+              <p className="text-sm text-red-600">{errorGuidedState}</p>
+            )}
+            {guidedState?.next_step ? (
+              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 space-y-2">
+                <p className="text-sm text-slate-600">On s&apos;était arrêté ici :</p>
+                <p className="text-base text-slate-900">{formatNextStep(guidedState.next_step)}</p>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <button
+                    onClick={handleResume}
+                    className="flex-1 rounded-xl bg-slate-900 text-white px-4 py-2 font-medium hover:bg-slate-800"
+                  >
+                    Reprendre
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleChangeSubject}
+                    className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-slate-700 hover:border-slate-300"
+                  >
+                    Changer de sujet
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleForgetStep}
+                    disabled={isClearingStep}
+                    className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-slate-500 hover:border-slate-300 disabled:opacity-50"
+                  >
+                    {isClearingStep ? 'En cours...' : 'Oublier cette étape'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+            <button
+              onClick={handleResume}
+              className="rounded-2xl bg-slate-900 text-white px-6 py-3 font-medium hover:bg-slate-800"
+            >
+              Reprendre à mon rythme
+            </button>
+            )}
+            <p className="text-xs text-slate-500">
+              Vous pouvez vous arrêter à tout moment. Phoenix reprendra exactement où vous en étiez.
+            </p>
+          </section>
 
-        {guidedState ? (
-          // Display ResumeCard if guided state exists
-          <ResumeCard guidedState={guidedState} />
-        ) : (
-          // Else, display the 3 action cards
-          <>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 tracking-tight mb-8 max-w-3xl">
-              Comment puis-je vous accompagner aujourd&apos;hui ?
-            </h1>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
-              {/* Card 1: Administratif */}
+          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+            <p className="text-sm uppercase tracking-wide text-slate-500">Qu&apos;est-ce qui pèse maintenant ?</p>
+            <h2 className="text-2xl font-semibold text-slate-900">Une seule chose à traiter.</h2>
+            <p className="text-sm text-slate-600 mt-2">
+              Choisissez ce qui vous alourdit. Phoenix ouvrira le chat avec la bonne question déjà prête.
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
               <button
-                onClick={() => handleCardClick("J&apos;ai besoin d&apos;aide pour mes démarches administratives.")}
-                className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 hover:shadow-lg hover:border-rose-300 transition-all duration-200 flex flex-col items-center text-center space-y-4"
+                onClick={() => handleNeed('Aide-moi à décoder un courrier que je viens de recevoir.')} 
+                className="rounded-2xl border border-slate-300 px-4 py-3 text-left hover:border-rose-300"
               >
-                <FileText className="h-12 w-12 text-blue-500" />
-                <h2 className="text-xl font-semibold text-slate-800">Administratif</h2>
-                <p className="text-slate-600">MDPH, CAF, allocations, dossiers...</p>
+                <span className="font-medium text-slate-900">Un courrier</span>
+                <p className="text-xs text-slate-500">Je veux comprendre</p>
               </button>
-
-              {/* Card 2: Fatigue */}
               <button
-                onClick={() => handleCardClick("Je me sens fatigué(e) et dépassé(e).")}
-                className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 hover:shadow-lg hover:border-rose-300 transition-all duration-200 flex flex-col items-center text-center space-y-4"
+                onClick={() => handleNeed('Je suis épuisé(e). Aide-moi à ralentir sans culpabiliser.')} 
+                className="rounded-2xl border border-slate-300 px-4 py-3 text-left hover:border-rose-300"
               >
-                <Frown className="h-12 w-12 text-yellow-500" />
-                <h2 className="text-xl font-semibold text-slate-800">Fatigue & Épuisement</h2>
-                <p className="text-slate-600">Besoin de souffler, de soutien moral...</p>
+                <span className="font-medium text-slate-900">La fatigue</span>
+                <p className="text-xs text-slate-500">J&apos;ai besoin d&apos;une pause</p>
               </button>
-
-              {/* Card 3: Perdu */}
               <button
-                onClick={() => handleCardClick("Je ne sais pas par où commencer ou quoi faire.")}
-                className="bg-white p-6 rounded-2xl shadow-md border border-slate-200 hover:shadow-lg hover:border-rose-300 transition-all duration-200 flex flex-col items-center text-center space-y-4"
+                onClick={() => handleNeed('Je me sens perdu(e). Propose-moi une micro-action pour redémarrer.')} 
+                className="rounded-2xl border border-slate-300 px-4 py-3 text-left hover:border-rose-300"
               >
-                <Zap className="h-12 w-12 text-rose-500" />
-                <h2 className="text-xl font-semibold text-slate-800">Je suis perdu(e)</h2>
-                <p className="text-slate-600">Besoin d&apos;orientation, de clarté...</p>
+                <span className="font-medium text-slate-900">Je suis perdu(e)</span>
+                <p className="text-xs text-slate-500">Tu peux m&apos;orienter ?</p>
               </button>
             </div>
-          </>
-        )}
+          </section>
+
+          <QuietFragmentsCard />
+
+          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-3">
+            <p className="text-sm uppercase tracking-wide text-slate-500">Notre promesse</p>
+            <h2 className="text-2xl font-semibold text-slate-900">PhoenixCare est une base arrière.</h2>
+            <p className="text-slate-700">
+              Pas d&apos;agenda, pas de compte à rebours. Juste des micro-actions quand vous vous sentez prêt, un journal
+              silencieux quand il faut déposer, et des mots d&apos;autres parents quand le cœur devient lourd.
+            </p>
+          </section>
+        </div>
       </main>
 
-      {/* Footer - Reused/Adapted */}
-      <footer className="bg-slate-900 text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-slate-400 text-sm">© {new Date().getFullYear()} PhoenixCare. Tous droits réservés.</p>
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 text-xs text-slate-500">
+          © {new Date().getFullYear()} PhoenixCare · Une seule action à la fois.
         </div>
       </footer>
     </div>

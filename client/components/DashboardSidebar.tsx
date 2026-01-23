@@ -3,10 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  LayoutDashboard,
   Heart,
   FileText,
-  Calendar,
   User,
   ChevronLeft,
   ChevronRight,
@@ -49,10 +47,8 @@ export default function DashboardSidebar({
   };
 
   const menuItems = [
-    { id: 'resume', label: 'Résumé', icon: LayoutDashboard },
-    { id: 'aides', label: 'Mes Aides', icon: Heart },
+    { id: 'base', label: 'Base arrière', icon: Heart },
     { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'planning', label: 'Planning', icon: Calendar },
   ];
 
   const SidebarContent = () => (

@@ -29,20 +29,18 @@ export default function GuidedMessage({
 
   return (
     <div className="flex flex-col space-y-3">
-      {/* Priority (always visible) */}
       {priority && (
         <div className="bg-rose-50 border border-rose-200 text-rose-800 p-3 rounded-lg flex items-center space-x-2">
           <CheckCircle className="h-5 w-5 flex-shrink-0" />
-          <p className="font-medium text-sm">{priority}</p>
+          <p className="font-medium text-sm">Important maintenant : {priority}</p>
         </div>
       )}
 
-      {/* Next Step (clickable action card with 3 buttons) */}
       {next_step && (
         <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
           <div className="flex items-center space-x-2 mb-3">
             <ArrowRight className="h-5 w-5 text-slate-600" />
-            <h3 className="font-semibold text-slate-800">Prochaine étape :</h3>
+            <h3 className="font-semibold text-slate-800">Prochaine petite étape</h3>
           </div>
           <p className="text-slate-700 mb-4">{next_step}</p>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -71,20 +69,17 @@ export default function GuidedMessage({
         </div>
       )}
 
-      {/* Situation (secondary) */}
       {situation && (
         <div className="bg-slate-50 border border-slate-200 text-slate-700 p-3 rounded-lg text-sm">
-          <span className="font-medium">Où en est-on ?</span> {situation}
+          <span className="font-medium">Où on en est :</span> {situation}
         </div>
       )}
-
-      {/* Detailed Content (collapsed by default) */}
       <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
         <button
           onClick={() => setShowDetailedContent(!showDetailedContent)}
           className="w-full flex justify-between items-center text-slate-700 hover:text-slate-900 font-medium text-sm"
         >
-          <span>{showDetailedContent ? 'Masquer les détails' : 'Afficher les détails de la réponse'}</span>
+          <span>{showDetailedContent ? 'Masquer le détail explicatif' : 'Détail explicatif (optionnel)'}</span>
           {showDetailedContent ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
         {showDetailedContent && (

@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, RotateCcw, FileText, Heart, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Send, RotateCcw, FileText, Heart, Loader2, AlertCircle, CheckCircle, PauseCircle } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 import { formatTimestamp, isRecentMessage } from '@/lib/chatApi';
 import GuidedMessage from '@/components/GuidedMessage';
@@ -19,6 +20,7 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
   const [showQuickActions, setShowQuickActions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
 
   const {
     messages,
@@ -297,12 +299,22 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
             </div>
             <div>
               <h2 className="font-semibold text-slate-900">Phoenix</h2>
-              <p className="text-sm text-slate-600">Votre assistant empathique</p>
+              <p className="text-sm text-slate-600">On avance une seule étape à la fois.</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <ConnectionStatus />
+            <button
+              onClick={() => {
+                alert('C\'est noté. Rien n\'est perdu.');
+                router.push('/dashboard');
+              }}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:border-slate-300"
+            >
+              <PauseCircle className="h-4 w-4" />
+              Faire une pause
+            </button>
             <button
               onClick={resetConversation}
               className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
@@ -312,6 +324,7 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
             </button>
           </div>
         </div>
+        <p className="mt-2 text-xs text-slate-500">Vous pouvez fermer cette page quand vous le souhaitez, Phoenix gardera tout.</p>
       </div>
 
       {/* Messages */}
@@ -325,8 +338,7 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
               Bonjour ! Je suis Phoenix 🕊️
             </h3>
             <p className="text-slate-600 mb-6 max-w-md mx-auto">
-              <strong>Conseiller social expert</strong> combinant l&apos;expertise MDPH + CAF + droits parentaux.
-              Je vous accompagne pour toutes vos démarches : AEEH, allocations, AESH, recours, et bien plus !
+              Racontez ce qui pèse maintenant. On traitera une seule micro-action. Si c&apos;est trop, on s&apos;arrête.
             </p>
             <QuickActions />
           </div>
@@ -418,10 +430,9 @@ export default function ChatInterface({ userId, className = '', initialMessage, 
         </form>
 
         <div className="text-xs text-slate-500 mt-2 text-center">
-          Phoenix garde en mémoire vos conversations pour mieux vous accompagner
+          Besoin d&apos;une pause ? Fermez simplement l&apos;écran. Rien n&apos;est perdu.
         </div>
       </div>
     </div>
   );
 }
-
