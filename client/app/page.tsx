@@ -272,6 +272,20 @@ export default function HomePage() {
               silencieux quand il faut déposer, et des mots d&apos;autres parents quand le cœur devient lourd.
             </p>
           </section>
+
+          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-3">
+            <p className="text-sm uppercase tracking-wide text-slate-500">Charte éthique du silence</p>
+            <h2 className="text-2xl font-semibold text-slate-900">Respect radical du calme et de la vie privée.</h2>
+            <p className="text-slate-700">
+              PhoenixCare suit quatre piliers : regard détourné, amnistie de l&apos;absence, neutralité de la mémoire, posture de l&apos;ombre.
+            </p>
+            <Link
+              href="/charte"
+              className="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 text-slate-700 hover:border-slate-300"
+            >
+              Lire la charte en entier
+            </Link>
+          </section>
         </div>
       </main>
 

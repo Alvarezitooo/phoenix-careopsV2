@@ -34,7 +34,8 @@ from services.memory import (
     add_to_conversation,
     fetch_user_memories,
     conversation_memory,
-    MAX_MEMORY_MESSAGES
+    MAX_MEMORY_MESSAGES,
+    save_last_guided_state
 )
 from services.supabase import save_conversation_to_supabase
 from services.analytics import (
