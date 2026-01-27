@@ -6,7 +6,7 @@ import { useSupabaseAuth } from '@/context/SupabaseAuthContext';
 import { supabase } from '@/lib/supabase';
 import { ChevronLeft, Loader2, Inbox } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale/fr';
+import fr from 'date-fns/locale/fr';
 
 interface JournalEntry {
   id: string;
