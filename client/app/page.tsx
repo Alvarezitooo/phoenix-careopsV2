@@ -175,7 +175,7 @@ export default function HomePage() {
           {user && guidedState?.next_step && (
             <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
               <p className="text-sm uppercase tracking-wide text-slate-500">Repère précédent</p>
-              <p className="text-lg text-slate-800">On s'était arrêté ici : "{guidedState.next_step}"</p>
+              <p className="text-lg text-slate-800">On s&apos;était arrêté ici : &quot;{guidedState.next_step}&quot;</p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleResume}
