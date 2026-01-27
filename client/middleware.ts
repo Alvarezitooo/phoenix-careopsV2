@@ -1,14 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// Routes publiques qui n'ont pas besoin d'authentification
-const PUBLIC_ROUTES = ['/login', '/', '/signup', '/soutenir'];
-
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  console.log('🔍 Middleware - Pathname:', pathname);
-
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -21,84 +14,51 @@ export async function middleware(request: NextRequest) {
     {
       cookies: {
         get(name: string) {
-          const value = request.cookies.get(name)?.value;
-          if (name.startsWith('sb-')) {
-            console.log('🍪 Cookie get:', name, value ? 'présent' : 'absent');
-          }
-          return value;
+          return request.cookies.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
+          request.cookies.set({ name, value, ...options })
+          response = NextResponse.next({ request: { headers: request.headers } })
+          response.cookies.set({ name, value, ...options })
         },
         remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
+          request.cookies.set({ name, value: '', ...options })
+          response = NextResponse.next({ request: { headers: request.headers } })
+          response.cookies.set({ name, value: '', ...options })
         },
       },
     }
   )
 
-  const { data: { user }, error } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+  const { pathname } = request.nextUrl
 
-  console.log('👤 Middleware - User:', user?.id || 'null');
-  if (error) console.log('❌ Middleware - Error:', error.message);
-
-  // Si l'utilisateur est authentifié
-  if (user) {
-    // S'il essaie d'aller sur login/signup, on le redirige vers le dashboard
-    if (pathname === '/login' || pathname === '/signup') {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
+  // Si l'utilisateur est connecté et essaie d'accéder à /login ou /signup, on le redirige vers la page d'accueil.
+  if (user && (pathname === '/login' || pathname === '/signup')) {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
-  // Si l'utilisateur n'est pas authentifié et essaie d'accéder à une route protégée
-  if (!user && !PUBLIC_ROUTES.includes(pathname)) {
-    // Routes protégées: tout ce qui commence par /chat, /dashboard
-    if (pathname.startsWith('/chat') || pathname.startsWith('/dashboard')) {
-      return NextResponse.redirect(new URL('/login', request.url));
-    }
+  // Si l'utilisateur n'est PAS connecté, le matcher garantit que cette page est protégée,
+  // donc on le redirige vers la page de connexion.
+  if (!user && pathname !== '/login' && pathname !== '/signup') {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  return response;
+  return response
 }
 
-// Configuration du matcher pour spécifier quelles routes sont concernées par le middleware
+// Le middleware ne s'appliquera qu'aux routes listées ici.
+// Les pages publiques (accueil, cgu, etc.) ne seront pas affectées.
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    // Routes protégées
+    '/guide/:path*',
+    '/journal/:path*',
+    '/decodeur/:path*',
+    '/fragments/:path*',
+    
+    // Routes d'authentification (pour la logique de redirection si l'utilisateur est déjà connecté)
+    '/login',
+    '/signup',
   ],
 }
