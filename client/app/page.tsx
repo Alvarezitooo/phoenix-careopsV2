@@ -198,8 +198,8 @@ export default function HomePage() {
 
           {(!user || !guidedState?.next_step) && (
             <section>
-              <h2 className="text-center text-2xl font-semibold text-slate-800 mb-2">Aujourd'hui, je suis là pour...</h2>
-              <p className="text-center text-slate-600 mb-8">Choisissez une porte d'entrée. Une seule chose à la fois.</p>
+                      <h2 className="text-center text-2xl font-semibold text-slate-800 mb-2">Aujourd{'\''}hui, je suis là pour...</h2>
+              <p className="text-center text-slate-600 mb-8">Choisissez une porte d&apos;entrée. Une seule chose à la fois.</p>
               <div className="grid gap-4 sm:grid-cols-1">
                 <IntentionButton 
                   href="/guide"

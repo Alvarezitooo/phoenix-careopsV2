@@ -11,7 +11,7 @@ export default function JournalPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center">
           <Link href="/" className="flex items-center gap-2 text-slate-600 hover:text-slate-900">
             <ChevronLeft className="h-5 w-5" />
-            <span>Retour à l'accueil</span>
+            <span>Retour à l&apos;accueil</span>
           </Link>
         </div>
       </header>
