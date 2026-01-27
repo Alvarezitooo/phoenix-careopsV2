@@ -166,7 +166,7 @@ export default function HomePage() {
           
           <section className="text-center">
             <p className="text-lg font-medium text-rose-600">Base arrière</p>
-            <h1 className="mt-2 text-4xl sm:text-5xl font-semibold text-slate-900">Bonjour{user ? `, ${user.user_metadata.name || user.email.split('@')[0]}` : ''}.</h1>
+            <h1 className="mt-2 text-4xl sm:text-5xl font-semibold text-slate-900">Bonjour{user ? `, ${user.user_metadata.name || user.email?.split('@')[0] || ''}` : ''}.</h1>
             <p className="mt-4 text-lg text-slate-700 max-w-2xl mx-auto">
               Prenez un instant. Aucune urgence, aucune tâche. Nous sommes là.
             </p>
