@@ -5,20 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSupabaseAuth } from '@/context/SupabaseAuthContext';
 import { supabase } from '@/lib/supabase';
-import QuietFragmentsCard from '@/components/QuietFragmentsCard';
-import { Heart, Loader2 } from 'lucide-react';
+import { Heart, Loader2, MessageSquare, Book, FileText, Users } from 'lucide-react';
 
 type GuidedState = {
   situation?: string;
   priority?: string;
   next_step?: string;
-};
-
-const formatNextStep = (value?: string) => {
-  if (!value) return '';
-  const clean = value.trim();
-  if (clean.length <= 120) return clean;
-  return `${clean.slice(0, 117).trimEnd()}...`;
 };
 
 export default function HomePage() {
@@ -75,9 +67,9 @@ export default function HomePage() {
       return;
     }
     if (guidedState?.next_step) {
-      router.push(`/chat?q=${encodeURIComponent(`Reprenons ici : ${guidedState.next_step}`)}`);
+      router.push(`/guide?q=${encodeURIComponent(`Reprenons ici : ${guidedState.next_step}`)}`);
     } else {
-      router.push('/chat');
+      router.push('/guide');
     }
   };
 
@@ -108,29 +100,12 @@ export default function HomePage() {
 
       setGuidedState(null);
       setErrorGuidedState(null);
-      router.refresh();
     } catch (error) {
       console.error('Impossible d\'oublier l\'étape', error);
       setErrorGuidedState('Impossible d\'oublier cette étape pour le moment.');
     } finally {
       setIsClearingStep(false);
     }
-  };
-
-  const handleChangeSubject = () => {
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-    router.push('/chat?q=Changeons de sujet. Aide-moi sur autre chose.');
-  };
-
-  const handleNeed = (message: string) => {
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-    router.push(`/chat?q=${encodeURIComponent(message)}`);
   };
 
   if (authLoading || guidedLoading) {
@@ -142,18 +117,32 @@ export default function HomePage() {
     );
   }
 
+  const IntentionButton = ({ href, icon: Icon, title, subtitle }: { href: string; icon: React.ElementType; title: string; subtitle: string }) => (
+    <Link href={user ? href : '/login'} className="block rounded-2xl border border-slate-200 bg-white p-6 text-left hover:border-rose-300 hover:shadow-lg transition-all duration-200">
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 bg-rose-50 rounded-full flex items-center justify-center">
+          <Icon className="h-6 w-6 text-rose-500" />
+        </div>
+        <div>
+          <h3 className="font-semibold text-slate-900">{title}</h3>
+          <p className="text-sm text-slate-600">{subtitle}</p>
+        </div>
+      </div>
+    </Link>
+  );
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="border-b border-slate-200 bg-white">
+      <header className="border-b border-slate-200 bg-white/80 backdrop-blur-lg sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-slate-900">
+          <Link href="/" className="flex items-center gap-2 text-slate-900">
             <Heart className="h-6 w-6 text-rose-500" />
             <span className="font-semibold tracking-tight">PhoenixCare</span>
-          </div>
+          </Link>
           <div className="space-x-4 text-sm">
             {user ? (
-              <Link href="/dashboard" className="text-slate-600 hover:text-slate-900">
-                Accéder à ma base
+              <Link href="/logout" className="text-slate-600 hover:text-slate-900">
+                Déconnexion
               </Link>
             ) : (
               <>
@@ -173,125 +162,84 @@ export default function HomePage() {
       </header>
 
       <main className="flex-1">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 space-y-8">
-          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <p className="text-sm uppercase tracking-wide text-slate-500">Base arrière</p>
-            <h1 className="text-4xl font-semibold text-slate-900">On est là.</h1>
-            <p className="text-lg text-slate-700">
-              PhoenixCare n&apos;est pas un agenda. C&apos;est un endroit où déposer, faire une pause et reprendre quand
-              vous le décidez.
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 space-y-12">
+          
+          <section className="text-center">
+            <p className="text-lg font-medium text-rose-600">Base arrière</p>
+            <h1 className="mt-2 text-4xl sm:text-5xl font-semibold text-slate-900">Bonjour{user ? `, ${user.user_metadata.name || user.email.split('@')[0]}` : ''}.</h1>
+            <p className="mt-4 text-lg text-slate-700 max-w-2xl mx-auto">
+              Prenez un instant. Aucune urgence, aucune tâche. Nous sommes là.
             </p>
-            {guidedState?.situation && (
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm text-slate-600">
-                <p className="font-medium text-slate-900">Dernier repère retenu</p>
-                <p className="mt-1">{guidedState.situation}</p>
+          </section>
+
+          {user && guidedState?.next_step && (
+            <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+              <p className="text-sm uppercase tracking-wide text-slate-500">Repère précédent</p>
+              <p className="text-lg text-slate-800">On s'était arrêté ici : "{guidedState.next_step}"</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={handleResume}
+                  className="flex-1 rounded-xl bg-slate-900 text-white px-4 py-3 font-medium hover:bg-slate-800 transition-colors"
+                >
+                  Reprendre le fil
+                </button>
+                <button
+                  type="button"
+                  onClick={handleForgetStep}
+                  disabled={isClearingStep}
+                  className="flex-1 rounded-xl border border-slate-300 px-4 py-3 text-slate-700 hover:bg-slate-100 disabled:opacity-50 transition-colors"
+                >
+                  {isClearingStep ? 'En cours...' : 'Changer de sujet'}
+                </button>
               </div>
-            )}
-            {errorGuidedState && (
-              <p className="text-sm text-red-600">{errorGuidedState}</p>
-            )}
-            {guidedState?.next_step ? (
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 space-y-2">
-                <p className="text-sm text-slate-600">On s&apos;était arrêté ici :</p>
-                <p className="text-base text-slate-900">{formatNextStep(guidedState.next_step)}</p>
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <button
-                    onClick={handleResume}
-                    className="flex-1 rounded-xl bg-slate-900 text-white px-4 py-2 font-medium hover:bg-slate-800"
-                  >
-                    Reprendre
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleChangeSubject}
-                    className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-slate-700 hover:border-slate-300"
-                  >
-                    Changer de sujet
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleForgetStep}
-                    disabled={isClearingStep}
-                    className="flex-1 rounded-xl border border-slate-200 px-4 py-2 text-slate-500 hover:border-slate-300 disabled:opacity-50"
-                  >
-                    {isClearingStep ? 'En cours...' : 'Oublier cette étape'}
-                  </button>
-                </div>
+              {errorGuidedState && <p className="text-sm text-red-600">{errorGuidedState}</p>}
+            </section>
+          )}
+
+          {(!user || !guidedState?.next_step) && (
+            <section>
+              <h2 className="text-center text-2xl font-semibold text-slate-800 mb-2">Aujourd'hui, je suis là pour...</h2>
+              <p className="text-center text-slate-600 mb-8">Choisissez une porte d'entrée. Une seule chose à la fois.</p>
+              <div className="grid gap-4 sm:grid-cols-1">
+                <IntentionButton 
+                  href="/guide"
+                  icon={MessageSquare}
+                  title="... être écouté(e) et guidé(e)."
+                  subtitle="Ouvrir une conversation pour y voir plus clair."
+                />
+                <IntentionButton 
+                  href="/journal"
+                  icon={Book}
+                  title="... mettre mes pensées au clair."
+                  subtitle="Écrire dans un espace privé, sans jugement."
+                />
+                <IntentionButton 
+                  href="/decodeur"
+                  icon={FileText}
+                  title="... déchiffrer un langage administratif."
+                  subtitle="Traduire un courrier ou un document complexe."
+                />
+                <IntentionButton 
+                  href="/fragments"
+                  icon={Users}
+                  title="... juste lire, sans interagir."
+                  subtitle="Parcourir des témoignages anonymes."
+                />
               </div>
-            ) : (
-            <button
-              onClick={handleResume}
-              className="rounded-2xl bg-slate-900 text-white px-6 py-3 font-medium hover:bg-slate-800"
-            >
-              Reprendre à mon rythme
-            </button>
-            )}
-            <p className="text-xs text-slate-500">
-              Vous pouvez vous arrêter à tout moment. Phoenix reprendra exactement où vous en étiez.
-            </p>
-          </section>
-
-          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-            <p className="text-sm uppercase tracking-wide text-slate-500">Qu&apos;est-ce qui pèse maintenant ?</p>
-            <h2 className="text-2xl font-semibold text-slate-900">Une seule chose à traiter.</h2>
-            <p className="text-sm text-slate-600 mt-2">
-              Choisissez ce qui vous alourdit. Phoenix ouvrira le chat avec la bonne question déjà prête.
-            </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <button
-                onClick={() => handleNeed('Aide-moi à décoder un courrier que je viens de recevoir.')} 
-                className="rounded-2xl border border-slate-300 px-4 py-3 text-left hover:border-rose-300"
-              >
-                <span className="font-medium text-slate-900">Un courrier</span>
-                <p className="text-xs text-slate-500">Je veux comprendre</p>
-              </button>
-              <button
-                onClick={() => handleNeed('Je suis épuisé(e). Aide-moi à ralentir sans culpabiliser.')} 
-                className="rounded-2xl border border-slate-300 px-4 py-3 text-left hover:border-rose-300"
-              >
-                <span className="font-medium text-slate-900">La fatigue</span>
-                <p className="text-xs text-slate-500">J&apos;ai besoin d&apos;une pause</p>
-              </button>
-              <button
-                onClick={() => handleNeed('Je me sens perdu(e). Propose-moi une micro-action pour redémarrer.')} 
-                className="rounded-2xl border border-slate-300 px-4 py-3 text-left hover:border-rose-300"
-              >
-                <span className="font-medium text-slate-900">Je suis perdu(e)</span>
-                <p className="text-xs text-slate-500">Tu peux m&apos;orienter ?</p>
-              </button>
-            </div>
-          </section>
-
-          <QuietFragmentsCard />
-
-          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-3">
-            <p className="text-sm uppercase tracking-wide text-slate-500">Notre promesse</p>
-            <h2 className="text-2xl font-semibold text-slate-900">PhoenixCare est une base arrière.</h2>
-            <p className="text-slate-700">
-              Pas d&apos;agenda, pas de compte à rebours. Juste des micro-actions quand vous vous sentez prêt, un journal
-              silencieux quand il faut déposer, et des mots d&apos;autres parents quand le cœur devient lourd.
-            </p>
-          </section>
-
-          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-3">
-            <p className="text-sm uppercase tracking-wide text-slate-500">Charte éthique du silence</p>
-            <h2 className="text-2xl font-semibold text-slate-900">Respect radical du calme et de la vie privée.</h2>
-            <p className="text-slate-700">
-              PhoenixCare suit quatre piliers : regard détourné, amnistie de l&apos;absence, neutralité de la mémoire, posture de l&apos;ombre.
-            </p>
-            <Link
-              href="/charte"
-              className="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2 text-slate-700 hover:border-slate-300"
-            >
-              Lire la charte en entier
-            </Link>
-          </section>
+            </section>
+          )}
         </div>
       </main>
 
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 text-xs text-slate-500">
-          © {new Date().getFullYear()} PhoenixCare · Une seule action à la fois.
+      <footer className="border-t border-slate-200 bg-slate-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 text-center text-xs text-slate-500">
+          <p>© {new Date().getFullYear()} PhoenixCare · Une seule action à la fois.</p>
+          <div className="mt-2 space-x-4">
+            <Link href="/cgu" className="hover:text-slate-800">CGU</Link>
+            <Link href="/mentions-legales" className="hover:text-slate-800">Mentions Légales</Link>
+            <Link href="/politique-confidentialite" className="hover:text-slate-800">Confidentialité</Link>
+            <Link href="/charte" className="hover:text-slate-800">Notre Charte</Link>
+          </div>
         </div>
       </footer>
     </div>

@@ -121,14 +121,19 @@ export default function PhoenixJournal() {
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center">
-          <Inbox className="h-5 w-5 text-rose-500" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center">
+            <Inbox className="h-5 w-5 text-rose-500" />
+          </div>
+          <div>
+            <p className="text-sm uppercase tracking-wide text-slate-500">Journal Phoenix</p>
+            <h3 className="text-lg font-semibold text-slate-900">Déposer sans répondre</h3>
+          </div>
         </div>
-        <div>
-          <p className="text-sm uppercase tracking-wide text-slate-500">Journal Phoenix</p>
-          <h3 className="text-lg font-semibold text-slate-900">Déposer sans répondre</h3>
-        </div>
+        <Link href="/journal/archives" className="text-sm text-slate-500 hover:text-rose-600 underline decoration-dotted">
+          Mes archives
+        </Link>
       </div>
       <p className="text-sm text-slate-500 mt-4">
         Rien ne sera analysé automatiquement. Ce journal reste silencieux tant que tu ne demandes rien.

@@ -7,16 +7,17 @@ from datetime import datetime
 import requests
 
 SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_ANON_KEY = os.getenv('SUPABASE_ANON_KEY') or os.getenv('SUPABASE_KEY')
+SUPABASE_SERVICE_ROLE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
 
 def save_conversation_to_supabase(user_id: str, message: str, response: str, sources: list):
     """💾 Sauvegarde ou met à jour la conversation dans Supabase"""
-    if not SUPABASE_URL or not SUPABASE_ANON_KEY:
+    if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
         return
 
     try:
         headers = {
-            'apikey': SUPABASE_ANON_KEY,
+            'apikey': SUPABASE_SERVICE_ROLE_KEY,
+            'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE_KEY}',
             'Content-Type': 'application/json',
             'Prefer': 'return=representation'
         }
